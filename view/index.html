@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabTech Pro — Solutions Industrielles & Laboratoire</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              50:  '#f0f4fa',
+              100: '#dde6f3',
+              200: '#b8cce8',
+              300: '#87a9d8',
+              400: '#5080c2',
+              500: '#2d5fa8',
+              600: '#1e4a8c',
+              700: '#163872',
+              800: '#0f2a57',
+              900: '#091c3d',
+              950: '#050e22',
+            },
+            slate: {
+              50:  '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            accent: '#2563eb',
+            'accent-light': '#3b82f6',
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.7s ease forwards',
+            'fade-in': 'fadeIn 0.6s ease forwards',
+            'slide-right': 'slideRight 0.7s ease forwards',
+          },
+          keyframes: {
+            fadeUp:    { '0%': { opacity: '0', transform: 'translateY(28px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            fadeIn:    { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideRight:{ '0%': { opacity: '0', transform: 'translateX(-24px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: #fff; color: #1e293b; }
+
+    /* ── Reveal on scroll ─────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ── Nav ──────────────────────────────────────── */
+    #navbar { transition: background .3s, box-shadow .3s; }
+    #navbar.scrolled { background: rgba(255,255,255,.97); box-shadow: 0 1px 24px rgba(0,0,0,.08); }
+
+    /* ── Hero ─────────────────────────────────────── */
+    .hero-bg {
+      background: linear-gradient(135deg, #05183a 0%, #0f2a57 40%, #163872 70%, #1e4a8c 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1800&q=80&fit=crop') center/cover no-repeat;
+      opacity: .13;
+      mix-blend-mode: luminosity;
+    }
+    .hero-grid-overlay {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(37,99,235,.35) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.75);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(8px);
+    }
+    .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: #60a5fa; display: block; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.8); } }
+
+    /* ── Stat ticker ──────────────────────────────── */
+    .stat-bar { background: linear-gradient(90deg, #1e4a8c 0%, #163872 100%); }
+
+    /* ── Product cards ────────────────────────────── */
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform .3s ease, box-shadow .3s ease;
+      border: 1px solid #e2e8f0;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,.1); }
+    .product-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease;
+    }
+    .product-card:hover::after { transform: scaleX(1); }
+    .product-card img { transition: transform .5s ease; }
+    .product-card:hover img { transform: scale(1.06); }
+
+    /* ── Featured products ────────────────────────── */
+    .feat-card {
+      transition: box-shadow .3s, transform .3s;
+      border: 1px solid #e2e8f0;
+    }
+    .feat-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,.09); transform: translateY(-4px); }
+
+    /* ── Partner logos ────────────────────────────── */
+    .partner-logo { filter: grayscale(100%) opacity(.45); transition: filter .3s, opacity .3s; }
+    .partner-logo:hover { filter: grayscale(0%) opacity(1); }
+
+    /* ── Industry card ────────────────────────────── */
+    .industry-card {
+      position: relative; overflow: hidden;
+      transition: transform .3s;
+    }
+    .industry-card:hover { transform: translateY(-5px); }
+    .industry-card .overlay { transition: opacity .3s; }
+    .industry-card:hover .overlay { opacity: 1; }
+    .industry-card img { transition: transform .5s; }
+    .industry-card:hover img { transform: scale(1.07); }
+
+    /* ── CTA banner ───────────────────────────────── */
+    .cta-banner { background: linear-gradient(135deg, #0f2a57 0%, #1e4a8c 50%, #2563eb 100%); position: relative; overflow: hidden; }
+    .cta-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1614308458637-9ee13ebe8b27?w=1600&q=60&fit=crop') center/cover;
+      opacity: .07;
+    }
+
+    /* ── Misc ─────────────────────────────────────── */
+    .section-eyebrow { font-family: 'Syne', sans-serif; font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: #2563eb; font-weight: 700; }
+    .section-title { font-family: 'Syne', sans-serif; }
+    .tag-pill { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: .7rem; font-weight: 500; letter-spacing: .04em; background: #eff6ff; color: #2563eb; }
+
+    /* ── Scrollbar ────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     NAVIGATION
+═══════════════════════════════════════════════ -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 py-4">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-800 flex items-center justify-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+      </div>
+      <span class="font-display font-700 text-lg text-white" style="font-family:'Syne',sans-serif;font-weight:700;">LabTech<span class="text-blue-400">Pro</span></span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden lg:flex items-center gap-8">
+      <a href="#produits" class="text-sm text-white/70 hover:text-white transition-colors font-medium">Produits</a>
+      <a href="#solutions" class="text-sm text-white/70 hover:text-white transition-colors font-medium">Solutions</a>
+      <a href="#industries" class="text-sm text-white/70 hover:text-white transition-colors font-medium">Industries</a>
+      <a href="#apropos" class="text-sm text-white/70 hover:text-white transition-colors font-medium">À propos</a>
+      <a href="#contact" class="text-sm text-white/70 hover:text-white transition-colors font-medium">Contact</a>
+    </nav>
+
+    <!-- CTA -->
+    <div class="hidden lg:flex items-center gap-3">
+      <a href="#" class="text-sm text-white/75 hover:text-white transition font-medium px-3 py-2">Espace client</a>
+      <a href="#contact" class="text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25">Demander un devis</a>
+    </div>
+
+    <!-- Mobile burger -->
+    <button id="burger" class="lg:hidden p-2 text-white">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════ -->
+<section class="hero-bg min-h-screen flex flex-col justify-center pt-24 pb-16">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left content -->
+      <div>
+        <div class="hero-badge mb-8 animate-fade-in" style="animation-delay:.1s">
+          <span></span>Leader en équipements industriels & laboratoire
+        </div>
+
+        <h1 class="section-title text-5xl lg:text-6xl xl:text-[4.2rem] font-800 text-white leading-[1.05] mb-6 animate-fade-up" style="font-weight:800;animation-delay:.2s;opacity:0;">
+          Précision &amp;<br/>Performance<br/>
+          <em class="not-italic text-blue-400">au cœur de<br/>votre process.</em>
+        </h1>
+
+        <p class="text-white/60 text-lg leading-relaxed max-w-lg mb-10 animate-fade-up" style="animation-delay:.35s;opacity:0;">
+          Solutions de filtration, pesage, surveillance de l'air et équipements de laboratoire pour les industries pharmaceutiques, agroalimentaires et pétrochimiques les plus exigeantes.
+        </p>
+
+        <div class="flex flex-wrap gap-4 animate-fade-up" style="animation-delay:.5s;opacity:0;">
+          <a href="#produits" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 hover:shadow-xl hover:shadow-blue-600/30 group">
+            Découvrir nos solutions
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#contact" class="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-medium px-7 py-3.5 rounded-xl transition-all duration-200 backdrop-blur-sm">
+            Contacter un expert
+          </a>
+        </div>
+
+        <!-- Mini stats -->
+        <div class="flex gap-10 mt-14 animate-fade-up" style="animation-delay:.65s;opacity:0;">
+          <div>
+            <div class="section-title text-3xl font-800 text-white" style="font-weight:800;">25+</div>
+            <div class="text-white/45 text-sm mt-0.5">Années d'expérience</div>
+          </div>
+          <div class="w-px bg-white/10"></div>
+          <div>
+            <div class="section-title text-3xl font-800 text-white" style="font-weight:800;">1200+</div>
+            <div class="text-white/45 text-sm mt-0.5">Clients actifs</div>
+          </div>
+          <div class="w-px bg-white/10"></div>
+          <div>
+            <div class="section-title text-3xl font-800 text-white" style="font-weight:800;">40+</div>
+            <div class="text-white/45 text-sm mt-0.5">Marques partenaires</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right — floating cards -->
+      <div class="hidden lg:flex flex-col gap-4 animate-fade-in" style="animation-delay:.4s;opacity:0;">
+        <!-- Main image -->
+        <div class="rounded-2xl overflow-hidden relative h-64 shadow-2xl">
+          <img src="https://images.unsplash.com/photo-1581093458791-9d09c4a3b9f0?w=800&q=80&fit=crop" alt="Lab" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <div class="text-white/50 text-xs mb-1">Salle blanche ISO 5</div>
+            <div class="text-white font-semibold text-sm">Systèmes de filtration avancés</div>
+          </div>
+        </div>
+
+        <!-- Two small cards -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="rounded-xl overflow-hidden relative h-40 shadow-xl">
+            <img src="https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=400&q=80&fit=crop" alt="Weighing" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <div class="text-white font-semibold text-xs">Pesage de précision</div>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden relative h-40 shadow-xl">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80&fit=crop" alt="Monitoring" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <div class="text-white font-semibold text-xs">Surveillance qualité air</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Certification badge -->
+        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-blue-600/30 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="text-white text-sm font-semibold">Certifié ISO 9001 · GMP · FDA 21 CFR</div>
+            <div class="text-white/45 text-xs mt-0.5">Conformité assurée pour les industries réglementées</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+    <div class="text-white text-xs tracking-widest uppercase">Scroll</div>
+    <div class="w-px h-10 bg-white/40 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-full bg-white" style="height:50%;animation:scrollLine 1.8s ease infinite;">
+      </div>
+    </div>
+  </div>
+  <style>@keyframes scrollLine{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}</style>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STAT BAR
+═══════════════════════════════════════════════ -->
+<div class="stat-bar py-5">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <div class="section-title text-2xl font-700 text-white" style="font-weight:700;">98.4%</div>
+        <div class="text-blue-200/60 text-xs mt-1 tracking-wide uppercase">Taux de satisfaction</div>
+      </div>
+      <div>
+        <div class="section-title text-2xl font-700 text-white" style="font-weight:700;">48h</div>
+        <div class="text-blue-200/60 text-xs mt-1 tracking-wide uppercase">Délai d'intervention</div>
+      </div>
+      <div>
+        <div class="section-title text-2xl font-700 text-white" style="font-weight:700;">5000+</div>
+        <div class="text-blue-200/60 text-xs mt-1 tracking-wide uppercase">Références produits</div>
+      </div>
+      <div>
+        <div class="section-title text-2xl font-700 text-white" style="font-weight:700;">15</div>
+        <div class="text-blue-200/60 text-xs mt-1 tracking-wide uppercase">Pays desservis</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     À PROPOS
+═══════════════════════════════════════════════ -->
+<section id="apropos" class="py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+      <!-- Image mosaic -->
+      <div class="relative reveal">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="rounded-2xl overflow-hidden h-64 col-span-2 shadow-lg">
+            <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&q=80&fit=crop" alt="Lab interior" class="w-full h-full object-cover" />
+          </div>
+          <div class="rounded-2xl overflow-hidden h-44 shadow-lg">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&q=80&fit=crop" alt="Team" class="w-full h-full object-cover" />
+          </div>
+          <div class="rounded-2xl overflow-hidden h-44 shadow-lg">
+            <img src="https://images.unsplash.com/photo-1624996379697-f01d168b1a52?w=400&q=80&fit=crop" alt="Equipment" class="w-full h-full object-cover" />
+          </div>
+        </div>
+        <!-- Floating trust badge -->
+        <div class="absolute -right-6 top-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-5 border border-slate-100 w-44">
+          <div class="text-3xl font-800 text-navy-800 section-title" style="font-weight:800;">25+</div>
+          <div class="text-slate-500 text-sm leading-tight mt-1">ans d'expertise sectorielle</div>
+          <div class="mt-3 flex gap-1">
+            <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+            <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+            <div class="w-2 h-2 rounded-full bg-blue-200"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text content -->
+      <div class="reveal reveal-delay-2">
+        <p class="section-eyebrow mb-4">À propos de nous</p>
+        <h2 class="section-title text-4xl lg:text-[2.8rem] font-800 text-slate-900 leading-tight mb-6" style="font-weight:800;">
+          Votre partenaire de<br/>confiance depuis 1999
+        </h2>
+        <p class="text-slate-500 leading-relaxed mb-6">
+          LabTech Pro est spécialisé dans la distribution et l'intégration de solutions d'équipements de laboratoire, de systèmes de filtration industrielle et d'instruments de mesure. Nous accompagnons les industries les plus exigeantes dans leur quête de précision et de conformité réglementaire.
+        </p>
+        <p class="text-slate-500 leading-relaxed mb-10">
+          Grâce à un réseau de 40+ partenaires fabricants de premier plan mondial — Sartorius, Mettler-Toledo, Camfil, TSI — nous proposons des solutions clé en main adaptées à chaque contexte de production.
+        </p>
+
+        <!-- Trust indicators -->
+        <div class="grid grid-cols-2 gap-4 mb-10">
+          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-slate-800">Certifié ISO 9001</div>
+              <div class="text-xs text-slate-400 mt-0.5">Qualité garantie</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-slate-800">Support 24/5</div>
+              <div class="text-xs text-slate-400 mt-0.5">Expertise réactive</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-slate-800">Stock Europe</div>
+              <div class="text-xs text-slate-400 mt-0.5">Livraison rapide</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-slate-800">Équipe dédiée</div>
+              <div class="text-xs text-slate-400 mt-0.5">Ingénieurs terrain</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="#" class="inline-flex items-center gap-2 text-blue-600 font-semibold hover:gap-3 transition-all text-sm group">
+          En savoir plus sur notre histoire
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     CATÉGORIES PRODUITS
+═══════════════════════════════════════════════ -->
+<section id="produits" class="py-28 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Header -->
+    <div class="text-center mb-16 reveal">
+      <p class="section-eyebrow mb-3">Gamme complète</p>
+      <h2 class="section-title text-4xl font-800 text-slate-900 mb-4" style="font-weight:800;">Nos catégories produits</h2>
+      <p class="text-slate-500 max-w-xl mx-auto">Des solutions industrielles adaptées à chaque étape de votre process, de la production au contrôle qualité.</p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Filtration -->
+      <div class="product-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-1">
+        <div class="h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1583912267550-d974c8b28e23?w=600&q=80&fit=crop" alt="Filtration" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+          </div>
+          <h3 class="section-title font-700 text-slate-900 text-lg mb-2" style="font-weight:700;">Filtration</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mb-4">Filtres HEPA, membranaires, cartouches et systèmes de filtration d'air pour salles blanches.</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="tag-pill">HEPA H14</span>
+            <span class="tag-pill">Membranaire</span>
+            <span class="tag-pill">Salle blanche</span>
+          </div>
+          <a href="#" class="flex items-center gap-1.5 text-blue-600 text-sm font-semibold group hover:gap-2.5 transition-all">
+            Voir produits <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Pesage -->
+      <div class="product-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-2">
+        <div class="h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1605289355680-75fb41239154?w=600&q=80&fit=crop" alt="Pesage" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+          </div>
+          <h3 class="section-title font-700 text-slate-900 text-lg mb-2" style="font-weight:700;">Pesage de précision</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mb-4">Balances analytiques, industrielles et microbalances pour dosages et contrôle qualité.</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="tag-pill">Analytique</span>
+            <span class="tag-pill">µg précision</span>
+            <span class="tag-pill">GMP</span>
+          </div>
+          <a href="#" class="flex items-center gap-1.5 text-blue-600 text-sm font-semibold group hover:gap-2.5 transition-all">
+            Voir produits <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Surveillance air -->
+      <div class="product-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-3">
+        <div class="h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1581091870621-9fbe5e1efbbc?w=600&q=80&fit=crop" alt="Air monitoring" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12c0-2.76 1.12-5.26 2.93-7.07"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3 class="section-title font-700 text-slate-900 text-lg mb-2" style="font-weight:700;">Surveillance air</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mb-4">Compteurs de particules, analyseurs de COV et capteurs de qualité de l'air en continu.</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="tag-pill">Particules</span>
+            <span class="tag-pill">COV/HAP</span>
+            <span class="tag-pill">ISO 14644</span>
+          </div>
+          <a href="#" class="flex items-center gap-1.5 text-blue-600 text-sm font-semibold group hover:gap-2.5 transition-all">
+            Voir produits <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Équipements lab -->
+      <div class="product-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-4">
+        <div class="h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&q=80&fit=crop" alt="Lab equipment" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+          </div>
+          <h3 class="section-title font-700 text-slate-900 text-lg mb-2" style="font-weight:700;">Équipements lab</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mb-4">Enceintes, autoclaves, centrifugeuses, hottes et consommables pour laboratoires analytiques.</p>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <span class="tag-pill">Stérilisation</span>
+            <span class="tag-pill">Centrifugation</span>
+            <span class="tag-pill">Confinement</span>
+          </div>
+          <a href="#" class="flex items-center gap-1.5 text-blue-600 text-sm font-semibold group hover:gap-2.5 transition-all">
+            Voir produits <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     PRODUITS PHARES
+═══════════════════════════════════════════════ -->
+<section id="solutions" class="py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 reveal">
+      <div>
+        <p class="section-eyebrow mb-3">Sélection</p>
+        <h2 class="section-title text-4xl font-800 text-slate-900" style="font-weight:800;">Produits phares</h2>
+      </div>
+      <a href="#" class="inline-flex items-center gap-2 border border-slate-200 text-slate-700 hover:border-blue-500 hover:text-blue-600 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">
+        Tous les produits <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Product 1 -->
+      <div class="feat-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-1">
+        <div class="relative h-52 overflow-hidden bg-slate-50">
+          <img src="https://images.unsplash.com/photo-1578496479763-c21ef2a4d87b?w=600&q=80&fit=crop" alt="Product 1" class="w-full h-full object-cover" />
+          <div class="absolute top-3 left-3">
+            <span class="bg-blue-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">Nouveau</span>
+          </div>
+          <div class="absolute top-3 right-3">
+            <button class="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-white transition shadow-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="text-xs text-slate-400 mb-1.5 font-medium tracking-wide uppercase">Sartorius</div>
+          <h3 class="font-semibold text-slate-900 mb-2 leading-snug">Balance analytique Quintix® 224-1S</h3>
+          <p class="text-slate-500 text-sm mb-4 leading-relaxed">Précision 0.1 mg, portée max 220 g. Interface ErgoSens, conforme GMP/GLP.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-blue-600 font-700 text-lg section-title" style="font-weight:700;">2 890 €</span>
+              <span class="text-slate-400 text-xs ml-1">HT</span>
+            </div>
+            <a href="#" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Demander prix</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="feat-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-2">
+        <div class="relative h-52 overflow-hidden bg-slate-50">
+          <img src="https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=600&q=80&fit=crop" alt="Product 2" class="w-full h-full object-cover" />
+          <div class="absolute top-3 left-3">
+            <span class="bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">Best-seller</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="text-xs text-slate-400 mb-1.5 font-medium tracking-wide uppercase">Camfil</div>
+          <h3 class="font-semibold text-slate-900 mb-2 leading-snug">Filtre HEPA CamCleaner H14 — 610×610</h3>
+          <p class="text-slate-500 text-sm mb-4 leading-relaxed">Efficacité ≥99.995% sur MPPS. Certifié EN 1822-1. Résistant aux aérosols agressifs.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-blue-600 font-700 text-lg section-title" style="font-weight:700;">340 €</span>
+              <span class="text-slate-400 text-xs ml-1">HT/unité</span>
+            </div>
+            <a href="#" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Demander prix</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="feat-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-3">
+        <div class="relative h-52 overflow-hidden bg-slate-50">
+          <img src="https://images.unsplash.com/photo-1581093458791-9d09c4a3b9f0?w=600&q=80&fit=crop" alt="Product 3" class="w-full h-full object-cover" />
+          <div class="absolute top-3 left-3">
+            <span class="bg-orange-500 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">En stock</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="text-xs text-slate-400 mb-1.5 font-medium tracking-wide uppercase">TSI</div>
+          <h3 class="font-semibold text-slate-900 mb-2 leading-snug">Compteur de particules AEROTRAK™ 9310</h3>
+          <p class="text-slate-500 text-sm mb-4 leading-relaxed">6 canaux simultanés 0.3–10 µm, débit 1 CFM. Interface tactile. Certification ISO 21501-4.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-blue-600 font-700 text-lg section-title" style="font-weight:700;">Sur devis</span>
+            </div>
+            <a href="#" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Demander prix</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="feat-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-1">
+        <div class="relative h-52 overflow-hidden bg-slate-50">
+          <img src="https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=600&q=80&fit=crop" alt="Product 4" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-5">
+          <div class="text-xs text-slate-400 mb-1.5 font-medium tracking-wide uppercase">Mettler-Toledo</div>
+          <h3 class="font-semibold text-slate-900 mb-2 leading-snug">Plateforme de pesage IND780 Batching</h3>
+          <p class="text-slate-500 text-sm mb-4 leading-relaxed">Terminal industriel multi-voies, résolution 1/600 000, SIL 2, certifié OIML R76.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-blue-600 font-700 text-lg section-title" style="font-weight:700;">4 500 €</span>
+              <span class="text-slate-400 text-xs ml-1">HT</span>
+            </div>
+            <a href="#" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Demander prix</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 5 -->
+      <div class="feat-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-2">
+        <div class="relative h-52 overflow-hidden bg-slate-50">
+          <img src="https://images.unsplash.com/photo-1614308457595-a4578c3d0f7a?w=600&q=80&fit=crop" alt="Product 5" class="w-full h-full object-cover" />
+          <div class="absolute top-3 left-3">
+            <span class="bg-purple-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">Promo</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="text-xs text-slate-400 mb-1.5 font-medium tracking-wide uppercase">Esco</div>
+          <h3 class="font-semibold text-slate-900 mb-2 leading-snug">Hotte à flux laminaire Airstream® Class II</h3>
+          <p class="text-slate-500 text-sm mb-4 leading-relaxed">Sécurité biologique niveau 2. Filtre HEPA intégré. Certification NSF 49 & EN 12469.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-blue-600 font-700 text-lg section-title" style="font-weight:700;">7 200 €</span>
+              <span class="text-slate-400 text-xs ml-1">HT</span>
+            </div>
+            <a href="#" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Demander prix</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 6 -->
+      <div class="feat-card bg-white rounded-2xl overflow-hidden reveal reveal-delay-3">
+        <div class="relative h-52 overflow-hidden bg-slate-50">
+          <img src="https://images.unsplash.com/photo-1616696007984-4c0a7a6eba41?w=600&q=80&fit=crop" alt="Product 6" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-5">
+          <div class="text-xs text-slate-400 mb-1.5 font-medium tracking-wide uppercase">Pall Corporation</div>
+          <h3 class="font-semibold text-slate-900 mb-2 leading-snug">Système de filtration tangentielle Allegro™ STR</h3>
+          <p class="text-slate-500 text-sm mb-4 leading-relaxed">Cassettes 30 kDa à 0.65 µm. Débit 1–500 L/h. Connexion SIP/CIP. Usage biopharma.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-blue-600 font-700 text-lg section-title" style="font-weight:700;">Sur devis</span>
+            </div>
+            <a href="#" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Demander prix</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     PARTENAIRES / MARQUES
+═══════════════════════════════════════════════ -->
+<section class="py-20 bg-slate-50 border-y border-slate-100">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12 reveal">
+      <p class="section-eyebrow mb-2">Nos marques partenaires</p>
+      <h2 class="section-title text-2xl font-700 text-slate-900" style="font-weight:700;">40+ fabricants de rang mondial</h2>
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-6 items-center reveal">
+      <!-- Each "logo" is a styled text block — realistic placeholder -->
+      <div class="partner-logo bg-white rounded-xl border border-slate-100 p-5 flex items-center justify-center h-16 shadow-sm cursor-pointer">
+        <span class="section-title font-800 text-slate-800 text-sm tracking-tight" style="font-weight:800;">SARTORIUS</span>
+      </div>
+      <div class="partner-logo bg-white rounded-xl border border-slate-100 p-5 flex items-center justify-center h-16 shadow-sm cursor-pointer">
+        <span class="section-title font-800 text-slate-800 text-sm tracking-tight" style="font-weight:800;">Mettler<br>Toledo</span>
+      </div>
+      <div class="partner-logo bg-white rounded-xl border border-slate-100 p-5 flex items-center justify-center h-16 shadow-sm cursor-pointer">
+        <span class="section-title font-800 text-slate-800 text-sm tracking-tight" style="font-weight:800;">CAMFIL</span>
+      </div>
+      <div class="partner-logo bg-white rounded-xl border border-slate-100 p-5 flex items-center justify-center h-16 shadow-sm cursor-pointer">
+        <span class="section-title font-800 text-slate-800 text-sm tracking-tight" style="font-weight:800;">TSI</span>
+      </div>
+      <div class="partner-logo bg-white rounded-xl border border-slate-100 p-5 flex items-center justify-center h-16 shadow-sm cursor-pointer">
+        <span class="section-title font-800 text-slate-800 text-xs tracking-tight" style="font-weight:800;">PALL CORP.</span>
+      </div>
+      <div class="partner-logo bg-white rounded-xl border border-slate-100 p-5 flex items-center justify-center h-16 shadow-sm cursor-pointer">
+        <span class="section-title font-800 text-slate-800 text-sm tracking-tight" style="font-weight:800;">ESCO</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     INDUSTRIES SERVIES
+═══════════════════════════════════════════════ -->
+<section id="industries" class="py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <p class="section-eyebrow mb-3">Marchés</p>
+      <h2 class="section-title text-4xl font-800 text-slate-900 mb-4" style="font-weight:800;">Industries que nous servons</h2>
+      <p class="text-slate-500 max-w-lg mx-auto">De la production pharmaceutique aux procédés pétrochimiques, nos solutions répondent aux contraintes réglementaires les plus strictes.</p>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- Pharma -->
+      <div class="industry-card rounded-2xl overflow-hidden aspect-[4/5] relative cursor-pointer reveal reveal-delay-1">
+        <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?w=600&q=80&fit=crop" alt="Pharma" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/30 to-transparent"></div>
+        <div class="overlay absolute inset-0 bg-blue-700/20 opacity-0"></div>
+        <div class="absolute inset-x-0 bottom-0 p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-3">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v3"/><circle cx="18" cy="18" r="3"/><path d="M22 22l-1.5-1.5"/></svg>
+          </div>
+          <h3 class="section-title text-white font-700 text-lg mb-1" style="font-weight:700;">Pharmaceutique</h3>
+          <p class="text-white/55 text-xs leading-relaxed">GMP, FDA, salle blanche, stérilité</p>
+        </div>
+      </div>
+
+      <!-- Agroalimentaire -->
+      <div class="industry-card rounded-2xl overflow-hidden aspect-[4/5] relative cursor-pointer reveal reveal-delay-2">
+        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&q=80&fit=crop" alt="Food" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/30 to-transparent"></div>
+        <div class="overlay absolute inset-0 bg-blue-700/20 opacity-0"></div>
+        <div class="absolute inset-x-0 bottom-0 p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-3">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12c0-2.76 1.12-5.26 2.93-7.07"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3 class="section-title text-white font-700 text-lg mb-1" style="font-weight:700;">Agroalimentaire</h3>
+          <p class="text-white/55 text-xs leading-relaxed">HACCP, IFS, contrôle contaminants</p>
+        </div>
+      </div>
+
+      <!-- Énergie -->
+      <div class="industry-card rounded-2xl overflow-hidden aspect-[4/5] relative cursor-pointer reveal reveal-delay-3">
+        <img src="https://images.unsplash.com/photo-1548337138-e87d889cc369?w=600&q=80&fit=crop" alt="Energy" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/30 to-transparent"></div>
+        <div class="overlay absolute inset-0 bg-blue-700/20 opacity-0"></div>
+        <div class="absolute inset-x-0 bottom-0 p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-3">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="section-title text-white font-700 text-lg mb-1" style="font-weight:700;">Énergie</h3>
+          <p class="text-white/55 text-xs leading-relaxed">Nucléaire, hydraulique, solaire</p>
+        </div>
+      </div>
+
+      <!-- Pétrochimie -->
+      <div class="industry-card rounded-2xl overflow-hidden aspect-[4/5] relative cursor-pointer reveal reveal-delay-4">
+        <img src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=600&q=80&fit=crop" alt="Petrochem" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/30 to-transparent"></div>
+        <div class="overlay absolute inset-0 bg-blue-700/20 opacity-0"></div>
+        <div class="absolute inset-x-0 bottom-0 p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-3">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+          <h3 class="section-title text-white font-700 text-lg mb-1" style="font-weight:700;">Pétrochimie</h3>
+          <p class="text-white/55 text-xs leading-relaxed">ATEX, REACH, process continus</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TÉMOIGNAGES / CHIFFRES CLÉS
+═══════════════════════════════════════════════ -->
+<section class="py-20 bg-navy-950">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-3 gap-8">
+
+      <!-- Testimonial 1 -->
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-7 reveal">
+        <div class="flex gap-1 mb-5">
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="text-white/70 text-sm leading-relaxed mb-6 italic">"LabTech Pro nous a accompagnés dans la qualification de notre salle blanche ISO 5. Leur réactivité et leur expertise technique ont été déterminantes pour notre dossier ANSM."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-blue-700 flex items-center justify-center text-white text-sm font-bold">ML</div>
+          <div>
+            <div class="text-white text-sm font-semibold">Marie Lefebvre</div>
+            <div class="text-white/40 text-xs">QA Manager — Sanofi Pasteur</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-7 reveal reveal-delay-2">
+        <div class="flex gap-1 mb-5">
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg class="w-4 h-4 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="text-white/70 text-sm leading-relaxed mb-6 italic">"Le rapport qualité/prix et surtout le SAV sont au-dessus de ce que j'ai pu trouver chez d'autres distributeurs. Je recommande sans hésiter pour tout projet de pesage industriel."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-emerald-700 flex items-center justify-center text-white text-sm font-bold">TD</div>
+          <div>
+            <div class="text-white text-sm font-semibold">Thomas Dubois</div>
+            <div class="text-white/40 text-xs">Responsable process — TotalEnergies</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chiffre clé -->
+      <div class="bg-blue-600 rounded-2xl p-7 flex flex-col justify-between reveal reveal-delay-3">
+        <div>
+          <p class="text-blue-200 text-xs font-semibold tracking-widest uppercase mb-3">Satisfaction client</p>
+          <div class="section-title text-7xl font-800 text-white mb-2" style="font-weight:800;">98%</div>
+          <p class="text-white/70 text-sm leading-relaxed">de nos clients nous recommandent à leur réseau professionnel — enquête annuelle 2024.</p>
+        </div>
+        <a href="#contact" class="mt-6 inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-5 py-3 rounded-xl text-sm hover:bg-blue-50 transition-all group">
+          Rejoignez-les
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     CTA BANNER
+═══════════════════════════════════════════════ -->
+<section class="cta-banner py-24">
+  <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
+    <div class="max-w-3xl mx-auto reveal">
+      <p class="section-eyebrow text-blue-300 mb-4">Passez à l'étape suivante</p>
+      <h2 class="section-title text-4xl lg:text-5xl font-800 text-white mb-6 leading-tight" style="font-weight:800;">
+        Un projet ? Un besoin spécifique ?<br/>Nos experts sont là.
+      </h2>
+      <p class="text-white/60 text-lg mb-10">
+        Que vous soyez en phase de qualification, d'investissement ou de remplacement, bénéficiez d'une consultation technique gratuite avec un ingénieur spécialisé.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#contact" class="inline-flex items-center justify-center gap-2 bg-white text-blue-800 font-bold px-8 py-4 rounded-xl hover:bg-blue-50 transition-all text-sm shadow-xl shadow-blue-900/30 group">
+          Consultation gratuite
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="tel:+33561000000" class="inline-flex items-center justify-center gap-2 border border-white/25 text-white hover:border-white/50 font-semibold px-8 py-4 rounded-xl transition-all text-sm backdrop-blur-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.24h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          +33 (0)5 61 00 00 00
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════ -->
+<footer id="contact" class="bg-navy-950 pt-20 pb-8">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-10 mb-16">
+
+      <!-- Brand -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+          </div>
+          <span class="font-display font-700 text-white text-lg" style="font-family:'Syne',sans-serif;font-weight:700;">LabTech<span class="text-blue-400">Pro</span></span>
+        </div>
+        <p class="text-white/40 text-sm leading-relaxed mb-6 max-w-xs">
+          Votre partenaire de confiance pour les équipements de laboratoire, la filtration industrielle et la métrologie depuis 1999.
+        </p>
+        <div class="space-y-2 text-sm text-white/40">
+          <div class="flex items-center gap-2">
+            <svg class="w-3.5 h-3.5 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            12 Rue de l'Innovation, 31400 Toulouse
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-3.5 h-3.5 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.24h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +33 (0)5 61 00 00 00
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-3.5 h-3.5 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            contact@labtechpro.fr
+          </div>
+        </div>
+      </div>
+
+      <!-- Produits -->
+      <div>
+        <h4 class="text-white text-sm font-semibold mb-5 tracking-wide">Produits</h4>
+        <ul class="space-y-3 text-white/40 text-sm">
+          <li><a href="#" class="hover:text-white transition">Systèmes de filtration</a></li>
+          <li><a href="#" class="hover:text-white transition">Pesage de précision</a></li>
+          <li><a href="#" class="hover:text-white transition">Surveillance qualité air</a></li>
+          <li><a href="#" class="hover:text-white transition">Équipements de lab</a></li>
+          <li><a href="#" class="hover:text-white transition">Consommables</a></li>
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div>
+        <h4 class="text-white text-sm font-semibold mb-5 tracking-wide">Services</h4>
+        <ul class="space-y-3 text-white/40 text-sm">
+          <li><a href="#" class="hover:text-white transition">Qualification IQ/OQ/PQ</a></li>
+          <li><a href="#" class="hover:text-white transition">Maintenance préventive</a></li>
+          <li><a href="#" class="hover:text-white transition">Étalonnage & métrologie</a></li>
+          <li><a href="#" class="hover:text-white transition">Formation technique</a></li>
+          <li><a href="#" class="hover:text-white transition">Audit de conformité</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact / newsletter -->
+      <div>
+        <h4 class="text-white text-sm font-semibold mb-5 tracking-wide">Newsletter</h4>
+        <p class="text-white/40 text-xs mb-4 leading-relaxed">Recevez nos actualités produits et fiches techniques.</p>
+        <div class="flex flex-col gap-2">
+          <input type="email" placeholder="votre@email.fr" class="w-full bg-white/8 border border-white/12 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-blue-500 transition" />
+          <button class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition">S'abonner</button>
+        </div>
+        <!-- Social -->
+        <div class="flex gap-3 mt-6">
+          <a href="#" class="w-8 h-8 bg-white/8 border border-white/10 rounded-lg flex items-center justify-center hover:bg-blue-600/40 hover:border-blue-500/40 transition">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" class="w-8 h-8 bg-white/8 border border-white/10 rounded-lg flex items-center justify-center hover:bg-blue-600/40 hover:border-blue-500/40 transition">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+          </a>
+          <a href="#" class="w-8 h-8 bg-white/8 border border-white/10 rounded-lg flex items-center justify-center hover:bg-blue-600/40 hover:border-blue-500/40 transition">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="border-t border-white/8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-white/25 text-xs">© 2025 LabTech Pro SAS — Tous droits réservés</p>
+      <div class="flex gap-6 text-white/25 text-xs">
+        <a href="#" class="hover:text-white/60 transition">Mentions légales</a>
+        <a href="#" class="hover:text-white/60 transition">CGV</a>
+        <a href="#" class="hover:text-white/60 transition">Politique de confidentialité</a>
+        <a href="#" class="hover:text-white/60 transition">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
+<script>
+  // ── Navbar scroll effect ──────────────────────
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
+  });
+
+  // ── Scroll reveal ─────────────────────────────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Hero stagger animations ───────────────────
+  document.querySelectorAll('.animate-fade-up, .animate-fade-in').forEach(el => {
+    const delay = el.style.animationDelay || '0s';
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.style.animation = 'fadeUp 0.75s ease forwards';
+    }, parseFloat(delay) * 1000);
+  });
+
+  // ── Mobile menu (simple toggle) ───────────────
+  document.getElementById('burger').addEventListener('click', () => {
+    // Could expand to a full mobile drawer; left minimal here
+    alert('Menu mobile — à implémenter selon framework');
+  });
+</script>
+
+</body>
+</html>

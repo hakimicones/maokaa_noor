@@ -1,0 +1,64 @@
+# .htaccess - Apache URL Rewriting for VEP
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /Hebergement/maokaa/
+    
+    # Don't rewrite real files or directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Rewrite all requests to index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Compression gzip
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Images
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    
+    # CSS, JavaScript
+    ExpiresByType text/css "access plus 30 days"
+    ExpiresByType application/javascript "access plus 30 days"
+    ExpiresByType text/javascript "access plus 30 days"
+    
+    # Default
+    ExpiresDefault "access plus 7 days"
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Prevent Access to Sensitive Files
+<FilesMatch "^(\.htaccess|\.env|config\.php|shema\.sql)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# NOTE: setup.php is accessible for initial database setup
+# AFTER initialization, uncomment setup.php in the FilesMatch line above
+# and delete the setup.php file for production security
+
+# Prevent Directory Listing
+Options -Indexes

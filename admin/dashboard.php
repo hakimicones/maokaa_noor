@@ -1,0 +1,768 @@
+<?php
+// admin/dashboard.php
+// Dashboard administrateur principal
+
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+
+// Vérifier l'authentification
+requirePasswordChange();
+
+// Charger les modèles
+require_once __DIR__ . '/../app/models/Product.php';
+require_once __DIR__ . '/../app/models/Category.php';
+require_once __DIR__ . '/../app/models/Brand.php';
+require_once __DIR__ . '/../app/models/Partner.php';
+require_once __DIR__ . '/../app/models/News.php';
+require_once __DIR__ . '/../app/models/Contact.php';
+require_once __DIR__ . '/../app/models/Content.php';
+
+// Initialiser les modèles
+$productModel = new Product($pdo);
+$categoryModel = new Category($pdo);
+$brandModel = new Brand($pdo);
+$partnerModel = new Partner($pdo);
+$newsModel = new News($pdo);
+$contactModel = new Contact($pdo);
+$contentModel = new Content($pdo);
+
+// Obtenir les statistiques
+$stats = [
+    'total_products' => $productModel->count(),
+    'total_categories' => $categoryModel->count(false),
+    'total_brands' => $brandModel->count(),
+    'total_partners' => $partnerModel->count(),
+    'total_news' => $newsModel->count(),
+    'unread_messages' => $contactModel->count(true),
+    'total_content_pages' => count($contentModel->listAll(false))
+];
+
+// Déterminer la section active
+$section = $_GET['section'] ?? 'overview';
+
+// Traiter les actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    
+    // Vérifier le CSRF token
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Token de sécurité invalide');
+        header('Location: ' . BASE_URL . 'admin/dashboard.php');
+        exit;
+    }
+    
+    switch ($action) {
+        case 'delete_product':
+            if ($productModel->delete($_POST['id'])) {
+                setFlash('success', 'Produit supprimé avec succès');
+                logAudit('delete_product', 'ID: ' . $_POST['id']);
+            }
+            break;
+        
+        case 'delete_brand':
+            if ($brandModel->delete($_POST['id'])) {
+                setFlash('success', 'Marque supprimée avec succès');
+                logAudit('delete_brand', 'ID: ' . $_POST['id']);
+            }
+            break;
+        
+        case 'delete_partner':
+            if ($partnerModel->delete($_POST['id'])) {
+                setFlash('success', 'Partenaire supprimé avec succès');
+                logAudit('delete_partner', 'ID: ' . $_POST['id']);
+            }
+            break;
+        
+        case 'delete_news':
+            if ($newsModel->delete($_POST['id'])) {
+                setFlash('success', 'Actualité supprimée avec succès');
+                logAudit('delete_news', 'ID: ' . $_POST['id']);
+            }
+            break;
+        
+        case 'delete_message':
+            if ($contactModel->delete($_POST['id'])) {
+                setFlash('success', 'Message supprimé avec succès');
+                logAudit('delete_message', 'ID: ' . $_POST['id']);
+            }
+            break;
+    }
+    
+    header('Location: ' . BASE_URL . 'admin/dashboard.php?section=' . $section);
+    exit;
+}
+
+// Récupérer les données
+$products = $productModel->getAll(false, 10);
+$categories = $categoryModel->getAll(false);
+$brands = $brandModel->getAll(false);
+$partners = $partnerModel->getAll(false);
+$news = $newsModel->getAll(10);
+$messages = $contactModel->getAll(10);
+$unreadMessages = $contactModel->getUnread();
+$contentPages = $contentModel->listAll(false);
+
+$admin = getCurrentAdmin();
+$flash = getFlash();
+$csrfToken = generateCSRFToken();
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - VEP</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --secondary: #42a5f5;
+        }
+        
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar .brand {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .sidebar .nav-menu {
+            list-style: none;
+        }
+        
+        .sidebar .nav-item {
+            margin: 5px 0;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            display: block;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .topbar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            margin-bottom: 20px;
+            border-top: 4px solid var(--primary);
+        }
+        
+        .stat-card h3 {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            margin: 0;
+        }
+        
+        .data-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .data-table thead {
+            background: #f5f5f5;
+        }
+        
+        .data-table thead th {
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .data-table tbody td {
+            padding: 12px 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-cog"></i> VEP Admin
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="?section=overview" class="nav-link <?php echo $section === 'overview' ? 'active' : ''; ?>">
+                    <i class="fas fa-dashboard"></i> Tableau de bord
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=products" class="nav-link <?php echo $section === 'products' ? 'active' : ''; ?>">
+                    <i class="fas fa-box"></i> Produits
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=categories" class="nav-link <?php echo $section === 'categories' ? 'active' : ''; ?>">
+                    <i class="fas fa-list"></i> Catégories
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=content" class="nav-link <?php echo $section === 'content' ? 'active' : ''; ?>">
+                    <i class="fas fa-file-lines"></i> Pages CMS
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=brands" class="nav-link <?php echo $section === 'brands' ? 'active' : ''; ?>">
+                    <i class="fas fa-tag"></i> Marques
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=partners" class="nav-link <?php echo $section === 'partners' ? 'active' : ''; ?>">
+                    <i class="fas fa-handshake"></i> Partenaires
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=news" class="nav-link <?php echo $section === 'news' ? 'active' : ''; ?>">
+                    <i class="fas fa-newspaper"></i> Actualités
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="?section=messages" class="nav-link <?php echo $section === 'messages' ? 'active' : ''; ?>">
+                    <i class="fas fa-envelope"></i> Messages
+                    <?php if ($stats['unread_messages'] > 0): ?>
+                        <span class="badge bg-danger"><?php echo $stats['unread_messages']; ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
+            <li class="nav-item">
+                <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 10px 0;">
+            </li>
+            <li class="nav-item">
+                <a href="logout.php" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div>
+                <h4 style="margin: 0;">Bienvenue, <?php echo htmlspecialchars($admin['fullname'] ?? 'Admin'); ?></h4>
+            </div>
+            <div>
+                <span style="margin-right: 20px;"><?php echo date('d/m/Y H:i'); ?></span>
+                <a href="logout.php" class="btn btn-sm btn-outline-danger">Déconnexion</a>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        <?php if ($flash): ?>
+            <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?> alert-dismissible fade show">
+                <?php echo htmlspecialchars($flash['message']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Overview Section -->
+        <div class="content-section <?php echo $section === 'overview' ? 'active' : ''; ?>" id="overview">
+            <h3 class="mb-4">Tableau de bord</h3>
+            
+            <div class="row">
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <h3><?php echo $stats['total_products']; ?></h3>
+                        <p>Produits</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <h3><?php echo $stats['total_categories']; ?></h3>
+                        <p>Catégories</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <h3><?php echo $stats['total_brands']; ?></h3>
+                        <p>Marques</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <h3><?php echo $stats['total_partners']; ?></h3>
+                        <p>Partenaires</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <h3><?php echo $stats['total_news']; ?></h3>
+                        <p>Actualités</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card" style="border-top-color: #e74c3c;">
+                        <h3 style="color: #e74c3c;"><?php echo $stats['unread_messages']; ?></h3>
+                        <p>Messages non lus</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h4>Derniers produits</h4>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Catégorie</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach (array_slice($products, 0, 5) as $product): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars(substr($product['nom'], 0, 20)); ?></td>
+                                <td><small><?php echo htmlspecialchars($product['categorie_name']); ?></small></td>
+                                <td>
+                                    <a href="?section=products" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="col-md-6">
+                    <h4>Derniers messages</h4>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach (array_slice($messages, 0, 5) as $msg): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars(substr($msg['nom'], 0, 15)); ?></td>
+                                <td><small><?php echo htmlspecialchars(substr($msg['email'], 0, 20)); ?></small></td>
+                                <td>
+                                    <a href="?section=messages" class="btn btn-sm btn-info btn-action">Voir</a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Section -->
+        <div class="content-section <?php echo $section === 'products' ? 'active' : ''; ?>" id="products">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Gestion des Produits</h3>
+                <a href="products/create.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un produit
+                </a>
+            </div>
+            
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Marque</th>
+                            <th>Actif</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($products as $product): ?>
+                        <tr>
+                            <td><?php echo $product['id']; ?></td>
+                            <td><?php echo htmlspecialchars($product['nom']); ?></td>
+                            <td><?php echo htmlspecialchars($product['categorie_name']); ?></td>
+                            <td><?php echo htmlspecialchars($product['marque_name'] ?? '-'); ?></td>
+                            <td>
+                                <span class="badge <?php echo $product['active'] ? 'bg-success' : 'bg-secondary'; ?>">
+                                    <?php echo $product['active'] ? 'Oui' : 'Non'; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="products/edit.php?id=<?php echo $product['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                    <input type="hidden" name="action" value="delete_product">
+                                    <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Confirmer la suppression?')">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="content-section <?php echo $section === 'categories' ? 'active' : ''; ?>" id="categories">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Gestion des Catégories</h3>
+                <a href="categories/create.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une catégorie
+                </a>
+            </div>
+
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Ordre</th>
+                            <th>Actif</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($categories as $category): ?>
+                        <tr>
+                            <td><?php echo (int)$category['id']; ?></td>
+                            <td><?php echo htmlspecialchars($category['name']); ?></td>
+                            <td><?php echo htmlspecialchars($category['description'] ?? ''); ?></td>
+                            <td><?php echo (int)($category['display_order'] ?? 0); ?></td>
+                            <td>
+                                <span class="badge <?php echo !empty($category['active']) ? 'bg-success' : 'bg-secondary'; ?>">
+                                    <?php echo !empty($category['active']) ? 'Oui' : 'Non'; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="categories/edit.php?id=<?php echo (int)$category['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Content Pages Section -->
+        <div class="content-section <?php echo $section === 'content' ? 'active' : ''; ?>" id="content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Gestion des pages CMS</h3>
+                <a href="content/create.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une page
+                </a>
+            </div>
+
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Slug</th>
+                            <th>Titre</th>
+                            <th>Template</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($contentPages as $page): ?>
+                        <tr>
+                            <td><?php echo (int)$page['id']; ?></td>
+                            <td><?php echo htmlspecialchars($page['slug']); ?></td>
+                            <td><?php echo htmlspecialchars($page['title']); ?></td>
+                            <td><?php echo htmlspecialchars($page['template'] ?? 'default'); ?></td>
+                            <td>
+                                <span class="badge <?php echo $page['status'] === 'published' ? 'bg-success' : 'bg-secondary'; ?>">
+                                    <?php echo htmlspecialchars($page['status']); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="content/edit.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                                <a href="<?php echo BASE_URL . htmlspecialchars($page['slug']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary btn-action">Voir</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Brands Section -->
+        <div class="content-section <?php echo $section === 'brands' ? 'active' : ''; ?>" id="brands">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Gestion des Marques</h3>
+                <a href="brands/create.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une marque
+                </a>
+            </div>
+            
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Logo</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($brands as $brand): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($brand['name']); ?></td>
+                            <td>
+                                <?php if (!empty($brand['logo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($brand['logo']); ?>" alt="" style="max-height: 40px;">
+                                <?php else: ?>
+                                    <small class="text-muted">-</small>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars(substr($brand['description'], 0, 50)); ?></td>
+                            <td>
+                                <a href="brands/edit.php?id=<?php echo $brand['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                    <input type="hidden" name="action" value="delete_brand">
+                                    <input type="hidden" name="id" value="<?php echo $brand['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Confirmer la suppression?')">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Partners Section -->
+        <div class="content-section <?php echo $section === 'partners' ? 'active' : ''; ?>" id="partners">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Gestion des Partenaires</h3>
+                <a href="partners/create.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un partenaire
+                </a>
+            </div>
+            
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Logo</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($partners as $partner): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($partner['name']); ?></td>
+                            <td>
+                                <?php if (!empty($partner['logo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($partner['logo']); ?>" alt="" style="max-height: 40px;">
+                                <?php else: ?>
+                                    <small class="text-muted">-</small>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars(substr($partner['description'], 0, 50)); ?></td>
+                            <td>
+                                <a href="partners/edit.php?id=<?php echo $partner['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                    <input type="hidden" name="action" value="delete_partner">
+                                    <input type="hidden" name="id" value="<?php echo $partner['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Confirmer la suppression?')">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- News Section -->
+        <div class="content-section <?php echo $section === 'news' ? 'active' : ''; ?>" id="news">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Gestion des Actualités</h3>
+                <a href="news/create.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une actualité
+                </a>
+            </div>
+            
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($news as $item): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($item['title']); ?></td>
+                            <td><?php echo date('d/m/Y', strtotime($item['published_at'])); ?></td>
+                            <td>
+                                <span class="badge <?php echo $item['status'] === 'published' ? 'bg-success' : 'bg-warning'; ?>">
+                                    <?php echo ucfirst($item['status']); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="news/edit.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                    <input type="hidden" name="action" value="delete_news">
+                                    <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Confirmer la suppression?')">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Messages Section -->
+        <div class="content-section <?php echo $section === 'messages' ? 'active' : ''; ?>" id="messages">
+            <h3 class="mb-4">Messages de contact</h3>
+            
+            <div class="data-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Sujet</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($messages as $msg): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($msg['nom']); ?></td>
+                            <td><a href="mailto:<?php echo htmlspecialchars($msg['email']); ?>"><?php echo htmlspecialchars($msg['email']); ?></a></td>
+                            <td><?php echo htmlspecialchars($msg['telephone']); ?></td>
+                            <td><?php echo htmlspecialchars($msg['sujet']); ?></td>
+                            <td><?php echo date('d/m/Y H:i', strtotime($msg['created_at'])); ?></td>
+                            <td>
+                                <a href="messages/view.php?id=<?php echo $msg['id']; ?>" class="btn btn-sm btn-info btn-action">Voir</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                    <input type="hidden" name="action" value="delete_message">
+                                    <input type="hidden" name="id" value="<?php echo $msg['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Confirmer la suppression?')">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

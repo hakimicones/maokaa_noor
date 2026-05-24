@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\xampp\\\\htdocs\\\\Hebergement\\\\maokaa\\\\app\\\\views\\\\partials\\\\blocks\")",
+      "Bash(Out-Null)",
+      "Bash(Write-Output \"done\")",
+      "Bash(mysql -u root maokaa -e \"SELECT id, slug, CHAR_LENGTH\\(body\\) as body_len FROM content WHERE slug IN \\('home','products','news'\\);\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa -e \"SELECT id, slug, CHAR_LENGTH\\(COALESCE\\(body,''\\)\\) as body_len FROM content WHERE slug IN \\('home','products','news'\\);\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa -e \"SELECT slug, body FROM content WHERE slug IN \\('home','products','news'\\);\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa)"
+    ]
+  }
+}
