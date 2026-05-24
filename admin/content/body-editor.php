@@ -73,9 +73,9 @@ $csrfToken = generateCSRFToken();
 <div class="editor-shell">
     <div class="editor-topbar">
         <div>
-            <p class="text-muted mb-1">Éditeur visuel dédié</p>
+             
             <h1 class="h3 mb-1"><?php echo htmlspecialchars($page['title']); ?></h1>
-            <p class="text-muted mb-0">Le HTML final est synchronisé avec la colonne <strong>body</strong> de la table <strong>content</strong>.</p>
+            
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a href="<?php echo BASE_URL; ?>admin/content/edit.php?id=<?php echo (int)$pageId; ?>" class="btn btn-outline-secondary">Modifier les métadonnées</a>
@@ -89,12 +89,12 @@ $csrfToken = generateCSRFToken();
         </div>
     <?php endif; ?>
 
-    <div class="editor-card">
+    <div class="editor-card" style="padding: 0;">
         <form method="POST" id="bodyEditorForm">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
             <div class="mb-3">
-                <label class="form-label fw-semibold">Aperçu et édition visuelle</label>
-                <p class="text-muted small mb-3">Glissez des blocs, éditez le contenu puis cliquez sur <strong>Enregistrer dans MySQL</strong>.</p>
+                 
+              
                 <div class="border rounded overflow-hidden bg-white">
                     <div id="<?php echo htmlspecialchars($editorId); ?>" style="min-height: 760px;"></div>
                 </div>
@@ -105,6 +105,7 @@ $csrfToken = generateCSRFToken();
             <div class="editor-toolbar">
                 <button type="submit" class="btn btn-primary">Enregistrer dans MySQL</button>
             </div>
+              <p class="text-muted small mb-3">Glissez des blocs, éditez le contenu puis cliquez sur <strong>Enregistrer dans MySQL</strong>.</p>
         </form>
     </div>
 </div>
