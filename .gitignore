@@ -1,0 +1,23 @@
+# Variables d'environnement (SENSITIVE)
+.env
+.env.local
+.env.*.local
+.claude
+
+
+# Uploads et fichiers générés
+assets/images/*
+assets/brochures/*
+!assets/images/.gitkeep
+!assets/brochures/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Système
+.DS_Store
+Thumbs.db
