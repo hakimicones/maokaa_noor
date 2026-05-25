@@ -322,6 +322,11 @@ $csrfToken = generateCSRFToken();
                 </a>
             </li>
             <li class="nav-item">
+                <a href="menus/index.php" class="nav-link">
+                    <i class="fas fa-bars"></i> Menus
+                </a>
+            </li>
+            <li class="nav-item">
                 <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 10px 0;">
             </li>
             <li class="nav-item">
