@@ -1,6 +1,10 @@
+
+
+
 <?php
 // index.php - Front Controller Principal
 // Routeur centralisé pour l'application VEP
+
 
 require_once 'includes/config.php';
 require_once 'includes/db.php';
@@ -30,6 +34,8 @@ if ($slug === 'login' || $slug === 'login.php') {
     exit;
 }
 
+
+
 if (strpos($slug, 'admin') === 0) {
     if (isLoggedIn()) {
         include __DIR__ . '/admin/dashboard.php';
@@ -38,6 +44,8 @@ if (strpos($slug, 'admin') === 0) {
     }
     exit;
 }
+
+
 
 // Charger la page depuis la table content
 $contentModel = new Content($pdo);
@@ -55,6 +63,8 @@ if (!$page) {
         exit;
     }
 }
+
+
 
 // Déterminer le template à utiliser
 $template = !empty($page['template']) ? $page['template'] : 'default';

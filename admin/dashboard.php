@@ -269,6 +269,163 @@ $csrfToken = generateCSRFToken();
                 margin-left: 200px;
             }
         }
+
+      /* ===================================================
+   card page cms
+   =================================================== */
+
+.page-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-radius: 16px !important;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Barre colorée animée en haut de la carte */
+.page-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #06b6d4);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px 16px 0 0;
+}
+
+.page-card:hover::before {
+    transform: scaleX(1);
+}
+
+.page-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.08),
+                0 8px 16px rgba(0, 0, 0, 0.06) !important;
+    border-color: rgba(79, 70, 229, 0.15) !important;
+}
+
+/* Card body */
+.page-card .card-body {
+    padding: 1.4rem 1.4rem 1rem;
+}
+
+/* ID et badge */
+.page-card .card-body .text-muted.small {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a0aec0 !important;
+}
+
+/* Badge statut */
+.page-card .badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.35em 0.75em;
+    border-radius: 999px;
+}
+
+.page-card .badge.bg-success {
+    background: #dcfce7 !important;
+    color: #16a34a !important;
+}
+
+.page-card .badge.bg-secondary {
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+}
+
+/* Template et slug */
+.page-card .card-body p.text-muted {
+    font-size: 0.78rem;
+    color: #94a3b8 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.page-card .card-body p.text-muted i {
+    font-size: 0.7rem;
+    color: #cbd5e1;
+}
+
+/* Titre */
+.page-card .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+/* Footer */
+.page-card .card-footer {
+    padding: 0.9rem 1.4rem;
+    background: #f8fafc !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.page-card .card-footer .btn {
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.45rem 0.75rem;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+}
+
+.page-card .card-footer .btn-primary {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+.page-card .card-footer .btn-primary:hover {
+    background: #4338ca;
+    border-color: #4338ca;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    transform: translateY(-1px);
+}
+
+.page-card .card-footer .btn-outline-secondary {
+    color: #64748b;
+    border-color: #e2e8f0;
+    background: #ffffff;
+}
+
+.page-card .card-footer .btn-outline-secondary:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+}
+
+/* Petits boutons icônes */
+.page-card .card-footer .btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+}
+
+.page-card .card-footer .btn-editor {
+    font-size: 0.72rem;
+    padding: 0.4rem 0.65rem;
+    white-space: nowrap;
+}
     </style>
 </head>
 <body>
@@ -545,48 +702,53 @@ $csrfToken = generateCSRFToken();
         </div>
         
         <!-- Content Pages Section -->
-        <div class="content-section <?php echo $section === 'content' ? 'active' : ''; ?>" id="content">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3>Gestion des pages CMS</h3>
-                <a href="content/create.php" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter une page
-                </a>
-            </div>
+    <!-- Content Pages Section -->
+<div class="content-section <?php echo $section === 'content' ? 'active' : ''; ?>" id="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Gestion des pages CMS</h3>
+        <a href="content/create.php" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter une page
+        </a>
+    </div>
 
-            <div class="data-table">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Slug</th>
-                            <th>Titre</th>
-                            <th>Template</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($contentPages as $page): ?>
-                        <tr>
-                            <td><?php echo (int)$page['id']; ?></td>
-                            <td><?php echo htmlspecialchars($page['slug']); ?></td>
-                            <td><?php echo htmlspecialchars($page['title']); ?></td>
-                            <td><?php echo htmlspecialchars($page['template'] ?? 'default'); ?></td>
-                            <td>
-                                <span class="badge <?php echo $page['status'] === 'published' ? 'bg-success' : 'bg-secondary'; ?>">
-                                    <?php echo htmlspecialchars($page['status']); ?>
-                                </span>
-                            </td>
-                            <td>
-                                <a href="content/edit.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-primary btn-action">Éditer</a>
-                                <a href="<?php echo BASE_URL . htmlspecialchars($page['slug']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary btn-action">Voir</a>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+    <div class="row g-3">
+        <?php foreach ($contentPages as $page): ?>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card h-100 shadow-sm border-0 page-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small">#<?php echo (int)$page['id']; ?></span>
+                        <span class="badge <?php echo $page['status'] === 'published' ? 'bg-success' : 'bg-secondary'; ?>">
+                            <?php echo htmlspecialchars($page['status']); ?>
+                        </span>
+                    </div>
+
+                    <p class="text-muted small mb-1">
+                        <i class="fas fa-file-alt me-1"></i>Template : <?php echo htmlspecialchars($page['template'] ?? 'default'); ?>
+                    </p>
+                    <p class="text-muted small mb-3">
+                        <i class="fas fa-link me-1"></i><?php echo htmlspecialchars($page['slug']); ?>
+                    </p>
+
+                    <h5 class="card-title mb-0"><?php echo htmlspecialchars($page['title']); ?></h5>
+                </div>
+<div class="card-footer bg-transparent border-top d-flex gap-2 align-items-center">
+<a href="content/body-editor.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-primary btn-editor" title="Éditeur visuel">
+    <i class="fas fa-paint-brush me-1"></i>Éditeur visuel
+</a>
+    <a href="content/edit.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-outline-secondary btn-icon" title="Métadonnées">
+        <i class="fas fa-cog"></i>
+    </a>
+    <a href="<?php echo BASE_URL . htmlspecialchars($page['slug']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary btn-icon" title="Voir la page">
+        <i class="fas fa-eye"></i>
+    </a>
+</div>
+
             </div>
         </div>
+        <?php endforeach; ?>
+    </div>
+</div>
 
         <!-- Brands Section -->
         <div class="content-section <?php echo $section === 'brands' ? 'active' : ''; ?>" id="brands">
