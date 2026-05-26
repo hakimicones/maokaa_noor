@@ -82,7 +82,7 @@ $csrfToken = generateCSRFToken();
             <h2 class="mb-1">Modifier une page</h2>
             <p class="text-muted mb-0">Modifiez les métadonnées de la page puis ouvrez l’éditeur visuel dédié.</p>
         </div>
-        <a href="<?php echo BASE_URL; ?>admin/content/index.php" class="btn btn-outline-secondary">Retour</a>
+        <a href="<?php echo BASE_URL; ?>admin/dashboard.php?section=content" class="btn btn-outline-secondary">Retour</a>
     </div>
 
     <?php if (!empty($error)): ?>

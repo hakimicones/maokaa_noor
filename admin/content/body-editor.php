@@ -79,7 +79,7 @@ $csrfToken = generateCSRFToken();
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a href="<?php echo BASE_URL; ?>admin/content/edit.php?id=<?php echo (int)$pageId; ?>" class="btn btn-outline-secondary">Modifier les métadonnées</a>
-            <a href="<?php echo BASE_URL; ?>admin/content/index.php" class="btn btn-outline-secondary">Retour à la liste</a>
+            <a href="<?php echo BASE_URL; ?>admin/dashboard.php?section=content" class="btn btn-outline-secondary">Retour à la liste</a>
         </div>
     </div>
 
