@@ -11,6 +11,18 @@
         width: '100%',
         fromElement: false,
         storageManager: false,
+        plugins: ['grapesjs-preset-webpage', 'grapesjs-plugin-export', 'grapesjs-style-bg', 'grapesjs-custom-code'],
+        pluginsOpts: {
+            'grapesjs-plugin-export': {},
+            'grapesjs-style-bg': {},
+            'grapesjs-custom-code': {},
+            'grapesjs-preset-webpage': {
+            modalImportTitle: 'Import Template',
+            modalImportLabel: '<div style="margin-bottom: 10px; font-size: 13px;">Paste here your HTML/CSS and click Import</div>',
+            modalImportContent: function(editor) {return editor.getHtml() + '<style>'+editor.getCss()+'</style>'  },
+			
+          }
+        },
         canvas: {
             styles: [
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
