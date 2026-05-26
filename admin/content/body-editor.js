@@ -18,6 +18,13 @@
                 '/Hebergement/maokaa/assets/css/style.css'
             ]
         },
+        assetManager: {
+            assets: config.assets || [],
+            upload: config.uploadUrl || false,
+            uploadName: 'file',
+            multiUpload: false,
+            showUrlInput: true
+        },
         blockManager: {}
     });
 
@@ -132,8 +139,56 @@
         }
     });
 
-    const defaultContent = '<section class="container py-5"><div class="row"><div class="col-lg-8"><h1>Votre nouvelle page</h1><p>Ajoutez vos blocs ici.</p></div></div></section>';
-    editor.setComponents(config.initialBody || defaultContent);
+    // Convertit [shortcode attr="val"] en divs data-vep-block pour l'éditeur
+    function shortcodesToBlocks(html) {
+        return html.replace(/\[([a-z_]+)((?:\s+[a-z_]+="[^"]*")*)\s*\]/g, function(match, tag, attrsStr) {
+            var attrs = {};
+            var re = /([a-z_]+)="([^"]*)"/g, m;
+            while ((m = re.exec(attrsStr)) !== null) attrs[m[1]] = m[2];
+
+            var blockType = tag.replace(/_/g, '-');
+            var dataAttrs = 'data-vep-block="' + blockType + '"';
+            for (var k in attrs) {
+                dataAttrs += ' data-' + k.replace(/_/g, '-') + '="' + attrs[k] + '"';
+            }
+            return '<div ' + dataAttrs + ' style="background:#e8f4fd;border:2px dashed #2196F3;border-radius:8px;padding:24px;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;"><span style="color:#1565C0;font-weight:bold;">[' + tag + ']</span></div>';
+        });
+    }
+
+    // Convertit les divs data-vep-block en shortcodes [tag attr="val"] pour la sauvegarde
+    function blocksToShortcodes(html) {
+        var temp = document.createElement('div');
+        temp.innerHTML = html;
+        var blocks = Array.from(temp.querySelectorAll('[data-vep-block]'));
+        var replacements = {};
+
+        blocks.forEach(function(el, i) {
+            var blockType = el.getAttribute('data-vep-block');
+            var tag = blockType.replace(/-/g, '_');
+            var sc = '[' + tag;
+            for (var j = 0; j < el.attributes.length; j++) {
+                var attr = el.attributes[j];
+                if (attr.name.startsWith('data-') && attr.name !== 'data-vep-block') {
+                    var attrName = attr.name.slice(5).replace(/-/g, '_');
+                    if (attr.value !== '') sc += ' ' + attrName + '="' + attr.value + '"';
+                }
+            }
+            sc += ']';
+            var marker = 'SCMARKER' + i + 'END';
+            replacements[marker] = sc;
+            el.replaceWith(document.createTextNode(marker));
+        });
+
+        var result = temp.innerHTML;
+        for (var marker in replacements) {
+            result = result.split(marker).join(replacements[marker]);
+        }
+        return result;
+    }
+
+    var defaultContent = '<section class="container py-5"><div class="row"><div class="col-lg-8"><h1>Votre nouvelle page</h1><p>Ajoutez vos blocs ici.</p></div></div></section>';
+    var initialHtml = shortcodesToBlocks(config.initialBody || defaultContent);
+    editor.setComponents(initialHtml);
 
     editor.on('load', function() {
         editor.getComponents().forEach(function(comp) {
@@ -149,9 +204,17 @@
         return;
     }
 
-    const syncBody = function () {
-        const cleanHtml = DOMPurify.sanitize(editor.getHtml(), {
-            USE_PROFILES: { html: true }
+    var syncBody = function () {
+        var rawHtml = editor.getHtml();
+        var withShortcodes = blocksToShortcodes(rawHtml);
+        var cleanHtml = DOMPurify.sanitize(withShortcodes, {
+            USE_PROFILES: { html: true },
+            FORCE_BODY: false,
+            ALLOWED_ATTR: ['class', 'id', 'style', 'href', 'src', 'alt', 'target', 'rel',
+                           'data-limit', 'data-category', 'data-title',
+                           'data-vep-block', 'data-inline-field',
+                           'role', 'aria-label', 'aria-current', 'type', 'name', 'value',
+                           'placeholder', 'required', 'method', 'action', 'enctype']
         });
         hiddenInput.value = cleanHtml;
     };

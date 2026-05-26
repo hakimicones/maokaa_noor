@@ -7,7 +7,15 @@
       "Bash(mysql -u root maokaa -e \"SELECT id, slug, CHAR_LENGTH\\(body\\) as body_len FROM content WHERE slug IN \\('home','products','news'\\);\")",
       "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa -e \"SELECT id, slug, CHAR_LENGTH\\(COALESCE\\(body,''\\)\\) as body_len FROM content WHERE slug IN \\('home','products','news'\\);\")",
       "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa -e \"SELECT slug, body FROM content WHERE slug IN \\('home','products','news'\\);\")",
-      "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa)"
+      "Bash(\"/c/xampp/mysql/bin/mysql\" -u root maokaa)",
+      "Bash(Get-ChildItem -Path \"c:\\\\xampp\\\\htdocs\\\\Hebergement\\\\maokaa\" -Force)",
+      "Bash(Select-Object -First 30)",
+      "Bash(Format-Table Name, PSIsContainer)",
+      "Bash(Get-Content \"C:\\\\xampp\\\\mysql\\\\bin\\\\my.ini\")",
+      "Bash(Select-String -Pattern \"max_allowed_packet\")",
+      "Bash(Select-Object -First 5)",
+      "Bash(Get-ChildItem -Path \"c:\\\\xampp\\\\htdocs\\\\Hebergement\\\\maokaa\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }

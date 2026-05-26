@@ -1,0 +1,5 @@
+.claude
+logs/
+.env
+.htaccess
+vendor/

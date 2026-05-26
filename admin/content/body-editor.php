@@ -89,7 +89,8 @@ $csrfToken = generateCSRFToken();
         </div>
     <?php endif; ?>
 
-    <div class="editor-card" style="padding: 0;">
+    <div class="editor-card" style="padding: 0;
+">
         <form method="POST" id="bodyEditorForm">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
             <div class="mb-3">
@@ -103,7 +104,7 @@ $csrfToken = generateCSRFToken();
             <input type="hidden" name="body" id="body-html" value="<?php echo htmlspecialchars($initialBody, ENT_QUOTES, 'UTF-8'); ?>">
 
             <div class="editor-toolbar">
-                <button type="submit" class="btn btn-primary">Enregistrer dans MySQL</button>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>
               <p class="text-muted small mb-3">Glissez des blocs, éditez le contenu puis cliquez sur <strong>Enregistrer dans MySQL</strong>.</p>
         </form>
@@ -111,10 +112,25 @@ $csrfToken = generateCSRFToken();
 </div>
 
 <script>
+    <?php
+    $imagesDir = __DIR__ . '/../../assets/images';
+    $assetImages = [];
+    if (is_dir($imagesDir)) {
+        $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($imagesDir, FilesystemIterator::SKIP_DOTS));
+        foreach ($rii as $file) {
+            if ($file->isFile() && preg_match('/\.(jpg|jpeg|png|gif|svg|webp)$/i', $file->getFilename())) {
+                $relativePath = str_replace('\\', '/', substr($file->getPathname(), strlen(__DIR__ . '/../../')));
+                $assetImages[] = BASE_URL . $relativePath;
+            }
+        }
+    }
+    ?>
     window.__contentEditorConfig = {
         editorContainerId: '<?php echo htmlspecialchars($editorId); ?>',
         hiddenInputId: 'body-html',
-        initialBody: <?php echo json_encode($initialBody); ?>
+        initialBody: <?php echo json_encode($initialBody); ?>,
+        assets: <?php echo json_encode($assetImages); ?>,
+        uploadUrl: '<?php echo BASE_URL; ?>admin/content/upload-asset.php'
     };
 </script>
 <script src="https://unpkg.com/grapesjs@0.21.9/dist/grapes.min.js"></script>

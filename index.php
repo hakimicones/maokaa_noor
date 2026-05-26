@@ -1,22 +1,19 @@
-
-
-
 <?php
 // index.php - Front Controller Principal
-// Routeur centralisé pour l'application VEP
-
 
 require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
+require_once 'includes/theme.php';
 require_once 'app/models/Content.php';
 
-// Résoudre le slug depuis l'URL
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Initialiser le gestionnaire de thème
+ThemeManager::init($pdo);
 
-// Retirer BASE_URL de l'URI si présent
+// Résoudre le slug depuis l'URL
+$uri      = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $basePath = rtrim(parse_url(BASE_URL, PHP_URL_PATH) ?: '', '/');
-$path = $uri;
+$path     = $uri;
 
 if ($basePath && strpos($uri, $basePath) === 0) {
     $path = substr($uri, strlen($basePath));
@@ -24,8 +21,6 @@ if ($basePath && strpos($uri, $basePath) === 0) {
 
 $path = trim($path, '/');
 $slug = empty($path) || $path === 'index.php' ? 'home' : basename($path, '.php');
-
-// Normaliser et valider le slug
 $slug = strtolower(preg_replace('/[^a-z0-9\-_]/', '', $slug));
 
 // Routes spéciales
@@ -33,8 +28,6 @@ if ($slug === 'login' || $slug === 'login.php') {
     include __DIR__ . '/login.php';
     exit;
 }
-
-
 
 if (strpos($slug, 'admin') === 0) {
     if (isLoggedIn()) {
@@ -45,14 +38,11 @@ if (strpos($slug, 'admin') === 0) {
     exit;
 }
 
-
-
 // Charger la page depuis la table content
 $contentModel = new Content($pdo);
-$page = $contentModel->findBySlug($slug);
+$page         = $contentModel->findBySlug($slug);
 
 if (!$page) {
-    // Essayer de charger une page 404 spécifique
     $page404 = $contentModel->findBySlug('404');
     if ($page404) {
         http_response_code(404);
@@ -64,15 +54,14 @@ if (!$page) {
     }
 }
 
+// Charger le template depuis le thème actif
+$template     = !empty($page['template']) ? $page['template'] : 'default';
+$templateFile = ThemeManager::template($template);
 
-
-// Déterminer le template à utiliser
-$template = !empty($page['template']) ? $page['template'] : 'default';
-$templateFile = __DIR__ . "/app/views/templates/{$template}.php";
-
-if (!file_exists($templateFile)) {
-    $templateFile = __DIR__ . '/app/views/templates/default.php';
+if (empty($templateFile)) {
+    http_response_code(500);
+    echo '<p>Template introuvable : ' . htmlspecialchars($template) . '</p>';
+    exit;
 }
 
-// Inclure le template choisi
 include $templateFile;
