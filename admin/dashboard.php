@@ -701,8 +701,10 @@ $csrfToken = generateCSRFToken();
             </div>
         </div>
         
+
+
+
         <!-- Content Pages Section -->
-    <!-- Content Pages Section -->
 <div class="content-section <?php echo $section === 'content' ? 'active' : ''; ?>" id="content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>Gestion des pages CMS</h3>
@@ -714,41 +716,73 @@ $csrfToken = generateCSRFToken();
     <div class="row g-3">
         <?php foreach ($contentPages as $page): ?>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="card h-100 shadow-sm border-0 page-card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="text-muted small">#<?php echo (int)$page['id']; ?></span>
-                        <span class="badge <?php echo $page['status'] === 'published' ? 'bg-success' : 'bg-secondary'; ?>">
-                            <?php echo htmlspecialchars($page['status']); ?>
-                        </span>
+            <div class="card shadow-sm border-0 page-card" style="min-height: 320px;">
+
+                <!-- APERÇU PLEIN FORMAT -->
+                <div style="position: relative; overflow: hidden; background: #f8f9fa; height: 280px;">
+                    <iframe
+                        src="<?php echo BASE_URL . htmlspecialchars($page['slug']); ?>"
+                        scrolling="no"
+                        style="
+                            width: 500%;
+                            height: 500%;
+                            border: none;
+                            transform: scale(0.20);
+                            transform-origin: top left;
+                            pointer-events: none;
+                            max-width: none;
+                        "
+                        loading="lazy"
+                        title="Aperçu <?php echo htmlspecialchars($page['title']); ?>"
+                    ></iframe>
+
+                    <!-- Dégradé + infos overlay -->
+                    <div style="
+                        position: absolute;
+                        inset: 0;
+                        background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%, rgba(0,0,0,0.75) 100%);
+                    ">
+                        <!-- Badge ID + statut en haut -->
+                        <div class="p-2 d-flex justify-content-between align-items-start">
+                            <span class="badge bg-dark bg-opacity-50">#<?php echo (int)$page['id']; ?></span>
+                            <span class="badge <?php echo $page['status'] === 'published' ? 'bg-success' : 'bg-secondary'; ?>">
+                                <?php echo htmlspecialchars($page['status']); ?>
+                            </span>
+                        </div>
+
+                        <!-- Titre + template + slug en bas -->
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 14px;">
+                            <h6 class="text-white fw-bold mb-1"><?php echo htmlspecialchars($page['title']); ?></h6>
+                            <small class="text-white opacity-75 d-block">
+                                <i class="fas fa-file-alt me-1"></i><?php echo htmlspecialchars($page['template'] ?? 'default'); ?>
+                            </small>
+                            <small class="text-white opacity-75 d-block">
+                                <i class="fas fa-link me-1"></i><?php echo htmlspecialchars($page['slug']); ?>
+                            </small>
+                        </div>
                     </div>
-
-                    <p class="text-muted small mb-1">
-                        <i class="fas fa-file-alt me-1"></i>Template : <?php echo htmlspecialchars($page['template'] ?? 'default'); ?>
-                    </p>
-                    <p class="text-muted small mb-3">
-                        <i class="fas fa-link me-1"></i><?php echo htmlspecialchars($page['slug']); ?>
-                    </p>
-
-                    <h5 class="card-title mb-0"><?php echo htmlspecialchars($page['title']); ?></h5>
                 </div>
-<div class="card-footer bg-transparent border-top d-flex gap-2 align-items-center">
-<a href="content/body-editor.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-primary btn-editor" title="Éditeur visuel">
-    <i class="fas fa-paint-brush me-1"></i>Éditeur visuel
-</a>
-    <a href="content/edit.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-outline-secondary btn-icon" title="Métadonnées">
-        <i class="fas fa-cog"></i>
-    </a>
-    <a href="<?php echo BASE_URL . htmlspecialchars($page['slug']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary btn-icon" title="Voir la page">
-        <i class="fas fa-eye"></i>
-    </a>
-</div>
+
+                <!-- FOOTER ACTIONS -->
+                <div class="card-footer bg-transparent border-top d-flex gap-2 align-items-center">
+                    <a href="content/body-editor.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-primary btn-editor" title="Éditeur visuel">
+                        <i class="fas fa-paint-brush me-1"></i>Éditeur visuel
+                    </a>
+                    <a href="content/edit.php?id=<?php echo (int)$page['id']; ?>" class="btn btn-sm btn-outline-secondary btn-icon" title="Métadonnées">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                    <a href="<?php echo BASE_URL . htmlspecialchars($page['slug']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary btn-icon" title="Voir la page">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                </div>
 
             </div>
         </div>
         <?php endforeach; ?>
     </div>
 </div>
+
+
 
         <!-- Brands Section -->
         <div class="content-section <?php echo $section === 'brands' ? 'active' : ''; ?>" id="brands">
@@ -933,3 +967,8 @@ $csrfToken = generateCSRFToken();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
+
+
