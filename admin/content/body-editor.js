@@ -11,17 +11,11 @@
         width: '100%',
         fromElement: false,
         storageManager: false,
-        plugins: ['grapesjs-preset-webpage', 'grapesjs-plugin-export', 'grapesjs-style-bg', 'grapesjs-custom-code'],
+        plugins: ['grapesjs-plugin-export', 'grapesjs-style-bg', 'grapesjs-custom-code'],
         pluginsOpts: {
             'grapesjs-plugin-export': {},
             'grapesjs-style-bg': {},
-            'grapesjs-custom-code': {},
-            'grapesjs-preset-webpage': {
-            modalImportTitle: 'Import Template',
-            modalImportLabel: '<div style="margin-bottom: 10px; font-size: 13px;">Paste here your HTML/CSS and click Import</div>',
-            modalImportContent: function(editor) {return editor.getHtml() + '<style>'+editor.getCss()+'</style>'  },
-			
-          }
+            'grapesjs-custom-code': {}
         },
         canvas: {
             styles: [
@@ -122,6 +116,34 @@
     };
 
     registerBlocks();
+
+    editor.Commands.add('import-template', {
+        run: function(ed) {
+            var modal = ed.Modal;
+            var container = document.createElement('div');
+            container.innerHTML =
+                '<p style="font-size:13px;margin-bottom:8px;">Collez votre HTML/CSS puis cliquez sur <strong>Importer</strong>.</p>' +
+                '<textarea id="gjs-import-input" style="width:100%;height:250px;font-family:monospace;font-size:13px;padding:8px;box-sizing:border-box;border:1px solid #ccc;border-radius:4px;"></textarea>' +
+                '<div style="text-align:right;margin-top:10px;"><button id="gjs-import-btn" style="padding:8px 18px;background:#2196F3;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;">Importer</button></div>';
+            modal.setTitle('Import Template');
+            modal.setContent(container);
+            modal.open();
+            container.querySelector('#gjs-import-btn').addEventListener('click', function() {
+                var val = container.querySelector('#gjs-import-input').value.trim();
+                if (val) {
+                    ed.setComponents(val);
+                    modal.close();
+                }
+            });
+        }
+    });
+
+    editor.Panels.addButton('options', {
+        id: 'import-template',
+        command: 'import-template',
+        className: 'fa fa-upload',
+        attributes: { title: 'Import Template' }
+    });
 
     const loadVepBlockPreview = function(component) {
         const content = component.toHTML();
