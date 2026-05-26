@@ -19,7 +19,15 @@ class News {
         
         return $this->pdo->query($sql)->fetchAll();
     }
+
+    public function getAllAdmin() {
+    $sql = "SELECT * FROM {$this->table} ORDER BY created_at DESC";
+    return $this->pdo->query($sql)->fetchAll();
+}
     
+
+
+
     public function getRecent($limit = 6) {
         $sql = "SELECT * FROM {$this->table} WHERE status = 'published' 
                 ORDER BY published_at DESC LIMIT {$limit}";

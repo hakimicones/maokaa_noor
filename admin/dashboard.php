@@ -17,6 +17,9 @@ require_once __DIR__ . '/../app/models/Partner.php';
 require_once __DIR__ . '/../app/models/News.php';
 require_once __DIR__ . '/../app/models/Contact.php';
 require_once __DIR__ . '/../app/models/Content.php';
+require_once __DIR__ . '/../app/models/User.php';
+
+
 
 // Initialiser les modèles
 $productModel = new Product($pdo);
@@ -26,6 +29,8 @@ $partnerModel = new Partner($pdo);
 $newsModel = new News($pdo);
 $contactModel = new Contact($pdo);
 $contentModel = new Content($pdo);
+$UserModel = new User($pdo);
+
 
 // Obtenir les statistiques
 $stats = [
@@ -35,7 +40,9 @@ $stats = [
     'total_partners' => $partnerModel->count(),
     'total_news' => $newsModel->count(),
     'unread_messages' => $contactModel->count(true),
-    'total_content_pages' => count($contentModel->listAll(false))
+    'total_content_pages' => count($contentModel->listAll(false)),
+    'total_users'         => $UserModel->count(), // ← AJOUTER
+
 ];
 
 // Déterminer la section active
@@ -96,13 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setFlash('error', 'Erreur lors de la suppression de la page');
     }
     break;
-
-    case 'delete_category':
-    if ($categoryModel->delete((int)$_POST['id'])) {
-        setFlash('success', 'Catégorie supprimée avec succès');
-        logAudit('delete_category', 'ID: ' . $_POST['id']);
+ 
+    case 'delete_user':
+    if ($UserModel->delete((int)$_POST['id'])) {
+        setFlash('success', 'Utilisateur supprimé avec succès');
+        logAudit('delete_user', 'ID: ' . $_POST['id']);
     } else {
-        setFlash('error', 'Erreur lors de la suppression de la catégorie');
+        setFlash('error', 'Erreur lors de la suppression de l\'utilisateur');
     }
     break;
 
@@ -117,10 +124,12 @@ $products = $productModel->getAll(false, 10);
 $categories = $categoryModel->getAll(false);
 $brands = $brandModel->getAll(false);
 $partners = $partnerModel->getAll(false);
-$news = $newsModel->getAll(10);
+$news = $newsModel->getAllAdmin();
 $messages = $contactModel->getAll(10);
 $unreadMessages = $contactModel->getUnread();
 $contentPages = $contentModel->listAll(false);
+
+$users = $UserModel->getAll(); //
 
 $admin = getCurrentAdmin();
 $flash = getFlash();
@@ -502,6 +511,14 @@ $csrfToken = generateCSRFToken();
                     <i class="fas fa-bars"></i> Menus
                 </a>
             </li>
+
+            <li class="nav-item">
+    <a href="?section=users" class="nav-link <?php echo $section === 'users' ? 'active' : ''; ?>">
+        <i class="fas fa-users"></i> Utilisateurs
+    </a>
+</li>
+
+
             <li class="nav-item">
                 <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 10px 0;">
             </li>
@@ -1002,6 +1019,70 @@ $csrfToken = generateCSRFToken();
                 </table>
             </div>
         </div>
+
+
+
+    <!-- Users Section -->
+<!-- Users Section -->
+<div class="content-section <?php echo $section === 'users' ? 'active' : ''; ?>" id="users">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Gestion des Utilisateurs</h3>
+        <a href="users/create.php" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un utilisateur
+        </a>
+    </div>
+
+    <div class="data-table">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Nom complet</th>
+                    <th>Email</th>
+                    <th>Statut</th>
+                    <th>Créé le</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user): ?>
+                <tr>
+                    <td><?php echo (int)$user['id']; ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars($user['username']); ?></strong>
+                    </td>
+                    <td><?php echo htmlspecialchars($user['fullname'] ?? '—'); ?></td>
+                    <td><?php echo htmlspecialchars($user['email'] ?? '—'); ?></td>
+                    <td>
+                        <span class="badge <?php echo !empty($user['active']) ? 'bg-success' : 'bg-secondary'; ?>">
+                            <?php echo !empty($user['active']) ? 'Actif' : 'Inactif'; ?>
+                        </span>
+                    </td>
+                    <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
+                    <td>
+                        <a href="users/edit.php?id=<?php echo (int)$user['id']; ?>" class="btn btn-sm btn-primary btn-action">
+                            <i class="fas fa-edit"></i> Éditer
+                        </a>
+
+                            <!-- Bouton Supprimer -->
+    <form method="POST" style="display:inline;" 
+          onsubmit="return confirm('Supprimer cet utilisateur ?');">
+        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+        <input type="hidden" name="action" value="delete_user">
+        <input type="hidden" name="id" value="<?php echo (int)$user['id']; ?>">
+        <button type="submit" class="btn btn-sm btn-danger btn-action">
+            <i class="fas fa-trash"></i> Supprimer
+        </button>
+    </form>
+</td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
