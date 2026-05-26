@@ -134,6 +134,9 @@ $csrfToken = generateCSRFToken();
     };
 </script>
 <script src="https://unpkg.com/grapesjs@0.21.9/dist/grapes.min.js"></script>
+<script src="https://unpkg.com/grapesjs-plugin-export@1.0.11/dist/grapesjs-plugin-export.min.js"></script>
+<script src="https://unpkg.com/grapesjs-style-bg@2.0.2/dist/grapesjs-style-bg.min.js"></script>
+<script src="https://unpkg.com/grapesjs-custom-code@1.0.2/dist/grapesjs-custom-code.min.js"></script>
 <script src="https://unpkg.com/dompurify@3.1.6/dist/purify.min.js"></script>
 <script src="<?php echo BASE_URL; ?>admin/content/body-editor.js"></script>
 </body>
