@@ -130,7 +130,8 @@ $csrfToken = generateCSRFToken();
         hiddenInputId: 'body-html',
         initialBody: <?php echo json_encode($initialBody); ?>,
         assets: <?php echo json_encode($assetImages); ?>,
-        uploadUrl: '<?php echo BASE_URL; ?>admin/content/upload-asset.php'
+        uploadUrl: '<?php echo BASE_URL; ?>admin/content/upload-asset.php',
+        baseUrl: '<?php echo BASE_URL; ?>'
     };
 </script>
 <script src="https://unpkg.com/grapesjs@0.21.9/dist/grapes.min.js"></script>

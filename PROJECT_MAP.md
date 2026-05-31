@@ -1,0 +1,142 @@
+# PROJECT MAP — Maokaa CMS
+
+> Généré le 30 Mai 2026 — Audit code
+
+---
+
+## TECH_STACK
+
+| Couche | Technologie | Version |
+|--------|-----------|---------|
+| **Backend** | PHP natif (sans framework) | 8.x |
+| **Base de données** | MySQL via PDO | 5.7+ / MariaDB |
+| **Frontend admin** | Bootstrap 5.3 + Font Awesome 6 | 5.3.0 / 6.4.0 |
+| **Éditeur visuel** | GrapesJS | 0.21.9 |
+| **Plugins GrapesJS** | export (1.0.11), style-bg (2.0.2), custom-code (1.0.2) | — |
+| **Sanitisation HTML** | DOMPurify (client) + regex PHP (serveur) | 3.1.6 |
+| **Carousel** | Splide.js | 4.1.4 |
+| **Serveur** | XAMPP (Apache + MySQL) | — |
+
+### Dépendances CDN (aucun package manager)
+- Bootstrap 5.3 (CSS + JS)
+- Font Awesome 6.4.0
+- GrapesJS 0.21.9 + plugins
+- DOMPurify 3.1.6
+- Splide.js 4.1.4
+- Quill.js 1.3.7 (édition inline admin)
+
+---
+
+## SYSTEM_FLOW
+
+### 1. Front Controller (`index.php`)
+```
+Requête HTTP
+  → index.php (front controller)
+    → includes/config.php
+    → includes/db.php          (connexion PDO)
+    → includes/auth.php        (session + CSRF)
+    → includes/theme.php       (ThemeManager)
+    → app/models/Content.php
+    → Résolution slug depuis l'URL
+      → /login       → login.php
+      → /admin/*     → admin/dashboard.php (si connecté)
+      → /{slug}      → Content::findBySlug() → template theme
+      → 404          → page 404 ou erreur
+```
+
+### 2. Authentication Flow
+```
+login.php
+  → POST credentials
+  → login() dans auth.php
+    → Vérification rate limiting (5 tentatives/15min)
+    → Requête préparée PDO
+    → password_verify() bcrypt
+    → session_regenerate_id()
+    → Si password = 'admin123' → force change password
+    → logAudit()
+  → Dashboard admin
+```
+
+### 3. Shortcode Engine (`includes/shortcodes.php`)
+```
+Page body stocké en DB avec shortcodes:
+  [carousel slider_id="1"]
+  [products limit="6" category="3"]
+  [featured_products limit="4"]
+  [news limit="3"]
+  [brands] [partners] [contact_form]
+
+do_shortcode($html, $pdo)
+  → preg_replace_callback détecte [tag attr="val"]
+  → render_shortcode() dispatche par tag
+  → render_block_*() génère HTML via modèle partiel
+  → Si admin connecté: wrapper admin autour du bloc
+```
+
+### 4. GrapesJS Editor Flow
+```
+Chargement:
+  DB body → shortcodesToBlocks() (JS) → editor.setComponents()
+  → loadVepBlockPreview() (AJAX → preview-block.php)
+  → initSplideInCanvas()
+
+Sauvegarde:
+  editor.getHtml() → blocksToShortcodes() (JS)
+  → DOMPurify.sanitize() (client)
+  → POST body → sanitize_body_html() (PHP)
+  → UPDATE content SET body = ...
+```
+
+### 5. Theme Resolution
+```
+ThemeManager::template($name)
+  → themes/{active}/templates/{name}.php
+  → fallback: themes/default/templates/{name}.php
+  → fallback: app/views/templates/{name}.php
+  → return '' si introuvable
+```
+
+### 6. Admin CRUD Architecture
+```
+admin/dashboard.php (single page, sections via ?section=)
+  ├── POST actions centralisées (delete_product, delete_brand, etc.)
+  ├── CSRF + logAudit sur chaque action
+  └── Sections: overview, products, categories, content, brands,
+                partners, news, messages
+
+Sous-pages (CRUD dédiés):
+  admin/products/, admin/categories/, admin/brands/, admin/partners/
+  admin/news/, admin/content/, admin/sliders/, admin/menus/
+  admin/messages/, admin/themes/
+```
+
+### 7. Upload Flow
+```
+upload_image() / upload_pdf() dans includes/upload.php
+  → Validation MIME (finfo)
+  → Validation taille (2MB image, 5MB PDF)
+  → Génération nom uniqid + extension
+  → move_uploaded_file() vers assets/images/ ou assets/brochures/
+```
+
+### 8. Tables Database
+```
+admins → categories → marques → partenaires → actualites
+→ produits → produit_images → contacts → content
+→ sliders → menus → settings → audit_logs → login_attempts
+```
+
+---
+
+## Architecture Patterns
+
+- **Pattern**: Front Controller + MVC léger
+- **DB Layer**: PDO avec requêtes préparées (sauf LIMIT/OFFSET)
+- **Templates**: PHP natif avec include (pas de moteur de templates)
+- **Thèmes**: Dossier themes/{name}/ avec fallback hiérarchique
+- **Shortcodes**: Moteur style WordPress avec parsing regex
+- **Slider**: Support images upload + fallback couleur de fond
+- **Editor**: Configuration dynamique via JS (baseUrl depuis PHP)
+- **Sécurité**: CSRF tokens, bcrypt, rate limiting, prepared statements, sanitize_body_html

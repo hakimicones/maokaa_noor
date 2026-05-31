@@ -10,9 +10,10 @@ requirePasswordChange();
 
 header('Content-Type: application/json');
 
-$type     = $_GET['type'] ?? '';
-$limit    = max(1, (int)($_GET['limit']    ?? 6));
-$category = (int)($_GET['category'] ?? 0);
+$type      = $_GET['type'] ?? '';
+$limit     = max(1, (int)($_GET['limit']      ?? 6));
+$category  = (int)($_GET['category']  ?? 0);
+$slider_id = (int)($_GET['slider_id'] ?? 0);
 
 if (empty($type)) {
     http_response_code(400);
@@ -23,7 +24,7 @@ if (empty($type)) {
 // Normaliser : accepte tirets ou underscores (featured-products = featured_products)
 $tag = strtolower(str_replace('-', '_', $type));
 
-$atts = ['limit' => (string)$limit, 'category' => (string)$category];
+$atts = ['limit' => (string)$limit, 'category' => (string)$category, 'slider_id' => (string)$slider_id];
 $html = render_shortcode($tag, $atts, $pdo);
 
 if ($html === '') {

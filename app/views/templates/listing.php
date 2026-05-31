@@ -11,6 +11,7 @@ $slug = $page['slug'] ?? 'page';
     <meta name="description" content="<?php echo htmlspecialchars($page['meta_description'] ?? ''); ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
     <link href="<?php echo BASE_URL; ?>assets/css/style.css" rel="stylesheet">
 </head>
 <body>
@@ -79,6 +80,7 @@ $slug = $page['slug'] ?? 'page';
     </main>
     <?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
 </body>
 </html>

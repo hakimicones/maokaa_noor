@@ -1,296 +1,429 @@
-# VEP - Site Web Vitrine Professionnel
+# Maokaa — CMS PHP sur mesure
 
-## À propos
-VEP est un site web vitrine moderne et professionnel pour une entreprise spécialisée dans l'importation et la distribution de matériels et consommables de laboratoire en Algérie.
+Application web complète pour la gestion de contenu, produits, actualités et médias. Développée en PHP natif avec une architecture MVC légère, un éditeur visuel GrapesJS, un système de shortcodes et un moteur de thèmes.
 
-## Caractéristiques
-- ✅ Architecture MVC complète
-- ✅ Design moderne, élégant et responsive
-- ✅ Système de gestion de contenu (CMS)
-- ✅ Authentification sécurisée (PDO, password_hash)
-- ✅ Dashboard administration complet
-- ✅ Gestion des produits avec filtrage alphabétique
-- ✅ Système de brochures PDF
-- ✅ Formulaire de contact
-- ✅ Gestion des actualités (blog)
-- ✅ Galerie de produits
-- ✅ Responsive design (mobile, tablette, desktop)
+> Secteur : importation et distribution de matériels et consommables de laboratoire en Algérie.
+
+---
+
+## Stack technique
+
+| Composant | Technologie |
+|---|---|
+| Backend | PHP 8.x natif (sans framework) |
+| Base de données | MySQL via PDO |
+| Frontend admin | Bootstrap 5.3 + Font Awesome 6 |
+| Éditeur visuel | GrapesJS 0.21.9 |
+| Carousel | Splide.js 4.1.4 |
+| Sanitisation HTML | DOMPurify 3.1.6 |
+| Serveur local | XAMPP (Apache + MySQL) |
+
+---
 
 ## Prérequis
-- PHP 7.4+
-- MySQL/MariaDB 5.7+
-- Apache avec mod_rewrite (optionnel, pour les URL propres)
-- Bootstrap 5.3
+
+- PHP 8.0+
+- MySQL 5.7+ / MariaDB
+- Apache avec `mod_rewrite`
+- XAMPP (environnement recommandé)
+
+---
 
 ## Installation
 
-### 1. Télécharger les fichiers
-Placez tous les fichiers dans le répertoire `c:\xampp\htdocs\Hebergement\maokaa\`
-
-### 2. Créer la base de données
-Assurez-vous que MySQL/MariaDB est en cours d'exécution sur votre XAMPP.
-
-### 3. Configurer les paramètres
-Éditez `includes/config.php`:
-```php
-define('BASE_URL', 'http://localhost/Hebergement/maokaa/');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'maokaa');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-```
-
-### 4. Initialiser la base de données
-Accédez à votre navigateur:
-```
-http://localhost/Hebergement/maokaa/setup.php
-```
-
-Cela va:
-- Créer toutes les tables
-- Insérer les données initiales
-- Créer un compte administrateur par défaut
-
-### 5. Identifiants par défaut
-```
-Username: admin
-Password: admin123
-```
-
-⚠️ **Important:** Changez le mot de passe admin immédiatement après la première connexion!
-
-## Structure du Projet
+### 1. Placer les fichiers
 
 ```
-maokaa/
-├── index.php                 # Front controller principal
-├── login.php                 # Page de connexion admin
-├── setup.php                 # Script d'initialisation (à exécuter une seule fois)
-│
-├── admin/
-│   ├── dashboard.php         # Dashboard administrateur
-│   ├── logout.php            # Déconnexion
-│   ├── products/
-│   ├── brands/
-│   ├── partners/
-│   ├── news/
-│   └── messages/
-│
-├── app/
-│   ├── controllers/          # Contrôleurs MVC
-│   ├── models/               # Modèles MVC
-│   │   ├── Product.php
-│   │   ├── Category.php
-│   │   ├── Brand.php
-│   │   ├── Partner.php
-│   │   ├── News.php
-│   │   ├── Contact.php
-│   │   └── Content.php
-│   └── views/                # Vues/Templates
-│       ├── partials/         # Navbar, Footer
-│       ├── templates/        # Layouts principaux
-│       └── errors/           # Pages d'erreur
-│
-├── assets/
-│   ├── css/                  # Styles CSS
-│   │   └── style.css         # Style principal
-│   ├── js/                   # JavaScript
-│   │   └── main.js           # Script principal
-│   ├── images/               # Images produits, marques, etc.
-│   └── brochures/            # Fichiers PDF brochures
-│
-├── includes/
-│   ├── config.php            # Configuration
-│   ├── db.php                # Connexion BD
-│   └── auth.php              # Gestion authentification
-│
-├── db/
-│   └── shema.sql             # Schéma SQL complet
-│
-└── README.md                 # Ce fichier
+c:\xampp\htdocs\Hebergement\maokaa\
 ```
 
-## Pages Principales
+### 2. Configurer l'environnement
 
-### Pages Publiques
-- **Accueil** (`/` ou `/home`) - Page d'accueil avec sections dynamiques
-- **À propos** (`/about`) - Informations sur l'entreprise
-- **Produits** (`/products`) - Catalogue complet avec filtres
-- **Nos marques** (`/brands`) - Marques partenaires
-- **Nos partenaires** (`/partners`) - Partenaires stratégiques
-- **Actualités** (`/news`) - Blog/Actualités
-- **Contact** (`/contact`) - Formulaire de contact
-- **Connexion Admin** (`/login.php`) - Formulaire de connexion
+Créer/éditer le fichier `.env` à la racine :
 
-### Pages Admin (après connexion)
-- **Dashboard** (`/admin/dashboard.php`) - Tableau de bord
-- **Gestion Produits** - CRUD complet
-- **Gestion Catégories** - CRUD complet
-- **Gestion Marques** - CRUD complet
-- **Gestion Partenaires** - CRUD complet
-- **Gestion Actualités** - CRUD complet
-- **Gestion Messages** - Consulter les messages de contact
-
-## Fonctionnalités Clés
-
-### Système de Produits
-- Liste complète avec pagination
-- Filtrage par catégorie
-- Filtrage alphabétique (A-Z, #)
-- Recherche dynamique
-- Fiche produit détaillée
-- Galerie d'images
-- Téléchargement de brochures PDF
-- Produits populaires/featured sur l'accueil
-
-### Sécurité
-- PDO Prepared Statements (protection SQL Injection)
-- Hachage de mots de passe (password_hash/verify)
-- Tokens CSRF
-- Sessions PHP sécurisées
-- Validation des formulaires côté serveur
-- Validation des uploads (images, PDF)
-
-### Design
-- Responsive design (mobile-first)
-- Gradient moderne bleu/violet
-- Cards avec animations
-- Transitions fluides
-- Design scientifique et professionnel
-- Font Awesome pour icônes
-- Bootstrap 5.3 pour structure
-
-## Configuration Avancée
-
-### Variables d'Environnement
-Créez un fichier `.env` pour les configurations sensibles:
-```
+```env
+BASE_URL=/Hebergement/maokaa/
 DB_HOST=localhost
 DB_NAME=maokaa
 DB_USER=root
 DB_PASS=
-BASE_URL=http://localhost/Hebergement/maokaa/
+
+UPLOAD_DIR=assets/images/
+BROCHURE_DIR=assets/brochures/
+MAX_IMAGE_SIZE=2097152
+MAX_PDF_SIZE=5242880
 ```
 
-### URL Rewriting (optionnel)
-Créez un `.htaccess` pour les URLs propres:
-```apache
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /Hebergement/maokaa/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?/$1 [QSA,L]
-</IfModule>
-```
+### 3. Créer la base de données
 
-## Gestion des Images et Fichiers
+Dans phpMyAdmin, créer la base `maokaa` puis exécuter :
 
-### Dossiers de Upload
-- `/assets/images/` - Images de produits et contenus
-- `/assets/images/brands/` - Logos des marques
-- `/assets/images/partners/` - Logos des partenaires
-- `/assets/brochures/` - Fichiers PDF
-
-### Limites de Taille
-- Images: 2 MB maximum
-- PDF: 5 MB maximum
-
-## Personnalisation
-
-### Couleurs
-Modifiez les variables CSS dans `assets/css/style.css`:
-```css
-:root {
-    --primary: #667eea;
-    --primary-dark: #764ba2;
-    --secondary: #42a5f5;
-    --success: #26c281;
-    --danger: #e74c3c;
-    --warning: #f39c12;
-}
-```
-
-### Contenu Statique
-Éditez le contenu des pages depuis le Dashboard Admin ou directement dans la BD table `content`.
-
-## Support Multi-Langue
-Le système supporte le multi-langue via la colonne `language` dans `content`. Par défaut: français (fr).
-
-## Performance
-
-### Optimisations Implémentées
-- Images responsives
-- CSS minifiée
-- JavaScript optimisé
-- Caching des requêtes
-- Lazy loading pour images
-- Compression gzip
-
-### Recommandations
-- Utilisez un CDN pour les images
-- Activez le cache du navigateur
-- Optimisez les images (WebP)
-- Minifiez CSS/JS en production
-
-## Maintenance
-
-### Sauvegardes
-Sauvegardez régulièrement votre base de données:
 ```bash
-mysqldump -u root maokaa > backup_maokaa.sql
+# Schéma principal
+mysql -u root maokaa < db/schema.sql
+
+# Table carousels (si pas incluse dans le schéma)
+mysql -u root maokaa < db/migration_sliders.sql
 ```
 
-### Logs
-Les actions administrateur sont enregistrées dans la table `audit_logs`.
+Ou via le navigateur :
+```
+http://localhost/Hebergement/maokaa/setup.php
+```
 
-### Mises à Jour
-Pour les mises à jour:
-1. Backup la base de données
-2. Backup les fichiers
-3. Appliquez les changements
-4. Testez complètement
+### 4. Premier accès
 
-## Dépannage
+```
+URL   : http://localhost/Hebergement/maokaa/
+Admin : http://localhost/Hebergement/maokaa/login
+```
 
-### La page d'accueil est blanche
-- Vérifiez que le template `home.php` existe
-- Vérifiez les erreurs PHP dans les logs
+```
+Identifiants par défaut
+Username : admin
+Password : admin123
+```
 
-### Impossible de se connecter
-- Vérifiez les identifiants dans la BD table `admins`
-- Vérifiez que PHP sessions sont activées
-- Vérifiez le BASE_URL dans config.php
-
-### Images ne s'affichent pas
-- Vérifiez les chemins dans `<img src="">`
-- Assurez-vous que les dossiers existent
-- Vérifiez les permissions (755)
-
-### Erreur: CSRF token invalide
-- Assurez-vous que les sessions sont activées
-- Vérifiez que le formulaire inclut le token CSRF
-
-## Support et Contact
-Pour toute question ou problème:
-- Email: support@vep.dz
-- Téléphone: +213 123 456 789
-- Adresse: Alger, Algérie
-
-## Licence
-Tous droits réservés © 2024 VEP
-
-## Changelog
-
-### Version 1.0.0 (Initial Release)
-- Architecture MVC complète
-- Dashboard administration
-- Gestion des produits, marques, partenaires
-- Gestion des actualités
-- Formulaire de contact
-- Authentification sécurisée
-- Design responsive
+> **Important :** Le changement de mot de passe est forcé dès le premier login.
 
 ---
 
-**Dernière mise à jour:** 23 Mai 2024
+## Structure du projet
+
+```
+maokaa/
+├── .env                          # Variables d'environnement
+├── index.php                     # Front controller — routeur principal
+├── login.php                     # Page de connexion admin
+├── setup.php                     # Script d'installation initial
+│
+├── includes/                     # Couche système
+│   ├── config.php                # Chargement de l'environnement
+│   ├── env.php                   # Parseur de fichier .env
+│   ├── db.php                    # Connexion PDO ($pdo global)
+│   ├── auth.php                  # Sessions, CSRF, rate limiting, audit
+│   ├── shortcodes.php            # Moteur de shortcodes + rendus de blocs
+│   ├── inline_edit.php           # Édition inline via AJAX
+│   └── theme.php                 # Gestionnaire de thèmes (ThemeManager)
+│
+├── app/
+│   ├── models/                   # Modèles PDO
+│   │   ├── Brand.php
+│   │   ├── Category.php
+│   │   ├── Contact.php
+│   │   ├── Content.php
+│   │   ├── Menu.php
+│   │   ├── News.php
+│   │   ├── Partner.php
+│   │   ├── Product.php
+│   │   └── Slider.php
+│   └── views/
+│       ├── templates/            # Templates fallback (hors thème)
+│       │   ├── home.php
+│       │   ├── page.php
+│       │   ├── default.php
+│       │   └── listing.php
+│       ├── partials/
+│       │   ├── navbar.php
+│       │   ├── footer.php
+│       │   └── blocks/           # Rendus partiels des shortcodes
+│       └── errors/
+│           └── 404.php
+│
+├── admin/                        # Interface d'administration
+│   ├── dashboard.php             # Dashboard (stats + navigation)
+│   ├── login.php / logout.php
+│   ├── change-password.php
+│   ├── content/                  # Gestion des pages CMS
+│   │   ├── index.php
+│   │   ├── create.php / edit.php
+│   │   ├── body-editor.php       # Éditeur visuel GrapesJS
+│   │   ├── body-editor.js        # Logique JS de l'éditeur
+│   │   ├── preview-block.php     # Aperçu AJAX des blocs (canvas)
+│   │   └── upload-asset.php      # Upload d'images
+│   ├── products/                 # CRUD produits + galerie
+│   ├── categories/               # CRUD catégories
+│   ├── brands/                   # CRUD marques
+│   ├── partners/                 # CRUD partenaires
+│   ├── news/                     # CRUD actualités
+│   ├── sliders/                  # Gestion des carousels Splide
+│   │   ├── index.php             # Liste de tous les sliders
+│   │   ├── manage.php            # Slides d'un slider donné
+│   │   ├── create.php            # Ajouter un slide
+│   │   └── edit.php              # Modifier un slide
+│   ├── menus/                    # Gestion de la navigation
+│   ├── messages/                 # Messages de contact reçus
+│   ├── themes/                   # Sélection du thème actif
+│   └── tools/                    # Utilitaires (migration shortcodes)
+│
+├── themes/                       # Thèmes frontend
+│   └── default/
+│       ├── templates/            # Templates du thème
+│       └── assets/               # CSS/JS du thème
+│
+├── assets/                       # Fichiers publics partagés
+│   ├── css/style.css
+│   ├── js/main.js
+│   └── images/
+│
+└── db/
+    ├── schema.sql                # Schéma complet de la base
+    └── migration_sliders.sql     # Migration table sliders
+```
+
+---
+
+## Base de données
+
+| Table | Description |
+|---|---|
+| `admins` | Comptes administrateurs |
+| `content` | Pages CMS (slug, body, template, meta SEO) |
+| `categories` | Catégories de produits (hiérarchiques) |
+| `produits` | Produits (catégorie, marque, featured, ordre) |
+| `produit_images` | Galerie photos des produits |
+| `marques` | Marques (logo, site web) |
+| `partenaires` | Partenaires (logo, site web) |
+| `actualites` | Actualités (publié / brouillon) |
+| `contacts` | Soumissions du formulaire de contact |
+| `sliders` | Slides des carousels (`slider_id`, label, bg, image) |
+| `menus` | Éléments de navigation |
+| `settings` | Configuration globale (thème actif, etc.) |
+| `audit_logs` | Journal des actions administrateur |
+
+---
+
+## Routeur (Front Controller)
+
+`index.php` extrait le slug depuis l'URL et dispatch vers le bon template :
+
+| URL | Résolution |
+|---|---|
+| `/Hebergement/maokaa/` | slug `home` → template `home.php` |
+| `/Hebergement/maokaa/contact` | slug `contact` → template selon la page |
+| `/Hebergement/maokaa/login` | → `login.php` |
+| `/Hebergement/maokaa/admin` | → `admin/dashboard.php` (si connecté) |
+| Slug inconnu | → page 404 |
+
+Le template est résolu via `ThemeManager::template($template)` avec fallback sur `app/views/templates/`.
+
+---
+
+## Système de Shortcodes
+
+Le corps des pages (champ `body` en base) peut contenir des shortcodes style WordPress :
+
+```
+[carousel slider_id="1"]
+[products limit="6" category="3"]
+[featured_products limit="4"]
+[news limit="3"]
+[brands]
+[partners]
+[contact_form]
+```
+
+`process_vep_blocks($html, $pdo)` dans `includes/shortcodes.php` détecte et remplace chaque shortcode par son rendu HTML côté serveur, avant envoi au navigateur.
+
+---
+
+## Éditeur visuel (GrapesJS)
+
+Accessible via **Admin → Pages CMS → Édition visuelle**.
+
+Plugins actifs : `grapesjs-plugin-export`, `grapesjs-style-bg`, `grapesjs-custom-code`.
+
+### Blocs disponibles
+
+| Catégorie | Blocs |
+|---|---|
+| Blocs | Hero, Deux colonnes, Texte, CTA, Image, Divider |
+| Dynamiques | Produits, Produits vedettes, Actualités, Marques, Partenaires, Formulaire de contact |
+| Caroussel | Carousel Splide |
+
+### Flux de sauvegarde
+
+```
+Éditeur GrapesJS
+  → blocksToShortcodes()    <div data-vep-block="carousel" data-slider-id="1">
+                             devient  [carousel slider_id="1"]
+  → DOMPurify.sanitize()    nettoyage HTML (liste blanche d'attributs)
+  → POST body               envoi au serveur
+  → sanitize_body_html()    suppression PHP des <script>, handlers on*, javascript:
+  → UPDATE content SET body = ...
+```
+
+### Flux de chargement
+
+```
+DB body = "[carousel slider_id="1"] <p>texte</p>"
+  → shortcodesToBlocks()    shortcodes → placeholders <div data-vep-block>
+  → editor.setComponents()  chargement dans GrapesJS
+  → loadVepBlockPreview()   fetch aperçu réel (AJAX → preview-block.php)
+  → initSplideInCanvas()    mount Splide dans l'iframe du canvas
+```
+
+---
+
+## Composant Carousel (Splide.js)
+
+### Gestion admin
+
+`admin/sliders/` — interface CRUD complète.
+
+Chaque **slider_id** regroupe plusieurs slides dans un même carousel :
+
+1. `admin/sliders/index.php` — liste de tous les carousels
+2. `admin/sliders/manage.php?slider_id=X` — slides du carousel X
+3. `admin/sliders/create.php` — ajouter un slide (label, couleur, image, ordre)
+4. `admin/sliders/edit.php?id=X` — modifier un slide
+
+Shortcode à insérer dans une page : `[carousel slider_id="1"]`
+
+### Rendu frontend
+
+Le shortcode génère un bloc HTML **autonome** :
+
+```html
+<!-- Chargé une seule fois par page (variable statique PHP) -->
+<link rel="stylesheet" href=".../splide.min.css">
+<script src=".../splide.min.js"></script>
+
+<!-- Structure Splide -->
+<section id="splide-vep-1" class="splide" aria-label="Carousel">
+  <div class="splide__track">
+    <ul class="splide__list">
+      <li class="splide__slide" style="height:420px;background:#dde4ee;">
+        <h2>Label du slide</h2>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Init autonome avec retry jusqu'à ce que window.Splide soit disponible -->
+<script>
+(function() {
+  function mount() {
+    if (window.Splide) {
+      new Splide('#splide-vep-1', { type:'loop', autoplay:true, interval:3000 }).mount();
+    } else { setTimeout(mount, 150); }
+  }
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', mount)
+    : mount();
+})();
+</script>
+```
+
+---
+
+## Sécurité
+
+| Mécanisme | Détail |
+|---|---|
+| Mots de passe | `password_hash()` / `password_verify()` |
+| CSRF | Token généré par `generateCSRFToken()`, vérifié sur chaque POST |
+| Rate limiting | 5 tentatives max / 15 min par IP |
+| Requêtes DB | 100 % prepared statements PDO |
+| HTML sauvegardé | `sanitize_body_html()` : supprime `<script>`, `on*`, `javascript:` |
+| HTML éditeur | `DOMPurify.sanitize()` côté client avant envoi |
+| Accès admin | `requirePasswordChange()` bloque si mot de passe non changé |
+| Audit | Toutes les actions admin loguées dans `audit_logs` |
+
+---
+
+## Moteur de thèmes
+
+Le thème actif est stocké dans la table `settings`. `ThemeManager` résout les templates :
+
+```
+themes/{theme_name}/templates/{template}.php
+```
+
+Templates disponibles : `home`, `page`, `default`, `listing`, `products`, `news`, `404`.
+
+Fallback automatique sur `app/views/templates/` si le fichier n'existe pas dans le thème.
+
+---
+
+## Pages publiques
+
+| URL | Template | Description |
+|---|---|---|
+| `/` | `home` | Page d'accueil |
+| `/products` | `listing` | Catalogue produits |
+| `/brands` | `listing` | Marques |
+| `/partners` | `listing` | Partenaires |
+| `/news` | `listing` | Actualités |
+| `/contact` | `page` | Formulaire de contact |
+| `/login` | — | Connexion admin |
+
+---
+
+## Uploads
+
+| Type | Répertoire | Limite |
+|---|---|---|
+| Images produits/contenu | `assets/images/` | 2 Mo |
+| Brochures PDF | `assets/brochures/` | 5 Mo |
+
+---
+
+## Dépannage
+
+**Page blanche**
+- Activer l'affichage des erreurs PHP : `error_reporting(E_ALL)` dans `config.php`
+- Vérifier que le template de la page existe
+
+**Impossible de se connecter**
+- Vérifier les identifiants dans la table `admins`
+- Vérifier `BASE_URL` dans `.env`
+- S'assurer que les sessions PHP sont activées
+
+**Carousel ne s'affiche pas**
+- Vérifier que la table `sliders` existe (exécuter `db/migration_sliders.sql`)
+- Vérifier que le `slider_id` contient des slides actives (`active = 1`)
+- Ouvrir la console navigateur pour détecter une erreur JS
+
+**Token CSRF invalide**
+- Vérifier que `session_start()` est bien appelé
+- S'assurer que le formulaire inclut `<input type="hidden" name="csrf_token" value="...">`
+
+---
+
+## Sauvegarde
+
+```bash
+# Base de données
+mysqldump -u root maokaa > backup_maokaa_$(date +%Y%m%d).sql
+
+# Fichiers uploadés
+cp -r assets/images/ backup/images/
+cp -r assets/brochures/ backup/brochures/
+```
+
+---
+
+## Changelog
+
+### 2026
+- Système de thèmes dynamiques (`ThemeManager`)
+- Éditeur visuel GrapesJS avec blocs dynamiques
+- Moteur de shortcodes (`[tag attr="val"]`)
+- Composant Carousel Splide.js (DB-driven)
+- Interface admin sliders CRUD
+- Plugins GrapesJS : export, style-bg, custom-code
+- Édition inline des pages
+- Import HTML depuis l'éditeur visuel
+
+### v1.0.0 (initial)
+- Architecture MVC
+- Dashboard administration
+- CRUD : produits, catégories, marques, partenaires, actualités
+- Formulaire de contact
+- Authentification sécurisée
+- Design responsive Bootstrap 5
+
+---
+
+*Tous droits réservés © VEP Algérie*

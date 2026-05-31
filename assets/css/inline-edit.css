@@ -1,4 +1,4 @@
-/* assets/css/inline-edit.css — Styles édition inline + WYSIWYG Quill */
+/* assets/css/inline-edit.css — Styles édition inline admin */
 
 /* ──────────────────────────────────────────
    Barre d'outils admin (top fixed)
@@ -37,20 +37,21 @@
 body:has(#ie-toolbar) { padding-top: 36px !important; }
 
 /* ──────────────────────────────────────────
-   Champs texte simples (title, subtitle)
+   Champs texte éditables (title, subtitle,
+   et éléments h1-h6 / p / etc. dans body)
 ────────────────────────────────────────── */
 .ie-field {
     outline: none;
     border-radius: 4px;
-    transition: box-shadow 0.18s ease, background-color 0.25s ease;
+    cursor: text;
+    transition: box-shadow 0.15s ease, background-color 0.2s ease;
 }
 
-.ie-field[contenteditable] { cursor: text; }
-
-.ie-field[contenteditable]:hover {
+.ie-field:hover {
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
 }
-.ie-field[contenteditable].ie-editing {
+
+.ie-field.ie-editing {
     box-shadow: 0 0 0 2px #6366f1;
     background-color: rgba(99, 102, 241, 0.04);
 }
@@ -61,113 +62,193 @@ body:has(#ie-toolbar) { padding-top: 36px !important; }
 .ie-field.ie-error   { box-shadow: 0 0 0 2px #ef4444; animation: ie-flash-error   1.8s ease forwards; }
 
 @keyframes ie-flash-success {
-    0%   { background-color: rgba(34, 197, 94, 0.18); }
+    0%   { background-color: rgba(34, 197, 94, 0.15); }
     100% { background-color: transparent; }
 }
 @keyframes ie-flash-error {
-    0%   { background-color: rgba(239, 68, 68, 0.18); }
+    0%   { background-color: rgba(239, 68, 68, 0.15); }
     100% { background-color: transparent; }
 }
 
 /* ──────────────────────────────────────────
-   Champ body : hint "cliquer pour éditer"
+   Blocs dynamiques (VEP) — non éditables
+   mais avec lien vers l'admin
 ────────────────────────────────────────── */
-.ie-body-hint {
+.ie-vep-block {
     position: relative;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: box-shadow 0.18s ease;
-}
-.ie-body-hint:hover {
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
 }
 
-.ie-body-click-hint {
+.ie-vep-block:hover::before {
+    content: '';
     position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #6366f1;
-    color: #fff;
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 20px;
+    inset: 0;
+    border: 2px dashed #f59e0b;
+    border-radius: 6px;
     pointer-events: none;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.2s, transform 0.2s;
-    font-family: system-ui, sans-serif;
-    white-space: nowrap;
+    z-index: 2;
 }
-.ie-body-hint:hover .ie-body-click-hint {
-    opacity: 1;
-    transform: translateY(0);
+
+.ie-vep-btn {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    background: #1e293b;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 0.78rem;
+    font-family: system-ui, sans-serif;
+    padding: 5px 12px;
+    border-radius: 6px;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.ie-vep-block:hover .ie-vep-btn {
+    display: inline-flex;
+}
+
+.ie-vep-btn:hover {
+    background: #334155;
 }
 
 /* ──────────────────────────────────────────
-   Éditeur Quill (wrapper + overrides)
+   Images — sélecteur au clic
 ────────────────────────────────────────── */
-.ie-quill-wrapper {
-    border: 2px solid #6366f1;
+.ie-img-wrap {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+
+.ie-img-wrap img.ie-img {
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.ie-img-wrap:hover img.ie-img {
+    opacity: 0.82;
+}
+
+.ie-img-overlay {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(15, 23, 42, 0.75);
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.18s;
+    pointer-events: none;
+}
+
+.ie-img-wrap:hover .ie-img-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ──────────────────────────────────────────
+   Modal sélecteur d'image
+────────────────────────────────────────── */
+#ie-img-picker {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.ie-img-picker-dialog {
+    background: #fff;
+    border-radius: 12px;
+    width: min(92vw, 820px);
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, .45);
+    overflow: hidden;
+}
+
+.ie-img-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1e293b;
+    flex-shrink: 0;
+}
+
+.ie-img-picker-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #64748b;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.15s;
+}
+.ie-img-picker-close:hover { color: #1e293b; }
+
+.ie-img-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.ie-img-picker-item {
+    aspect-ratio: 1;
+    border: 2px solid #e2e8f0;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-    background: #fff;
-}
-
-/* Toolbar Quill */
-.ie-quill-wrapper .ql-toolbar.ql-snow {
-    border: none;
-    border-bottom: 1px solid #e2e8f0;
-    background: #f8fafc;
-    padding: 8px 12px;
-}
-
-/* Zone de saisie Quill */
-.ie-quill-wrapper .ql-container.ql-snow {
-    border: none;
-    font-size: 1rem;
-    font-family: inherit;
-    min-height: 160px;
-}
-.ie-quill-wrapper .ql-editor {
-    min-height: 160px;
-    padding: 16px 20px;
-    line-height: 1.7;
-}
-.ie-quill-wrapper .ql-editor.ql-blank::before {
-    color: #94a3b8;
-    font-style: normal;
-}
-
-/* Boutons Enregistrer / Annuler */
-.ie-quill-actions {
-    display: flex;
-    gap: 10px;
-    padding: 10px 14px;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-}
-
-.ie-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    font-size: 0.85rem;
-    font-family: system-ui, sans-serif;
-    border: none;
-    border-radius: 6px;
     cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
+    padding: 0;
+    background: #f8fafc;
+    transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
 }
-.ie-btn:active { transform: scale(0.97); }
-.ie-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.ie-btn-save   { background: #6366f1; color: #fff; }
-.ie-btn-save:hover { background: #4f46e5; }
+.ie-img-picker-item:hover {
+    border-color: #6366f1;
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
 
-.ie-btn-cancel { background: #e2e8f0; color: #475569; }
-.ie-btn-cancel:hover { background: #cbd5e1; }
+.ie-img-picker-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+.ie-img-picker-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #94a3b8;
+    font-family: system-ui, sans-serif;
+    font-size: 0.9rem;
+    padding: 32px;
+}
 
 /* ──────────────────────────────────────────
    Toast de notification
@@ -176,7 +257,7 @@ body:has(#ie-toolbar) { padding-top: 36px !important; }
     position: fixed;
     bottom: 24px;
     right: 24px;
-    z-index: 10000;
+    z-index: 100001;
     padding: 11px 18px;
     border-radius: 8px;
     font-size: 0.88rem;

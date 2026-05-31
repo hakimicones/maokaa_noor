@@ -12,7 +12,15 @@ function do_shortcode(string $html, PDO $pdo): string
     $html = preg_replace_callback(
         '/\[([a-z_]+)((?:\s+[a-z_]+=\s*"[^"]*")*)\s*\]/',
         function (array $m) use ($pdo): string {
-            return render_shortcode($m[1], parse_shortcode_atts($m[2]), $pdo);
+            $tag      = $m[1];
+            $atts     = parse_shortcode_atts($m[2]);
+            $rendered = render_shortcode($tag, $atts, $pdo);
+            if ($rendered === '') return '';
+            if (function_exists('isLoggedIn') && isLoggedIn()) {
+                $sc = _rebuild_shortcode($tag, $atts);
+                return _wrap_vep_block_admin($tag, $sc, $rendered);
+            }
+            return $rendered;
         },
         $html
     );
@@ -24,12 +32,44 @@ function do_shortcode(string $html, PDO $pdo): string
             $attrs = _parse_vep_attrs($m[1]);
             $type  = str_replace('-', '_', $attrs['vep-block'] ?? '');
             unset($attrs['vep-block']);
-            return render_shortcode($type, $attrs, $pdo);
+            $rendered = render_shortcode($type, $attrs, $pdo);
+            if ($rendered === '') return '';
+            if (function_exists('isLoggedIn') && isLoggedIn()) {
+                $sc = _rebuild_shortcode($type, $attrs);
+                return _wrap_vep_block_admin($type, $sc, $rendered);
+            }
+            return $rendered;
         },
         $html
     );
 
     return $html ?? '';
+}
+
+function _rebuild_shortcode(string $tag, array $atts): string
+{
+    $sc = '[' . $tag;
+    foreach ($atts as $k => $v) $sc .= ' ' . $k . '="' . $v . '"';
+    return $sc . ']';
+}
+
+function _wrap_vep_block_admin(string $type, string $shortcode, string $html): string
+{
+    static $adminUrls = [
+        'featured_products' => 'admin/dashboard.php?section=products',
+        'products'          => 'admin/dashboard.php?section=products',
+        'news'              => 'admin/dashboard.php?section=news',
+        'brands'            => 'admin/dashboard.php?section=brands',
+        'partners'          => 'admin/dashboard.php?section=partners',
+        'contact_form'      => 'admin/messages/view.php',
+    ];
+    $adminUrl = $adminUrls[$type] ?? 'admin/dashboard.php';
+    return '<div class="vep-block-wrapper"'
+        . ' data-vep-shortcode="' . htmlspecialchars($shortcode, ENT_QUOTES, 'UTF-8') . '"'
+        . ' data-vep-type="'      . htmlspecialchars($type,      ENT_QUOTES, 'UTF-8') . '"'
+        . ' data-vep-admin-url="' . htmlspecialchars($adminUrl,  ENT_QUOTES, 'UTF-8') . '">'
+        . $html
+        . '</div>';
 }
 
 // Alias pour compatibilité avec les templates existants
@@ -59,6 +99,8 @@ function render_shortcode(string $tag, array $atts, PDO $pdo): string
         case 'brands':            return render_block_brands($pdo, $title);
         case 'partners':          return render_block_partners($pdo, $title);
         case 'contact_form':      return render_block_contact_form($pdo, $title);
+        case 'splide_carousel':
+        case 'carousel':          return render_block_carousel($pdo, (int)($atts['slider_id'] ?? 0));
         default:                  return '';
     }
 }
@@ -122,6 +164,124 @@ function render_block_partners(PDO $pdo, string $blockTitle = ''): string
     ob_start();
     include __DIR__ . '/../app/views/partials/blocks/partners.php';
     return ob_get_clean();
+}
+
+function render_block_carousel(PDO $pdo = null, int $slider_id = 0): string
+{
+    static $count = 0;
+    $count++;
+    $id = 'splide-vep-' . $count;
+
+    if ($slider_id > 0 && $pdo !== null) {
+        require_once __DIR__ . '/../app/models/Slider.php';
+        $model  = new Slider($pdo);
+        $dbRows = $model->getBySlider($slider_id);
+        if (!empty($dbRows)) {
+            $slides = array_map(fn($r) => [
+                'bg'            => $r['bg']            ?? '#dde4ee',
+                'label'         => $r['label']         ?? '',
+                'subtitle'      => $r['subtitle']      ?? null,
+                'image'         => $r['image']         ?? null,
+                'text_position' => $r['text_position'] ?? 'center',
+            ], $dbRows);
+        } else {
+            $slides = [
+                ['bg' => '#dde4ee', 'label' => 'Bienvenue sur notre site', 'subtitle' => null, 'image' => null, 'text_position' => 'center'],
+                ['bg' => '#c8d4e8', 'label' => 'Nos produits',             'subtitle' => null, 'image' => null, 'text_position' => 'center'],
+                ['bg' => '#b5c4de', 'label' => 'Contactez-nous',           'subtitle' => null, 'image' => null, 'text_position' => 'center'],
+            ];
+        }
+    } else {
+        $slides = [
+            ['bg' => '#dde4ee', 'label' => 'Bienvenue sur notre site', 'subtitle' => null, 'image' => null, 'text_position' => 'center'],
+            ['bg' => '#c8d4e8', 'label' => 'Nos produits',             'subtitle' => null, 'image' => null, 'text_position' => 'center'],
+            ['bg' => '#b5c4de', 'label' => 'Contactez-nous',           'subtitle' => null, 'image' => null, 'text_position' => 'center'],
+        ];
+    }
+
+    $positionMap = [
+        'top-left'      => ['align-items:flex-start;', 'justify-content:flex-start;', 'text-align:left;'],
+        'top-center'    => ['align-items:flex-start;', 'justify-content:center;',     'text-align:center;'],
+        'top-right'     => ['align-items:flex-start;', 'justify-content:flex-end;',   'text-align:right;'],
+        'center-left'   => ['align-items:center;',     'justify-content:flex-start;', 'text-align:left;'],
+        'center'        => ['align-items:center;',     'justify-content:center;',     'text-align:center;'],
+        'center-right'  => ['align-items:center;',     'justify-content:flex-end;',   'text-align:right;'],
+        'bottom-left'   => ['align-items:flex-end;',   'justify-content:flex-start;', 'text-align:left;'],
+        'bottom-center' => ['align-items:flex-end;',   'justify-content:center;',     'text-align:center;'],
+        'bottom-right'  => ['align-items:flex-end;',   'justify-content:flex-end;',   'text-align:right;'],
+    ];
+    $items = '';
+    foreach ($slides as $s) {
+        $bg     = htmlspecialchars($s['bg'],    ENT_QUOTES, 'UTF-8');
+        $label  = htmlspecialchars($s['label'], ENT_QUOTES, 'UTF-8');
+        $sub    = $s['subtitle'] ? htmlspecialchars($s['subtitle'], ENT_QUOTES, 'UTF-8') : null;
+        $pos    = $s['text_position'] ?? 'center';
+        $ai     = $positionMap[$pos][0] ?? 'align-items:center;';
+        $jc     = $positionMap[$pos][1] ?? 'justify-content:center;';
+        $ta     = $positionMap[$pos][2] ?? 'text-align:center;';
+
+        $textBlock = '<div  class="slider__overlay" style="' . $ai . $jc . 'display:flex;flex-direction:column;gap:6px;padding:40px 20px;width:100%;">'
+                   . '<h2 style="color:#fff;' . $ta . 'text-shadow:0 2px 6px rgba(0,0,0,.6);margin:0;font-size:1.8rem;">' . $label . '</h2>';
+        if ($sub) {
+            $textBlock .= '<p style="color:rgba(255,255,255,.9);' . $ta . 'text-shadow:0 1px 4px rgba(0,0,0,.5);margin:0;font-size:1.1rem;max-width:600px;">' . $sub . '</p>';
+        }
+        $textBlock .= '</div>';
+
+        if (!empty($s['image'])) {
+            $img    = htmlspecialchars(BASE_URL . $s['image'], ENT_QUOTES, 'UTF-8');
+            $items .= '<li class="splide__slide" data-splide-cover="true" style="position:relative;overflow:hidden;">'
+                    . '<img src="' . $img . '" alt="' . $label . '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
+                    . '<div class="container" style="position:absolute;inset:0;display:flex;' . $ai . $jc . ' ">'
+                    . $textBlock
+                    . '</div>'
+                    . '</li>';
+        } else {
+            $items .= '<li class="splide__slide" style="height:420px;background:' . $bg . ';display:flex;' . $ai . $jc . '">'
+                    . $textBlock
+                    . '</li>';
+        }
+    }
+
+    static $assetsLoaded = false;
+
+    $assets = '';
+    if (!$assetsLoaded) {
+        $assetsLoaded = true;
+        $assets = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">'
+                . '<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>';
+    }
+
+    $html = $assets
+          . '<style>'
+          . '#' . $id . '.splide,'
+          . '#' . $id . ' .splide__track,'
+          . '#' . $id . ' .splide__list,'
+          . '#' . $id . ' .splide__slide{height:100%;}'
+          . '#' . $id . '{padding:0!important;margin:0!important;}'
+          . '#' . $id . ' .splide__pagination{top:auto!important;bottom:12px!important;}'
+          . '#' . $id . ' .splide__arrow{opacity:.85;}'
+          . '</style>'
+          . '<section id="' . $id . '" class="splide" aria-label="Carousel" style="height:420px;">'
+          . '<div class="splide__track" style="height:100%;">'
+          . '<ul class="splide__list" style="height:100%;">' . $items . '</ul>'
+          . '</div>'
+          . '</section>';
+
+    $html .= '<script>'
+           . '(function(){'
+           .   'var id="#' . $id . '";'
+           .   'function mount(){'
+           .     'if(window.Splide){'
+           .       'new Splide(id,{type:"fade",autoplay:true,interval:4000,pauseOnHover:true,rewind:true,cover:true,heightRatio:0.4}).mount();'
+           .     '}else{setTimeout(mount,150);}'
+           .   '}'
+           .   'if(document.readyState==="loading"){'
+           .     'document.addEventListener("DOMContentLoaded",mount);'
+           .   '}else{mount();}'
+           . '})();'
+           . '</script>';
+
+    return $html;
 }
 
 function render_block_contact_form(PDO $pdo, string $blockTitle = ''): string

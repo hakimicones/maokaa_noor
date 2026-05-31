@@ -11,17 +11,26 @@
         width: '100%',
         fromElement: false,
         storageManager: false,
-        plugins: ['grapesjs-plugin-export', 'grapesjs-style-bg', 'grapesjs-custom-code'],
+        plugins: [
+            'grapesjs-plugin-export',
+            'grapesjs-style-bg',
+            'grapesjs-custom-code'
+        ],
         pluginsOpts: {
             'grapesjs-plugin-export': {},
             'grapesjs-style-bg': {},
             'grapesjs-custom-code': {}
         },
         canvas: {
+            scripts: [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
+                'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js'
+            ],
             styles: [
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+                'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css',
                 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-                '/Hebergement/maokaa/assets/css/style.css'
+                config.baseUrl + 'assets/css/style.css'
             ]
         },
         assetManager: {
@@ -47,6 +56,18 @@
                 label: 'Deux colonnes',
                 category: 'Blocs',
                 content: '<div class="row g-4"><div class="col-md-6"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h4">Colonne gauche</h3><p class="text-muted mb-0">Ajoutez un texte, une liste ou une mise en avant.</p></div></div><div class="col-md-6"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h4">Colonne droite</h3><p class="text-muted mb-0">Ajoutez un second bloc de contenu coherent avec votre page.</p></div></div></div>'
+            },
+             {
+                id: 'two-columns-8-4',
+                label: 'Deux colonnes 2-1',
+                category: 'Blocs',
+                content: '<div class="row g-4"><div class="col-md-8"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h4">Colonne gauche</h3><p class="text-muted mb-0">Ajoutez un texte, une liste ou une mise en avant.</p></div></div><div class="col-md-4"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h4">Colonne droite</h3><p class="text-muted mb-0">Ajoutez un second bloc de contenu coherent avec votre page.</p></div></div></div>'
+            },
+            {
+                id: 'one-columns-12',
+                label: 'Une colonnes ',
+                category: 'Blocs',
+                content: '<div class="row g-4"><div class="col-md-12"> <h2 class="h3 mb-3">Sous-titre</h2>  </div>'
             },
             {
                 id: 'text-block',
@@ -101,8 +122,20 @@
                 label: 'Formulaire de Contact',
                 category: 'Contenu Dynamique ',
                 content: '<div data-vep-block="contact-form" style="background:#fce4ec;border:2px dashed #E91E63;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-envelope" style="font-size:40px;color:#E91E63;margin-bottom:12px;"></i><strong style="color:#880E4F;font-size:16px;">Formulaire de Contact</strong><small style="color:#b05070;margin-top:6px;display:block;font-size:13px;">Connecte a la table contacts</small></div>'
+            },
+            {
+                id: 'bs-carousel',
+                label: 'Carousel',
+                category: 'Caroussel',
+                content: '<div data-vep-block="carousel" data-slider-id="1" style="background:#e3f2fd;border:2px dashed #2196F3;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-images" style="font-size:40px;color:#2196F3;margin-bottom:12px;"></i><strong style="color:#1565C0;font-size:16px;">Carousel #1</strong><small style="color:#5c85b8;margin-top:6px;display:block;font-size:13px;">Slider depuis la DB</small></div>'
             }
+
         ];
+
+
+        
+
+
 
         blocks.forEach((block) => {
             editor.BlockManager.add(block.id, {
@@ -145,6 +178,26 @@
         attributes: { title: 'Import Template' }
     });
 
+    function initSplideInCanvas() {
+        try {
+            var canvasWin = editor.Canvas.getWindow();
+            if (!canvasWin || !canvasWin.Splide) return;
+            canvasWin.document.querySelectorAll('.splide:not(.is-initialized)').forEach(function(el) {
+                new canvasWin.Splide(el, {
+                    type: 'fade',
+                    autoplay: true,
+                    interval: 4000,
+                    pauseOnHover: true,
+                    rewind: true,
+                    cover: true,
+                    heightRatio: 0.4
+                }).mount();
+            });
+        } catch(e) {
+            console.warn('Splide canvas init error:', e);
+        }
+    }
+
     const loadVepBlockPreview = function(component) {
         const content = component.toHTML();
         const match = content.match(/data-vep-block="([^"]+)"/);
@@ -155,12 +208,17 @@
         const limit = limitMatch ? limitMatch[1] : '6';
         const categoryMatch = content.match(/data-category="(\d+)"/);
         const category = categoryMatch ? categoryMatch[1] : '0';
+        const sliderIdMatch = content.match(/data-slider-id="(\d+)"/);
+        const sliderId = sliderIdMatch ? sliderIdMatch[1] : '0';
 
-        fetch('/Hebergement/maokaa/admin/content/preview-block.php?type=' + blockType + '&limit=' + limit + '&category=' + category)
+        fetch(config.baseUrl + 'admin/content/preview-block.php?type=' + blockType + '&limit=' + limit + '&category=' + category + '&slider_id=' + sliderId)
             .then(r => r.json())
             .then(data => {
                 if (data.html) {
                     component.setContent(data.html);
+                    if (data.html.includes('splide')) {
+                        setTimeout(initSplideInCanvas, 900);
+                    }
                 }
             })
             .catch(err => console.error('Preview load error:', err));
@@ -245,7 +303,7 @@
             USE_PROFILES: { html: true },
             FORCE_BODY: false,
             ALLOWED_ATTR: ['class', 'id', 'style', 'href', 'src', 'alt', 'target', 'rel',
-                           'data-limit', 'data-category', 'data-title',
+                           'data-limit', 'data-category', 'data-title', 'data-slider-id',
                            'data-vep-block', 'data-inline-field',
                            'role', 'aria-label', 'aria-current', 'type', 'name', 'value',
                            'placeholder', 'required', 'method', 'action', 'enctype']
