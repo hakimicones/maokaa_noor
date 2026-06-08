@@ -37,7 +37,7 @@ if (empty($message['lu'])) {
             <h2 class="mb-1">Message de contact</h2>
             <p class="text-muted mb-0">Consultez et archivez le message.</p>
         </div>
-        <a href="<?php echo BASE_URL; ?>admin/dashboard.php?section=messages" class="btn btn-outline-secondary">Retour</a>
+        <a href="<?php echo return_url(BASE_URL . 'admin/dashboard.php?section=messages'); ?>" class="btn btn-outline-secondary">Retour</a>
     </div>
 
     <div class="card">

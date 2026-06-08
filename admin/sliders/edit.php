@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if ($sliderModel->update($id, $data)) {
                         setFlash('success', 'Slide mis à jour avec succès');
-                        header('Location: ' . BASE_URL . 'admin/sliders/manage.php?slider_id=' . $slider_id);
+                        header('Location: ' . BASE_URL . 'admin/sliders/manage.php?slider_id=' . $slider_id . $retParam);
                         exit;
                     }
 
@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
+$retParam  = !empty($_GET['return_url']) ? '&return_url=' . urlencode($_GET['return_url']) : '';
 $csrfToken = generateCSRFToken();
 ?>
 <!DOCTYPE html>
@@ -100,7 +101,7 @@ $csrfToken = generateCSRFToken();
             <h2 class="mb-1">Modifier le slide #<?php echo $id; ?></h2>
             <p class="text-muted mb-0">Modifier les informations de ce slide.</p>
         </div>
-        <a href="<?php echo BASE_URL; ?>admin/sliders/manage.php?slider_id=<?php echo (int)$slide['slider_id']; ?>"
+        <a href="<?php echo return_url(BASE_URL . 'admin/sliders/manage.php?slider_id=' . (int)$slide['slider_id']); ?>"
            class="btn btn-outline-secondary">Retour</a>
     </div>
 
@@ -188,7 +189,7 @@ $csrfToken = generateCSRFToken();
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                <a href="<?php echo BASE_URL; ?>admin/sliders/manage.php?slider_id=<?php echo (int)$slide['slider_id']; ?>"
+                <a href="<?php echo return_url(BASE_URL . 'admin/sliders/manage.php?slider_id=' . (int)$slide['slider_id']); ?>"
                    class="btn btn-outline-secondary">Annuler</a>
             </div>
         </form>

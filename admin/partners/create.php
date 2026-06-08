@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($result['error'])) {
                     $error = $result['error'];
                 } else {
-                    $logoPath = '/assets/images/partners/' . $result['filename'];
+                    $logoPath = 'assets/images/partners/' . $result['filename'];
                 }
             }
 

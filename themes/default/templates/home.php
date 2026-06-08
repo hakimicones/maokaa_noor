@@ -24,7 +24,7 @@ $isAdmin = isLoggedIn();
 </head>
 <body>
     <?php theme_partial('navbar'); ?>
-    <main>
+    <main<?php if ($isAdmin): ?> data-inline-field="body"<?php endif; ?>>
         <?php echo do_shortcode($page['body'] ?? '', $pdo); ?>
     </main>
     <?php theme_partial('footer'); ?>

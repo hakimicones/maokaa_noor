@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($result['error'])) {
                     $error = $result['error'];
                 } else {
-                    $data['image'] = '/assets/images/' . $result['filename'];
+                    $data['image'] = 'assets/images/' . $result['filename'];
                 }
             }
 

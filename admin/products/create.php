@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($result['error'])) {
                     $error = $result['error'];
                 } else {
-                    $data['image'] = '/assets/images/' . $result['filename'];
+                    $data['image'] = 'assets/images/' . $result['filename'];
                 }
             }
 
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($result['error'])) {
                     $error = $result['error'];
                 } else {
-                    $data['brochure_pdf'] = '/assets/brochures/' . $result['filename'];
+                    $data['brochure_pdf'] = 'assets/brochures/' . $result['filename'];
                 }
             }
             

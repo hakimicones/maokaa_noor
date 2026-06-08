@@ -62,6 +62,8 @@ function _wrap_vep_block_admin(string $type, string $shortcode, string $html): s
         'brands'            => 'admin/dashboard.php?section=brands',
         'partners'          => 'admin/dashboard.php?section=partners',
         'contact_form'      => 'admin/messages/view.php',
+        'carousel'          => 'admin/sliders/index.php',
+        'splide_carousel'   => 'admin/sliders/index.php',
     ];
     $adminUrl = $adminUrls[$type] ?? 'admin/dashboard.php';
     return '<div class="vep-block-wrapper"'

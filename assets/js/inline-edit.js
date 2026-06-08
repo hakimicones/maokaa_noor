@@ -32,6 +32,76 @@
     var bodyEl = document.querySelector('[data-inline-field="body"]');
     if (bodyEl) initBodyField(bodyEl);
 
+    // ── Toolbar WYSIWYG flottante (apparaît au focus d'un élément body) ──
+    var wysiwygToolbar = null;
+    var wysiwygTarget  = null;
+    var wysiwygTimer   = null;
+
+    function getWysiwygToolbar() {
+        if (wysiwygToolbar) return wysiwygToolbar;
+        wysiwygToolbar = document.createElement('div');
+        wysiwygToolbar.id = 'ie-wysiwyg-toolbar';
+        wysiwygToolbar.innerHTML =
+            '<button type="button" data-cmd="bold" title="Gras (Ctrl+B)"><i class="fas fa-bold"></i></button>' +
+            '<button type="button" data-cmd="italic" title="Italique (Ctrl+I)"><i class="fas fa-italic"></i></button>' +
+            '<button type="button" data-cmd="underline" title="Souligné (Ctrl+U)"><i class="fas fa-underline"></i></button>' +
+            '<span class="ie-wysiwyg-sep"></span>' +
+            '<button type="button" data-cmd="formatBlock" data-arg="h2" title="Titre H2"><i class="fas fa-heading"></i> H2</button>' +
+            '<button type="button" data-cmd="formatBlock" data-arg="h3" title="Titre H3"><i class="fas fa-heading"></i> H3</button>' +
+            '<button type="button" data-cmd="formatBlock" data-arg="p" title="Paragraphe"><i class="fas fa-paragraph"></i></button>' +
+            '<span class="ie-wysiwyg-sep"></span>' +
+            '<button type="button" data-cmd="createLink" title="Insérer un lien"><i class="fas fa-link"></i></button>' +
+            '<button type="button" data-cmd="unlink" title="Supprimer le lien"><i class="fas fa-unlink"></i></button>';
+
+        wysiwygToolbar.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            var btn = e.target.closest('button');
+            if (!btn) return;
+            var cmd = btn.getAttribute('data-cmd');
+            var arg = btn.getAttribute('data-arg') || null;
+            if (cmd === 'createLink') {
+                var url = prompt('URL du lien :', 'https://');
+                if (url) document.execCommand(cmd, false, url);
+            } else {
+                document.execCommand(cmd, false, arg);
+            }
+            if (wysiwygTarget) wysiwygTarget.focus();
+        });
+
+        document.body.appendChild(wysiwygToolbar);
+        return wysiwygToolbar;
+    }
+
+    function showWysiwygToolbar(el) {
+        cancelHideWysiwyg();
+        var tb = getWysiwygToolbar();
+        wysiwygTarget = el;
+        var rect = el.getBoundingClientRect();
+        var scrollY = window.scrollY || window.pageYOffset;
+        var topPos = rect.top + scrollY - tb.offsetHeight - 8;
+        if (rect.top < tb.offsetHeight + 12) {
+            topPos = rect.bottom + scrollY + 8;
+        }
+        tb.style.top = topPos + 'px';
+        tb.style.left = Math.max(8, rect.left + (rect.width / 2) - 100) + 'px';
+        tb.classList.add('ie-wysiwyg-visible');
+    }
+
+    function hideWysiwygToolbar() {
+        if (wysiwygTimer) clearTimeout(wysiwygTimer);
+        wysiwygTimer = setTimeout(function () {
+            if (wysiwygToolbar) wysiwygToolbar.classList.remove('ie-wysiwyg-visible');
+            wysiwygTarget = null;
+        }, 200);
+    }
+
+    function cancelHideWysiwyg() {
+        if (wysiwygTimer) {
+            clearTimeout(wysiwygTimer);
+            wysiwygTimer = null;
+        }
+    }
+
     // ── Champs texte simples (title, subtitle) : contenteditable ─────────
     function initTextField(el, field) {
         el.setAttribute('contenteditable', 'true');
@@ -101,6 +171,8 @@
     function decorateVepBlock(block) {
         block.classList.add('ie-vep-block');
         var adminUrl = baseUrl + (block.getAttribute('data-vep-admin-url') || 'admin/dashboard.php');
+        var sep = adminUrl.indexOf('?') === -1 ? '?' : '&';
+        adminUrl += sep + 'return_url=' + encodeURIComponent(window.location.href);
 
         var btn = document.createElement('a');
         btn.className = 'ie-vep-btn';
@@ -146,7 +218,14 @@
 
         var originalHTML = el.innerHTML;
 
-        el.addEventListener('focus', function () { this.classList.add('ie-editing'); });
+        el.addEventListener('focus', function () {
+            this.classList.add('ie-editing');
+            showWysiwygToolbar(this);
+        });
+
+        el.addEventListener('mousedown', function () {
+            cancelHideWysiwyg();
+        });
 
         el.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -162,6 +241,7 @@
         el.addEventListener('blur', function () {
             var self = this;
             self.classList.remove('ie-editing');
+            hideWysiwygToolbar();
             var current = self.innerHTML;
             if (current === originalHTML) return;
 

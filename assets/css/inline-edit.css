@@ -275,3 +275,67 @@ body:has(#ie-toolbar) { padding-top: 36px !important; }
 .ie-toast.ie-toast-visible { opacity: 1; transform: translateY(0); }
 .ie-toast-success { background: #16a34a; }
 .ie-toast-error   { background: #dc2626; }
+
+/* ──────────────────────────────────────────
+   Toolbar WYSIWYG flottante (inline editing)
+────────────────────────────────────────── */
+#ie-wysiwyg-toolbar {
+    position: absolute;
+    z-index: 99999;
+    background: #1e293b;
+    border-radius: 8px;
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+    font-family: system-ui, sans-serif;
+}
+#ie-wysiwyg-toolbar.ie-wysiwyg-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+#ie-wysiwyg-toolbar button {
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: background 0.12s, color 0.12s;
+    white-space: nowrap;
+}
+#ie-wysiwyg-toolbar button:hover {
+    background: #334155;
+    color: #f1f5f9;
+}
+#ie-wysiwyg-toolbar button:active {
+    background: #475569;
+}
+
+.ie-wysiwyg-sep {
+    width: 1px;
+    height: 20px;
+    background: #475569;
+    margin: 0 3px;
+    flex-shrink: 0;
+}
+
+/* Ajustement responsive : cacher certains boutons sur mobile */
+@media (max-width: 600px) {
+    #ie-wysiwyg-toolbar button[data-cmd="unlink"],
+    #ie-wysiwyg-toolbar button[data-cmd="formatBlock"][data-arg="h3"] {
+        display: none;
+    }
+}

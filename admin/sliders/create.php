@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($sliderModel->create($data)) {
                     setFlash('success', 'Slide créé avec succès');
-                    header('Location: ' . BASE_URL . 'admin/sliders/manage.php?slider_id=' . $slider_id);
+                    header('Location: ' . BASE_URL . 'admin/sliders/manage.php?slider_id=' . $slider_id . $retParam);
                     exit;
                 }
 
@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$retParam  = !empty($_GET['return_url']) ? '&return_url=' . urlencode($_GET['return_url']) : '';
 $csrfToken = generateCSRFToken();
 ?>
 <!DOCTYPE html>
@@ -93,7 +94,7 @@ $csrfToken = generateCSRFToken();
             <h2 class="mb-1">Ajouter un slide</h2>
             <p class="text-muted mb-0">Créez un nouveau slide dans un carousel.</p>
         </div>
-        <a href="<?php echo BASE_URL; ?>admin/sliders/index.php" class="btn btn-outline-secondary">Retour</a>
+        <a href="<?php echo return_url(BASE_URL . 'admin/sliders/index.php'); ?>" class="btn btn-outline-secondary">Retour</a>
     </div>
 
     <?php if (!empty($error)): ?>
@@ -171,7 +172,7 @@ $csrfToken = generateCSRFToken();
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Créer le slide</button>
-                <a href="<?php echo BASE_URL; ?>admin/sliders/index.php" class="btn btn-outline-secondary">Annuler</a>
+                <a href="<?php echo return_url(BASE_URL . 'admin/sliders/index.php'); ?>" class="btn btn-outline-secondary">Annuler</a>
             </div>
         </form>
     </div>

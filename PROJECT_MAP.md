@@ -15,6 +15,8 @@
 | **Plugins GrapesJS** | export (1.0.11), style-bg (2.0.2), custom-code (1.0.2) | — |
 | **Sanitisation HTML** | DOMPurify (client) + regex PHP (serveur) | 3.1.6 |
 | **Carousel** | Splide.js | 4.1.4 |
+| **Toolbar WYSIWYG inline** | Floating toolbar via `document.execCommand` (B/I/U/H2/H3/lien) | — |
+| **Shortcodes admin URLs** | `_wrap_vep_block_admin()` mappe chaque shortcode vers sa section admin | — |
 | **Serveur** | XAMPP (Apache + MySQL) | — |
 
 ### Dépendances CDN (aucun package manager)
@@ -23,7 +25,7 @@
 - GrapesJS 0.21.9 + plugins
 - DOMPurify 3.1.6
 - Splide.js 4.1.4
-- Quill.js 1.3.7 (édition inline admin)
+- Quill.js 1.3.7 (chargé mais non utilisé — remplacé par toolbar flottante inline)
 
 ---
 
@@ -72,10 +74,33 @@ do_shortcode($html, $pdo)
   → preg_replace_callback détecte [tag attr="val"]
   → render_shortcode() dispatche par tag
   → render_block_*() génère HTML via modèle partiel
-  → Si admin connecté: wrapper admin autour du bloc
+  → Si admin connecté: _wrap_vep_block_admin() enveloppe le bloc
+    dans .vep-block-wrapper avec data-vep-admin-url et
+    data-vep-shortcode ; le JS inline affiche un bouton
+    "Gérer dans l'admin" qui pointe vers la section correspondante.
 ```
 
-### 4. GrapesJS Editor Flow
+### 4. Inline Edit (Frontend Admin)
+```
+Page rendue avec isLoggedIn()
+  → Templates injectent data-inline-field="body" sur le conteneur
+  → inline-edit.js détecte [data-inline-field="body"]
+  → initBodyField() parcourt les enfants :
+    → Éléments texte (h1-h6, p, ...) → contenteditable + toolbar WYSIWYG
+    → Images → sélecteur d'image (assets/images/)
+    → .vep-block-wrapper → bouton "Gérer dans l'admin"
+      (URL mappée par _wrap_vep_block_admin())
+      Le lien inclut ?return_url=<page courante> pour le retour
+  → Sauvegarde : serializeAndSaveBody() → POST → inline_edit.php
+    → sanitize_body_html() (PHP) → UPDATE content SET body
+
+Retour depuis l'admin :
+  → return_url() dans config.php : $_GET['return_url'] > Referer > défaut
+  → Utilisé par les boutons "Retour" / "Annuler" des pages admin
+    (sliders, messages, etc.)
+```
+
+### 5. GrapesJS Editor Flow
 ```
 Chargement:
   DB body → shortcodesToBlocks() (JS) → editor.setComponents()

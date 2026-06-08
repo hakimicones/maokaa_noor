@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($result['error'])) {
                     $error = $result['error'];
                 } else {
-                    $imagePath = '/assets/images/news/' . $result['filename'];
+                    $imagePath = 'assets/images/news/' . $result['filename'];
                 }
             }
 

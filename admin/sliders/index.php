@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $csrfToken = generateCSRFToken();
 $groups    = $sliderModel->getAllGroups();
+$retParam  = !empty($_GET['return_url']) ? '&return_url=' . urlencode($_GET['return_url']) : '';
 
 $flash = function_exists('getFlash') ? getFlash() : null;
 ?>
@@ -56,7 +57,7 @@ $flash = function_exists('getFlash') ? getFlash() : null;
             <h2 class="mb-1">Gestion des Sliders</h2>
             <p class="text-muted mb-0">Gérez vos carousels de slides.</p>
         </div>
-        <a href="<?php echo BASE_URL; ?>admin/sliders/create.php" class="btn btn-primary">
+        <a href="<?php echo BASE_URL; ?>admin/sliders/create.php<?php echo $retParam; ?>" class="btn btn-primary">
             + Nouveau Slider
         </a>
     </div>
@@ -75,10 +76,14 @@ $flash = function_exists('getFlash') ? getFlash() : null;
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($_GET['return_url'])): ?>
+        <a href="<?php echo htmlspecialchars($_GET['return_url']); ?>" class="btn btn-outline-secondary mb-3">&larr; Retour au site</a>
+    <?php endif; ?>
+
     <?php if (empty($groups)): ?>
         <div class="form-card text-center py-5">
             <p class="text-muted mb-3">Aucun slider trouvé.</p>
-            <a href="<?php echo BASE_URL; ?>admin/sliders/create.php" class="btn btn-primary">Créer le premier slider</a>
+            <a href="<?php echo BASE_URL; ?>admin/sliders/create.php<?php echo $retParam; ?>" class="btn btn-primary">Créer le premier slider</a>
         </div>
     <?php else: ?>
         <?php foreach ($groups as $group): ?>
@@ -102,7 +107,7 @@ $flash = function_exists('getFlash') ? getFlash() : null;
                         <small class="text-muted">Shortcode : <code>[carousel slider_id="<?php echo $sid; ?>"]</code></small>
                     </div>
                     <div class="d-flex gap-2 flex-shrink-0">
-                        <a href="<?php echo BASE_URL; ?>admin/sliders/manage.php?slider_id=<?php echo $sid; ?>"
+                        <a href="<?php echo BASE_URL; ?>admin/sliders/manage.php?slider_id=<?php echo $sid . $retParam; ?>"
                            class="btn btn-outline-primary btn-sm">
                             Gérer les slides
                         </a>

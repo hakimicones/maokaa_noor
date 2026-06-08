@@ -29,7 +29,7 @@ $isAdmin = isLoggedIn();
 </head>
 <body>
     <?php include __DIR__ . '/../partials/navbar.php'; ?>
-    <main>
+    <main<?php if ($isAdmin): ?> data-inline-field="body"<?php endif; ?>>
         <?php echo process_vep_blocks($page['body'] ?? '', $pdo); ?>
     </main>
     <?php include __DIR__ . '/../partials/footer.php'; ?>
@@ -38,7 +38,6 @@ $isAdmin = isLoggedIn();
     <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
 
     <?php if ($isAdmin): ?>
-    <!-- Inline edit JS (active la barre admin ; le body home n'est pas éditable inline car il contient des shortcodes) -->
     <script src="<?php echo BASE_URL; ?>assets/js/inline-edit.js"></script>
     <?php endif; ?>
 </body>

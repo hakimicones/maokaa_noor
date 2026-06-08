@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id > 0) {
             if ($sliderModel->delete($id)) {
                 setFlash('success', 'Slide supprimé avec succès');
-                header('Location: ' . BASE_URL . 'admin/sliders/manage.php?slider_id=' . $slider_id);
+                header('Location: ' . BASE_URL . 'admin/sliders/manage.php?slider_id=' . $slider_id . $retParam);
                 exit;
             }
             $error = 'Erreur lors de la suppression du slide';
@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $csrfToken = generateCSRFToken();
+$retParam  = !empty($_GET['return_url']) ? '&return_url=' . urlencode($_GET['return_url']) : '';
 $slides    = $sliderModel->getAllBySlider($slider_id);
 
 $flash = function_exists('getFlash') ? getFlash() : null;
@@ -64,9 +65,9 @@ $flash = function_exists('getFlash') ? getFlash() : null;
             <p class="text-muted mb-0"><?php echo count($slides); ?> slide<?php echo count($slides) > 1 ? 's' : ''; ?> dans ce carousel.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="<?php echo BASE_URL; ?>admin/sliders/create.php?slider_id=<?php echo $slider_id; ?>"
+            <a href="<?php echo BASE_URL; ?>admin/sliders/create.php?slider_id=<?php echo $slider_id . $retParam; ?>"
                class="btn btn-primary">+ Ajouter un slide</a>
-            <a href="<?php echo BASE_URL; ?>admin/sliders/index.php" class="btn btn-outline-secondary">Retour</a>
+            <a href="<?php echo return_url(BASE_URL . 'admin/sliders/index.php'); ?>" class="btn btn-outline-secondary">Retour</a>
         </div>
     </div>
 
