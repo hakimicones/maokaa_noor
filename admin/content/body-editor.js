@@ -178,6 +178,105 @@
         attributes: { title: 'Import Template' }
     });
 
+    function openAiModal(opts) {
+        var existing = document.getElementById('ai-modal-overlay');
+        if (existing) existing.remove();
+
+        var overlay = document.createElement('div');
+        overlay.id = 'ai-modal-overlay';
+        overlay.className = 'ai-modal-overlay';
+        overlay.innerHTML =
+            '<div class="ai-modal-dialog">' +
+                '<div class="ai-modal-header">' +
+                    '<span><i class="fas fa-magic"></i> Assistant IA</span>' +
+                    '<button type="button" class="ai-modal-close" aria-label="Fermer">&times;</button>' +
+                '</div>' +
+                '<div class="ai-modal-body">' +
+                    '<label for="ai-modal-instruction">Instruction pour l\'IA</label>' +
+                    '<textarea id="ai-modal-instruction" rows="4" placeholder="Ex: Réécris cette page avec un ton plus commercial et ajoute une section avantages."></textarea>' +
+                    '<div class="ai-modal-status"></div>' +
+                '</div>' +
+                '<div class="ai-modal-footer">' +
+                    '<button type="button" class="btn btn-outline-secondary btn-sm ai-modal-cancel">Annuler</button>' +
+                    '<button type="button" class="btn btn-primary btn-sm ai-modal-generate">Générer</button>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(overlay);
+
+        var statusEl = overlay.querySelector('.ai-modal-status');
+        var textarea = overlay.querySelector('#ai-modal-instruction');
+        var generateBtn = overlay.querySelector('.ai-modal-generate');
+
+        function close() { overlay.remove(); }
+
+        overlay.querySelector('.ai-modal-close').addEventListener('click', close);
+        overlay.querySelector('.ai-modal-cancel').addEventListener('click', close);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+
+        generateBtn.addEventListener('click', function () {
+            var instruction = textarea.value.trim();
+            if (!instruction) {
+                statusEl.textContent = 'Veuillez saisir une instruction.';
+                statusEl.className = 'ai-modal-status ai-modal-error';
+                return;
+            }
+
+            generateBtn.disabled = true;
+            statusEl.textContent = 'Génération en cours...';
+            statusEl.className = 'ai-modal-status ai-modal-loading';
+
+            fetch(opts.aiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    csrf_token: opts.csrfToken,
+                    html: opts.getHtml(),
+                    instruction: instruction
+                })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                generateBtn.disabled = false;
+                if (data.success) {
+                    opts.onApply(data.html);
+                    close();
+                } else {
+                    statusEl.textContent = data.message || 'Erreur inconnue';
+                    statusEl.className = 'ai-modal-status ai-modal-error';
+                }
+            })
+            .catch(function () {
+                generateBtn.disabled = false;
+                statusEl.textContent = 'Erreur de connexion au serveur';
+                statusEl.className = 'ai-modal-status ai-modal-error';
+            });
+        });
+
+        textarea.focus();
+    }
+
+    editor.Commands.add('ai-rewrite', {
+        run: function (ed) {
+            openAiModal({
+                csrfToken: config.csrfToken,
+                aiUrl: config.aiUrl,
+                getHtml: function () { return blocksToShortcodes(ed.getHtml()); },
+                onApply: function (newHtml) {
+                    ed.setComponents(shortcodesToBlocks(newHtml));
+                    syncBody();
+                }
+            });
+        }
+    });
+
+    editor.Panels.addButton('options', {
+        id: 'ai-rewrite',
+        command: 'ai-rewrite',
+        className: 'fa fa-magic',
+        attributes: { title: 'Assistant IA' }
+    });
+
     function initSplideInCanvas() {
         try {
             var canvasWin = editor.Canvas.getWindow();

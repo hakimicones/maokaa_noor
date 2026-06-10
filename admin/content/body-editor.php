@@ -67,6 +67,17 @@ $csrfToken = generateCSRFToken();
         .editor-topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
         .editor-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
         .editor-toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+        .ai-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: flex; align-items: center; justify-content: center; z-index: 100000; }
+        .ai-modal-dialog { background: #fff; border-radius: 12px; width: 100%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; }
+        .ai-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid #eee; font-weight: 600; }
+        .ai-modal-close { background: none; border: none; font-size: 22px; line-height: 1; cursor: pointer; color: #888; }
+        .ai-modal-body { padding: 18px; }
+        .ai-modal-body label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .ai-modal-body textarea { width: 100%; border: 1px solid #ccc; border-radius: 8px; padding: 10px; font-family: inherit; font-size: 14px; resize: vertical; box-sizing: border-box; }
+        .ai-modal-status { margin-top: 10px; font-size: 13px; min-height: 18px; }
+        .ai-modal-status.ai-modal-error { color: #dc3545; }
+        .ai-modal-status.ai-modal-loading { color: #0d6efd; }
+        .ai-modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 18px; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -131,6 +142,8 @@ $csrfToken = generateCSRFToken();
         initialBody: <?php echo json_encode($initialBody); ?>,
         assets: <?php echo json_encode($assetImages); ?>,
         uploadUrl: '<?php echo BASE_URL; ?>admin/content/upload-asset.php',
+        aiUrl: '<?php echo BASE_URL; ?>includes/api_ai_content.php',
+        csrfToken: '<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>',
         baseUrl: '<?php echo BASE_URL; ?>'
     };
 </script>
