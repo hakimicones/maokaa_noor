@@ -45,8 +45,8 @@
    VEP Products Block — variables & reset
    ═══════════════════════════════════════════════════ */
 .vep-products {
-  --vp-primary:   #667eea;
-  --vp-primary-h: #764ba2;
+  --vp-primary:   #435980;
+  --vp-primary-h: #345075;
   --vp-bg-card:   #fff;
   --vp-bg-skeleton: #e9ecef;
   --vp-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);

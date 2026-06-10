@@ -60,7 +60,7 @@ $csrfToken = generateCSRFToken();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #435980 0%, #345075 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -101,11 +101,11 @@ $csrfToken = generateCSRFToken();
             transition: border-color 0.3s;
         }
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            border-color: #435980;
+            box-shadow: 0 0 0 0.2rem rgba(67, 89, 128, 0.25);
         }
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #435980 0%, #345075 100%);
             border: none;
             border-radius: 5px;
             color: white;

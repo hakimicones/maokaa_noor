@@ -6,9 +6,9 @@
    =================================================== */
 
 :root {
-    --primary: #667eea;
-    --primary-dark: #764ba2;
-    --secondary: #42a5f5;
+    --primary: #435980;
+    --primary-dark: #345075;
+    --secondary: #87A952;
     --success: #26c281;
     --danger: #e74c3c;
     --warning: #f39c12;
@@ -93,7 +93,7 @@ a:hover {
    =================================================== */
 
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #435980 0%, #345075 100%);
     color: white;
     padding: 100px 0;
     position: relative;
@@ -413,7 +413,7 @@ a:hover {
 .form-control:focus,
 .form-select:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(67, 89, 128, 0.25);
 }
 
 .form-label {
@@ -439,7 +439,7 @@ a:hover {
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 20px rgba(67, 89, 128, 0.4);
 }
 
 .btn-secondary {
@@ -567,7 +567,7 @@ section {
 
 footer {
     margin-top: 80px;
-    background: linear-gradient(135deg, #2c3e50, #34495e);
+    background: linear-gradient(135deg, #2c3e50, #435980);
     color: white;
 }
 
@@ -631,5 +631,13 @@ footer a:hover {
         background: #3a3a3a;
         border-color: #4a4a4a;
         color: #e0e0e0;
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, #2c4058 0%, #1e2d40 100%);
+    }
+
+    .navbar {
+        background: #1a1a1a !important;
     }
 }

@@ -225,6 +225,7 @@ body:has(#ie-toolbar) { padding-top: 36px !important; }
     padding: 0;
     background: #f8fafc;
     transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+    min-height: 150px;
 }
 
 .ie-img-picker-item:hover {

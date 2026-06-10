@@ -110,15 +110,15 @@ $csrfToken = generateCSRFToken();
             margin-top: 30px;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-            color: #667eea;
+            border-bottom: 2px solid #435980;
+            color: #435980;
         }
         .form-control, .form-select {
             border-radius: 5px;
             border: 1px solid #ddd;
         }
         .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #435980 0%, #345075 100%);
             border: none;
             color: white;
             padding: 12px 40px;

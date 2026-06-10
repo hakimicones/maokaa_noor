@@ -147,9 +147,9 @@ $csrfToken = generateCSRFToken();
     
     <style>
         :root {
-            --primary: #667eea;
-            --primary-dark: #764ba2;
-            --secondary: #42a5f5;
+            --primary: #435980;
+            --primary-dark: #345075;
+            --secondary: #87A952;
         }
         
         body {
