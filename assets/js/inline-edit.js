@@ -30,7 +30,10 @@
 
     // ── Champ body ────────────────────────────────────────────────────────
     var bodyEl = document.querySelector('[data-inline-field="body"]');
-    if (bodyEl) initBodyField(bodyEl);
+    if (bodyEl) {
+        initBodyField(bodyEl);
+        initAiButton(bodyEl);
+    }
 
     // ── Toolbar WYSIWYG flottante (apparaît au focus d'un élément body) ──
     var wysiwygToolbar = null;
@@ -313,7 +316,7 @@
     }
 
     // ── Sérialisation du body (shortcodes reconstruits) ───────────────────
-    function serializeAndSaveBody(bodyEl, callback) {
+    function getCleanBodyHtml(bodyEl) {
         var clone = bodyEl.cloneNode(true);
 
         // Supprimer les UI d'édition injectées
@@ -342,7 +345,141 @@
             if (sc) block.replaceWith(document.createTextNode(sc));
         });
 
-        saveField('body', clone.innerHTML, callback);
+        return clone.innerHTML;
+    }
+
+    function serializeAndSaveBody(bodyEl, callback) {
+        saveField('body', getCleanBodyHtml(bodyEl), callback);
+    }
+
+    // ── Assistant IA (régénération du HTML du body) ───────────────────────
+    function initAiButton(bodyEl) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = 'ie-ai-btn';
+        btn.innerHTML = '<i class="fas fa-magic"></i> Assistant IA';
+
+        var adminLink = document.getElementById('ie-toolbar-admin');
+        if (adminLink) {
+            toolbar.insertBefore(btn, adminLink);
+        } else {
+            toolbar.appendChild(btn);
+        }
+
+        btn.addEventListener('click', function () {
+            openAiModal(bodyEl);
+        });
+    }
+
+    function openAiModal(bodyEl) {
+        var existing = document.getElementById('ie-ai-modal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.id = 'ie-ai-modal';
+        modal.innerHTML =
+            '<div class="ie-ai-dialog">' +
+                '<div class="ie-ai-header">' +
+                    '<span><i class="fas fa-magic"></i> Assistant IA</span>' +
+                    '<button class="ie-ai-close" type="button" aria-label="Fermer">&times;</button>' +
+                '</div>' +
+                '<div class="ie-ai-body">' +
+                    '<label for="ie-ai-instruction">Instruction</label>' +
+                    '<textarea id="ie-ai-instruction" rows="3" placeholder="Ex. : Réécris le texte d\'introduction avec un ton plus commercial"></textarea>' +
+                    '<div class="ie-ai-status"></div>' +
+                    '<div class="ie-ai-preview" style="display:none;"></div>' +
+                '</div>' +
+                '<div class="ie-ai-footer">' +
+                    '<button class="ie-ai-action ie-ai-action-secondary ie-ai-cancel" type="button">Annuler</button>' +
+                    '<button class="ie-ai-action ie-ai-action-primary ie-ai-apply" type="button" style="display:none;">Appliquer et enregistrer</button>' +
+                    '<button class="ie-ai-action ie-ai-action-primary ie-ai-generate" type="button">Générer</button>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(modal);
+
+        var textarea    = modal.querySelector('#ie-ai-instruction');
+        var statusEl    = modal.querySelector('.ie-ai-status');
+        var previewEl   = modal.querySelector('.ie-ai-preview');
+        var generateBtn = modal.querySelector('.ie-ai-generate');
+        var applyBtn    = modal.querySelector('.ie-ai-apply');
+        var cancelBtn   = modal.querySelector('.ie-ai-cancel');
+        var closeBtn    = modal.querySelector('.ie-ai-close');
+
+        var generatedHtml = null;
+
+        function close() { modal.remove(); }
+
+        closeBtn.addEventListener('click', close);
+        cancelBtn.addEventListener('click', close);
+        modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+
+        function setStatus(message, type) {
+            statusEl.className = 'ie-ai-status' + (type ? ' ie-ai-' + type : '');
+            statusEl.textContent = message || '';
+        }
+
+        generateBtn.addEventListener('click', function () {
+            var instruction = textarea.value.trim();
+            if (!instruction) {
+                setStatus('Veuillez saisir une instruction.', 'error');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            applyBtn.disabled = true;
+            previewEl.style.display = 'none';
+            setStatus('Génération en cours…', 'loading');
+
+            fetch(baseUrl + 'includes/api_ai_content.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    csrf_token: csrfToken,
+                    html: getCleanBodyHtml(bodyEl),
+                    instruction: instruction
+                })
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                generateBtn.disabled = false;
+                if (data.success) {
+                    generatedHtml = data.html;
+                    previewEl.innerHTML = data.html;
+                    previewEl.style.display = 'block';
+                    applyBtn.style.display = '';
+                    applyBtn.disabled = false;
+                    generateBtn.textContent = 'Régénérer';
+                    setStatus('Aperçu généré. Vérifiez le résultat puis appliquez.', 'success');
+                } else {
+                    setStatus(data.message || 'Erreur inconnue', 'error');
+                }
+            })
+            .catch(function () {
+                generateBtn.disabled = false;
+                setStatus('Erreur de connexion au serveur', 'error');
+            });
+        });
+
+        applyBtn.addEventListener('click', function () {
+            if (!generatedHtml) return;
+            applyBtn.disabled = true;
+            generateBtn.disabled = true;
+            setStatus('Enregistrement…', 'loading');
+
+            saveField('body', generatedHtml, function (ok, data) {
+                if (ok) {
+                    setStatus('Enregistré. Rechargement…', 'success');
+                    window.location.reload();
+                } else {
+                    applyBtn.disabled = false;
+                    generateBtn.disabled = false;
+                    setStatus(data.message || 'Erreur lors de l\'enregistrement', 'error');
+                }
+            });
+        });
+
+        textarea.focus();
     }
 
     // ── Envoi AJAX ────────────────────────────────────────────────────────

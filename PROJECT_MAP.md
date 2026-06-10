@@ -18,12 +18,14 @@
 | **Carousel** | Splide.js | 4.1.4 |
 | **Toolbar WYSIWYG inline** | Floating toolbar via `document.execCommand` (B/I/U/H2/H3/lien) | — |
 | **Shortcodes admin URLs** | `_wrap_vep_block_admin()` mappe chaque shortcode vers sa section admin | — |
+| **Assistant IA de contenu** | API compatible OpenAI (Chat Completions), configurable via `.env` (`AI_API_URL`/`AI_API_KEY`/`AI_MODEL`/`AI_MAX_TOKENS`) | — |
 | **Serveur** | XAMPP (Apache + MySQL) | — |
 
 ### API Interne
 - `includes/api_products.php` — Endpoint JSON pour le bloc produits interactif
 - `includes/api_quote.php` — Endpoint JSON pour soumettre une demande de devis (POST, public)
 - `includes/inline_edit_product.php` — Endpoint AJAX pour l'édition inline des produits (POST, admin)
+- `includes/api_ai_content.php` — Endpoint AJAX : régénération du HTML d'une page via IA (POST, admin), s'appuie sur `includes/ai_client.php`
 
 ### Dépendances CDN (aucun package manager)
 - Bootstrap 5.3 (CSS + JS)
@@ -205,6 +207,35 @@ upload_image() / upload_pdf() dans includes/upload.php
 admins → categories → marques → partenaires → actualites
 → produits → produit_images → contacts → content
 → sliders → menus → settings → audit_logs → login_attempts
+```
+
+### 9. Assistant IA (régénération HTML)
+```
+Configuration : .env → AI_API_URL, AI_API_KEY, AI_MODEL, AI_MAX_TOKENS
+  (API compatible OpenAI Chat Completions : OpenAI, Mistral, OpenRouter, etc.)
+
+Déclenchement (admin uniquement, 2 emplacements) :
+  1. Éditeur GrapesJS (admin/content/body-editor.php)
+     → bouton panel "Assistant IA" (commande 'ai-rewrite')
+  2. Toolbar inline frontend (assets/js/inline-edit.js)
+     → bouton #ie-ai-btn dans #ie-toolbar
+
+Flux commun :
+  Modale instruction (texte libre)
+  → POST includes/api_ai_content.php { csrf_token, html, instruction }
+    → isLoggedIn() + verifyCSRFToken()
+    → ai_client.php::ai_generate_html() : appel API Chat Completions
+      (system prompt : conserve les shortcodes [carousel]/[products]/...,
+       répond avec un fragment HTML Bootstrap 5 sans markdown)
+    → sanitize_body_html() sur la réponse (anti-XSS)
+    → logAudit('ai_content', instruction tronquée)
+    → { success, html }
+
+  Aperçu :
+    - GrapesJS : injecté dans le canvas via shortcodesToBlocks() + setComponents()
+      → bouton "Enregistrer" existant persiste (pipeline inchangé)
+    - Inline : aperçu dans la modale, bouton "Appliquer et enregistrer"
+      → saveField('body', html) → inline_edit.php → reload de la page
 ```
 
 ---
