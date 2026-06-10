@@ -548,7 +548,8 @@ var section = document.querySelector('.vep-products');
 if (!section) return;
 
 var baseUrl   = section.getAttribute('data-base-url') || '';
-var initLimit = parseInt(section.getAttribute('data-limit'), 10) || 12;
+var rawLimit  = parseInt(section.getAttribute('data-limit'), 10);
+var initLimit = isNaN(rawLimit) ? 0 : rawLimit;
 var initCat   = parseInt(section.getAttribute('data-category'), 10) || 0;
 
 // ─── Éléments DOM ───
@@ -795,7 +796,10 @@ function strip(s) { var d = document.createElement('div'); d.innerHTML = s; retu
 // ─── CHARGEMENT INITIAL ───
 showSkeletons();
 
-fetch(baseUrl + 'includes/api_products.php?limit=' + initLimit + (initCat > 0 ? '&category=' + initCat : ''))
+var apiUrl = baseUrl + 'includes/api_products.php?';
+if (initLimit > 0) apiUrl += 'limit=' + initLimit + '&';
+if (initCat > 0) apiUrl += 'category=' + initCat + '&';
+fetch(apiUrl)
   .then(function (r) {
     if (!r.ok) { throw new Error('HTTP ' + r.status); }
     return r.json();
@@ -811,7 +815,7 @@ fetch(baseUrl + 'includes/api_products.php?limit=' + initLimit + (initCat > 0 ? 
   .catch(function (err) {
     console.error('VEP Products fetch error:', err);
     emptyEl.classList.add('visible');
-    emptyEl.innerHTML = '<div class="vep-products__empty-box"><h3>Erreur de chargement</h3><p>Impossible de charger les produits. URL: ' + html(baseUrl + 'includes/api_products.php?limit=' + initLimit) + '</p></div>';
+    emptyEl.innerHTML = '<div class="vep-products__empty-box"><h3>Erreur de chargement</h3><p>Impossible de charger les produits.</p></div>';
     grid.innerHTML = '';
   });
 

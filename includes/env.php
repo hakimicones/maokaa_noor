@@ -11,7 +11,7 @@ function loadEnv($path = null) {
     }
 
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    $projectRoot = __DIR__ . '/../';
+    $projectRoot = realpath(__DIR__ . '/../') . DIRECTORY_SEPARATOR;
 
     foreach ($lines as $line) {
         // Ignorer les commentaires

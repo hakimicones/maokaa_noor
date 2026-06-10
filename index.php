@@ -20,7 +20,7 @@ if ($basePath && strpos($uri, $basePath) === 0) {
 }
 
 $path = trim($path, '/');
-$slug = empty($path) || $path === 'index.php' ? 'home' : basename($path, '.php');
+$slug = empty($path) || basename($path) === 'index.php' ? 'home' : basename($path, '.php');
 $slug = strtolower(preg_replace('/[^a-z0-9\-_]/', '', $slug));
 
 // Routes spéciales

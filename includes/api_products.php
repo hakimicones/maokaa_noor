@@ -9,7 +9,7 @@ require_once __DIR__ . '/../app/models/Category.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Max-Age: 300');
 
-$limit    = min(200, max(1, (int)($_GET['limit'] ?? 200)));
+$limit    = min(9999, max(1, (int)($_GET['limit'] ?? 9999)));
 $category = (int)($_GET['category'] ?? 0);
 $search   = trim($_GET['search'] ?? '');
 $sort     = $_GET['sort'] ?? 'popular';

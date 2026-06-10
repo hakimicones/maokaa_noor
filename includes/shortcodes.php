@@ -94,6 +94,10 @@ function render_shortcode(string $tag, array $atts, PDO $pdo): string
     $category = (int)($atts['category'] ?? 0);
     $title    = $atts['title'] ?? '';
 
+    // Pas de limite par défaut pour les produits (le bloc JS charge tout)
+    if ($tag === 'products') {
+        $limit = max(0, (int)($atts['limit'] ?? 0));
+    }
     switch ($tag) {
         case 'products':          return render_block_products($pdo, $limit, $category, $title);
         case 'featured_products': return render_block_featured_products($pdo, $limit, $title);
@@ -128,7 +132,7 @@ function render_block_featured_products(PDO $pdo, int $limit = 6, string $blockT
     return ob_get_clean();
 }
 
-function render_block_products(PDO $pdo, int $limit = 12, int $category = 0, string $blockTitle = ''): string
+function render_block_products(PDO $pdo, int $limit = 0, int $category = 0, string $blockTitle = ''): string
 {
     ob_start();
     include __DIR__ . '/../app/views/partials/blocks/products.php';
