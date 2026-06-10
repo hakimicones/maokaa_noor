@@ -41,13 +41,16 @@ function loadEnv($path = null) {
         } elseif ($key === 'MAX_IMAGE_SIZE' || $key === 'MAX_PDF_SIZE') {
             $value = (int)$value;
         } elseif ($key === 'BASE_URL') {
-            // Auto-détection : ignore .env pour les requêtes web, fonctionne dans
-            // n'importe quel sous-répertoire (local XAMPP) comme à la racine (prod)
-            if (php_sapi_name() !== 'cli' && isset($_SERVER['SCRIPT_NAME'])) {
-                $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-                $value = $scriptDir . '/';
+            // Auto-détection calcule le chemin relatif au DOCUMENT_ROOT.
+            // Fonctionne en sous-dossier (XAMPP: /Hebergement/maokaa/) comme à la racine (prod: /)
+            if (php_sapi_name() !== 'cli' && isset($_SERVER['DOCUMENT_ROOT'])) {
+                $docRoot   = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
+                $projRoot  = rtrim(str_replace('\\', '/', $projectRoot), '/');
+                if (strpos($projRoot, $docRoot) === 0) {
+                    $value = substr($projRoot, strlen($docRoot)) . '/';
+                }
             }
-            // En CLI, garder la valeur de .env comme fallback
+            // En CLI, garder la valeur .env comme fallback
         }
 
         // Définir la variable d'environnement et la constante
