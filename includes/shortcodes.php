@@ -130,9 +130,6 @@ function render_block_featured_products(PDO $pdo, int $limit = 6, string $blockT
 
 function render_block_products(PDO $pdo, int $limit = 12, int $category = 0, string $blockTitle = ''): string
 {
-    require_once __DIR__ . '/../app/models/Product.php';
-    $model = new Product($pdo);
-    $items = $category > 0 ? $model->getByCategory($category, $limit) : $model->getAll(true, $limit);
     ob_start();
     include __DIR__ . '/../app/views/partials/blocks/products.php';
     return ob_get_clean();

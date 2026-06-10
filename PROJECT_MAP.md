@@ -14,10 +14,14 @@
 | **Éditeur visuel** | GrapesJS | 0.21.9 |
 | **Plugins GrapesJS** | export (1.0.11), style-bg (2.0.2), custom-code (1.0.2) | — |
 | **Sanitisation HTML** | DOMPurify (client) + regex PHP (serveur) | 3.1.6 |
+| **Sélecteur images produits** | Modal bibliothèque depuis `assets/images/products/` + upload direct | — |
 | **Carousel** | Splide.js | 4.1.4 |
 | **Toolbar WYSIWYG inline** | Floating toolbar via `document.execCommand` (B/I/U/H2/H3/lien) | — |
 | **Shortcodes admin URLs** | `_wrap_vep_block_admin()` mappe chaque shortcode vers sa section admin | — |
 | **Serveur** | XAMPP (Apache + MySQL) | — |
+
+### API Interne
+- `includes/api_products.php` — Endpoint JSON pour le bloc produits interactif
 
 ### Dépendances CDN (aucun package manager)
 - Bootstrap 5.3 (CSS + JS)
@@ -78,6 +82,17 @@ do_shortcode($html, $pdo)
     dans .vep-block-wrapper avec data-vep-admin-url et
     data-vep-shortcode ; le JS inline affiche un bouton
     "Gérer dans l'admin" qui pointe vers la section correspondante.
+
+Bloc interactif [products] (depuis juin 2026):
+  → render_block_products() n'utilise plus de modèle PHP
+  → Le template client-side (products.php) charge les données
+    via includes/api_products.php (JSON)
+  → Fonctionnalités : recherche prédictive avec autocomplétion,
+    filtres par catégories (pills), tri (populaire/A-Z/nouveautés),
+    fuzzy search (coefficient Dice), skeleton loading,
+    état vide intelligent avec suggestions de produits populaires,
+    favoris localStorage, carte moderne (hover zoom, wishlist, aperçu)
+  → api_products.php supporte ?search=&category=&sort=&limit=
 ```
 
 ### 4. Inline Edit (Frontend Admin)

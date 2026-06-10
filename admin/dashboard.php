@@ -544,6 +544,7 @@ $csrfToken = generateCSRFToken();
             </div>
             <div>
                 <span style="margin-right: 20px;"><?php echo date('d/m/Y H:i'); ?></span>
+                <a href="../index.php" class="btn btn-sm btn-outline-success">Aller au site Web</a>
                 <a href="logout.php" class="btn btn-sm btn-outline-danger">Déconnexion</a>
             </div>
         </div>
