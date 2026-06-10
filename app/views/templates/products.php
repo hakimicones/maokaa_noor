@@ -53,7 +53,8 @@ if ($productId > 0) {
                         <img src="<?php echo htmlspecialchars($product['image']); ?>"
                              alt="<?php echo htmlspecialchars($product['nom']); ?>"
                              class="img-fluid rounded shadow-sm w-100"
-                             style="max-height: 400px; object-fit: contain;">
+                             style="max-height: 400px; object-fit: contain;"
+                             <?php if ($isAdmin): ?>data-product-img data-product-id="<?php echo $product['id']; ?>"<?php endif; ?>>
                     <?php else: ?>
                         <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 300px;">
                             <i class="fas fa-image text-muted fa-5x"></i>
@@ -109,9 +110,11 @@ if ($productId > 0) {
                                 <i class="fas fa-download me-2"></i>Télécharger la brochure
                             </a>
                         <?php endif; ?>
-                        <a href="<?php echo BASE_URL; ?>contact" class="btn btn-outline-primary">
-                            <i class="fas fa-envelope me-2"></i>Demander un devis
-                        </a>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quoteModal"
+                                data-quote-id="<?php echo $product['id']; ?>"
+                                data-quote-nom="<?php echo htmlspecialchars($product['nom'], ENT_QUOTES); ?>">
+                            <i class="fas fa-file-invoice me-2"></i>Demander un devis
+                        </button>
                     </div>
                 </div>
             </div>
@@ -124,6 +127,13 @@ if ($productId > 0) {
 
         <?php else: ?>
             <!-- Vue liste produits (contenu dynamique depuis body) -->
+            <?php if (function_exists('isLoggedIn') && isLoggedIn()): ?>
+                <div class="text-center mb-4">
+                    <a href="<?php echo BASE_URL; ?>admin/dashboard.php?section=products" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-cogs me-1"></i>G&eacute;rer les Produits
+                    </a>
+                </div>
+            <?php endif; ?>
             <div class="text-center mb-5">
                 <h1 class="display-6 mb-3"><?php echo htmlspecialchars($page['title'] ?? 'Produits'); ?></h1>
             </div>
@@ -138,5 +148,25 @@ if ($productId > 0) {
     <?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
+    <?php if (function_exists('isLoggedIn') && isLoggedIn()): ?>
+    <script src="<?php echo BASE_URL; ?>assets/js/inline-edit.js"></script>
+    <?php endif; ?>
+
+    <?php include __DIR__ . '/../partials/blocks/quote-form.php'; ?>
+
+    <script>
+    (function() {
+        var modalEl = document.getElementById('quoteModal');
+        if (!modalEl) return;
+        modalEl.addEventListener('show.bs.modal', function (e) {
+            var btn = e.relatedTarget;
+            if (!btn) return;
+            var id  = btn.getAttribute('data-quote-id');
+            var nom = btn.getAttribute('data-quote-nom');
+            document.getElementById('quote-produit-id').value  = id || '';
+            document.getElementById('quote-produit-nom').value = nom || '';
+        });
+    })();
+    </script>
 </body>
 </html>

@@ -434,6 +434,24 @@
 .vep-products__card-brochure:hover {
   background: #e2e8f0;
 }
+.vep-products__card-quote {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 1px solid var(--vp-primary);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--vp-primary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.vep-products__card-quote:hover {
+  background: var(--vp-primary);
+  color: #fff;
+}
 
 /* ═══════════════════════════════════════════════════
    État vide intelligent
@@ -614,6 +632,7 @@ function cardHTML(p) {
       '<p class="vep-products__card-desc">' + desc + '</p>' +
       '<div class="vep-products__card-actions">' +
         '<a href="' + url + '" class="vep-products__card-detail">Détail</a>' +
+        '<button type="button" class="vep-products__card-quote" data-quote-id="' + p.id + '" data-quote-nom="' + name + '"><i class="fas fa-file-invoice"></i> Devis</button>' +
         brochure +
       '</div>' +
     '</div>' +
@@ -830,5 +849,80 @@ clearBtn.addEventListener('click', function () {
   filterAndSort();
 });
 
+// ─── MODAL DEVIS (délégation) ───
+document.body.addEventListener('click', function (e) {
+  var btn = e.target.closest('.vep-products__card-quote, [data-bs-target="#quoteModal"]');
+  if (!btn) return;
+  var modalEl = document.getElementById('quoteModal');
+  if (!modalEl) return;
+  var id  = btn.getAttribute('data-quote-id');
+  var nom = btn.getAttribute('data-quote-nom');
+  if (id !== null)  document.getElementById('quote-produit-id').value  = id;
+  if (nom !== null) document.getElementById('quote-produit-nom').value = nom;
+  var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+  modal.show();
+});
+
+// ─── SOUMISSION FORMULAIRE DEVIS (une seule fois) ───
+if (!window._vepQuoteInit) {
+  window._vepQuoteInit = true;
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('quoteForm');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn  = document.getElementById('quote-submit');
+      var succ = document.getElementById('quote-success');
+      var err  = document.getElementById('quote-error');
+      if (!btn) return;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Envoi...';
+      succ.classList.add('d-none');
+      err.classList.add('d-none');
+      fetch(baseUrl + 'includes/api_quote.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nom:       form.nom.value,
+          email:     form.email.value,
+          telephone: form.telephone.value,
+          produit:   document.getElementById('quote-produit-nom').value,
+          quantite:  form.quantite.value,
+          message:   form.message.value
+        })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.success) {
+          succ.querySelector('span').textContent = data.message;
+          succ.classList.remove('d-none');
+          form.reset();
+          document.getElementById('quote-produit-id').value = '';
+          document.getElementById('quote-produit-nom').value = '';
+        } else {
+          err.querySelector('span').textContent = data.message;
+          err.classList.remove('d-none');
+        }
+      })
+      .catch(function () {
+        err.querySelector('span').textContent = 'Erreur de connexion.';
+        err.classList.remove('d-none');
+      })
+      .then(function () {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Envoyer la demande';
+      });
+    });
+  });
+}
+
 })();
 </script>
+
+<?php
+// Inclure le modal de devis une seule fois, quel que soit le nombre de blocs
+if (!defined('VEP_QUOTE_MODAL_INCLUDED')) {
+    define('VEP_QUOTE_MODAL_INCLUDED', true);
+    include __DIR__ . '/quote-form.php';
+}
+?>

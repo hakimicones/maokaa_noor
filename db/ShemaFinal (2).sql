@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 08 juin 2026 à 11:56
+-- Généré le : mer. 10 juin 2026 à 13:09
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -108,7 +108,8 @@ INSERT INTO `audit_logs` (`id`, `admin_id`, `action`, `details`, `ip_address`, `
 (13, 1, 'update_product', 'KT50 / KH50', '::1', '2026-06-07 15:45:48'),
 (14, 1, 'update_product', 'KT120 / KH120', '::1', '2026-06-07 15:55:44'),
 (15, 1, 'update_product', 'Echantilloneur Air Standard', '::1', '2026-06-07 15:56:18'),
-(16, 1, 'update_product', 'Balance Analytique BM500', '::1', '2026-06-07 16:22:17');
+(16, 1, 'update_product', 'Balance Analytique BM500', '::1', '2026-06-07 16:22:17'),
+(17, 1, 'update_product', 'HIAC 9703+', '::1', '2026-06-10 10:16:57');
 
 -- --------------------------------------------------------
 
@@ -124,32 +125,45 @@ CREATE TABLE `categories` (
   `display_order` int(11) DEFAULT 0,
   `active` tinyint(4) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `parent_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `categories`
 --
 
-INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `display_order`, `active`, `created_at`, `updated_at`) VALUES
-(1, 'Analyseurs d\'humidité', 'analyseurs-humidite', 'Analyseurs d\'humidité de laboratoire', 1, 1, '2026-05-23 10:29:22', NULL),
-(2, 'Appareils de mesure portables', 'appareils-mesure-portables', 'Appareils de mesure portables', 2, 1, '2026-05-23 10:29:22', NULL),
-(3, 'Armoires à filtration', 'armoires-filtration', 'Armoires à filtration', 3, 1, '2026-05-23 10:29:22', NULL),
-(4, 'Balances de laboratoire', 'balances-laboratoire', 'Balances de laboratoire', 4, 1, '2026-05-23 10:29:22', NULL),
-(5, 'Balances industrielles', 'balances-industrielles', 'Balances industrielles', 5, 1, '2026-05-23 10:29:22', NULL),
-(6, 'Centrale d\'acquisition: Akivision', 'centrale-acquisition-akivision', 'Centrale d\'acquisition: Akivision', 6, 1, '2026-05-23 10:29:22', NULL),
-(7, 'Compteur de particules dans les liquides', 'compteur-particules-liquides', 'Compteur de particules dans les liquides', 7, 1, '2026-05-23 10:29:22', NULL),
-(8, 'Compteurs de particules air', 'compteurs-particules-air', 'Compteurs de particules air', 8, 1, '2026-05-23 10:29:22', NULL),
-(9, 'Consommable pour essai de stérilité', 'consommable-essai-sterilite', 'Consommable pour essai de stérilité', 9, 1, '2026-05-23 10:29:22', NULL),
-(10, 'Débitmètre', 'debitmetres', 'Débitmètre', 10, 1, '2026-05-23 10:29:22', NULL),
-(11, 'Détecteurs de gaz', 'detecteurs-gaz', 'Détecteurs de gaz', 11, 1, '2026-05-23 10:29:22', NULL),
-(12, 'Echantilloneur d\'air', 'echantilloneur-air', 'Echantilloneur d\'air', 12, 1, '2026-05-23 10:29:22', NULL),
-(13, 'Enregistreurs', 'enregistreurs', 'Enregistreurs', 13, 1, '2026-05-23 10:29:22', NULL),
-(14, 'Filtres membrane', 'filtres-membrane', 'Filtres membrane', 14, 1, '2026-05-23 10:29:22', NULL),
-(15, 'Filtres seringue', 'filtres-seringue', 'Filtres seringue', 15, 1, '2026-05-23 10:29:22', NULL),
-(16, 'Hotte à filtration', 'hotte-filtration', 'Hotte à filtration', 16, 1, '2026-05-23 10:29:22', NULL),
-(17, 'Milieux de cultures', 'milieux-cultures', 'Milieux de cultures', 17, 1, '2026-05-23 10:29:22', NULL),
-(18, 'Pipettes électroniques', 'pipettes-electroniques', 'Pipettes électroniques', 18, 1, '2026-05-23 10:29:22', NULL);
+INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `display_order`, `active`, `created_at`, `updated_at`, `parent_id`) VALUES
+(6, 'Analyseurs d\'humidité', 'analyseurs-d-humidite', NULL, 0, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(7, 'Appareils de mesure portables', 'appareils-de-mesure-portables', NULL, 1, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(8, 'Armoires à filtration', 'armoires-a-filtration', NULL, 2, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(9, 'Balances', 'balances', NULL, 25, 0, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(10, 'Balances de laboratoire', 'balances-de-laboratoire', NULL, 3, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(11, 'Balances industrielles', 'balances-industrielles', NULL, 4, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(12, 'Compteurs de particules air', 'compteur-de-particules-air', NULL, 7, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(13, 'Débitmètre', 'debitmetre', NULL, 9, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(14, 'Détecteurs de gaz', 'detecteurs-de-gaz', NULL, 10, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(15, 'Echantilloneur d\'air', 'echantilloneur-d-air', NULL, 11, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(16, 'Enregistreurs', 'enregistreurs', NULL, 12, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(17, 'Filtration', 'filtration', NULL, 15, 0, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(18, 'Hotte à filtration', 'hottes-a-filtration', NULL, 16, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(19, 'Milieux de cultures', 'milieux-de-cultures', NULL, 17, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(20, 'Pipettes électroniques', 'pipettes', NULL, 18, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(21, 'Pompe Sterisart', 'pompe-sterisart', NULL, 20, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(22, 'Purificateur d\'eau', 'purificateur-d-eau', NULL, 21, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(23, 'Spectrophotomètres', 'spectrophotometre', NULL, 23, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(24, 'Thermomètres', 'thermometres', NULL, 24, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(25, 'Indicateurs', 'indicateurs', NULL, 0, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', 11),
+(26, 'Plate-Formes de pesée', 'plate-formes-de-pesee', NULL, 1, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', 11),
+(27, 'Accessoires', 'accessoires', NULL, 2, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', 11),
+(28, 'Consommable pour essai de stérilité', 'consommables-pour-essai-de-sterilite', NULL, 8, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(29, 'Filtres membrane', 'filtres-membranes', NULL, 13, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(30, 'Filtres seringue', 'filtres-seringues', NULL, 14, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(31, 'Rampes de filtration', 'rampes-de-filtration', NULL, 22, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(32, 'Poids étalons', 'jeu-de-poids', NULL, 19, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(36, 'Accessoires - Balances de laboratoire', 'accessoires-2', NULL, 0, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', 10),
+(37, 'Centrale d\'acquisition: Akivision', 'centrale-d-acquisition-akivision', NULL, 5, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL),
+(38, 'Compteur de particules dans les liquides', 'compteur-de-particules-dans-les-liquides', NULL, 6, 1, '2026-06-09 12:07:13', '2026-06-09 12:07:13', NULL);
 
 -- --------------------------------------------------------
 
@@ -357,10 +371,74 @@ CREATE TABLE `produits` (
 --
 
 INSERT INTO `produits` (`id`, `nom`, `slug`, `description`, `description_complete`, `image`, `brochure_pdf`, `categorie_id`, `marque_id`, `lettre_alphabet`, `caracteristiques_techniques`, `active`, `featured`, `display_order`, `created_at`, `updated_at`) VALUES
-(1, 'KT50 / KH50', 'kt50-kh50', 'Enregistreur de température et humidité', '', 'assets/images/prod_6a25922cba34a.png', '/assets/brochures/broch_6a25922cbc075.pdf', 13, 1, 'K', '', 1, 1, 0, '2026-05-23 10:29:22', '2026-06-07 15:47:14'),
-(2, 'KT120 / KH120', 'kt120-kh120', 'Enregistreur multicanal avancé', '', 'assets/images/prod_6a2594805a3d2.jpg', '/assets/brochures/broch_6a2594805a961.pdf', 13, 1, 'K', '', 1, 1, 0, '2026-05-23 10:29:22', '2026-06-07 15:55:44'),
-(3, 'Echantilloneur Air Standard', 'echantilloneur-air-standard', 'Échantilloneur d&#039;air haute performance', '', 'assets/images/prod_6a2594a259aa5.png', NULL, 12, 2, 'E', '', 1, 1, 0, '2026-05-23 10:29:22', '2026-06-07 15:56:18'),
-(4, 'Balance Analytique BM500', 'balance-analytique-bm500', 'Balance analytique ultra précise', '', 'assets/images/prod_6a259ab98bf15.jpg', NULL, 4, 1, 'B', '', 1, 1, 0, '2026-05-23 10:29:22', '2026-06-07 16:22:17');
+(14, 'MA37', 'ma', NULL, NULL, 'assets/images/products/ma37-min.jpg', 'assets/Data_MA37_W--2053-e.pdf', 6, NULL, NULL, NULL, 1, 0, 100, '2016-02-22 13:40:18', '2026-06-09 17:45:30'),
+(16, 'MA160', 'ma-160', NULL, NULL, 'assets/images/products/ma160-min.jpg', 'assets/brochuresData_MA160_W--2054-e.pdf', 6, NULL, NULL, NULL, 1, 0, 80, '2016-02-22 14:04:50', '2026-06-09 17:48:42'),
+(17, 'LMA200PM', 'sartorius-lma200pm', NULL, NULL, 'assets/images/products/ma200pm-min.jpg', 'assets/brochuresDS-LMA200PM-f.pdf', 6, NULL, NULL, NULL, 1, 0, 70, '2016-02-22 14:08:12', '2026-06-09 17:48:42'),
+(18, 'MA100C', 'ma100c', NULL, NULL, 'assets/images/products/ma100c-min.jpg', 'assets/brochuresDS-MA100C-f.pdf', 6, NULL, NULL, NULL, 1, 0, 90, '2016-02-22 14:10:42', '2026-06-09 17:48:42'),
+(19, 'CT 110', 'ct-110', NULL, NULL, 'images/products/appareils-de-mesure-portables/ct110-min.jpg', 'images/products/appareils-de-mesure-portables/FT_ct_110.pdf', 7, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:13:14', '2016-02-22 14:15:52'),
+(20, 'HQ 210', 'hq-210', NULL, NULL, 'images/products/appareils-de-mesure-portables/hq210-min.jpg', 'images/products/appareils-de-mesure-portables/FT_hq_210.pdf', 7, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:15:55', '2016-02-22 14:19:47'),
+(21, 'MP 210', 'mp-210', NULL, NULL, 'images/products/appareils-de-mesure-portables/mp210-min.jpg', 'images/products/appareils-de-mesure-portables/FT_mp_210.pdf', 7, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:19:51', '2016-02-22 14:21:59'),
+(22, 'VT 210', 'vt-210', NULL, NULL, 'images/products/appareils-de-mesure-portables/vt210-min.jpg', 'images/products/appareils-de-mesure-portables/FT_vt_210.pdf', 7, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:22:02', '2016-02-22 14:23:11'),
+(23, 'AMI 310', 'images-products-appareils-de-mesure-portables-vt210-min-jpg', NULL, NULL, 'images/products/appareils-de-mesure-portables/ami310-min.jpg', 'images/products/appareils-de-mesure-portables/FT-portable-AMI310.pdf', 7, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:23:15', '2016-02-22 14:27:35'),
+(24, 'Filtres Asura', 'filtres-asura', NULL, NULL, 'images/products/armoires-a-filtration/filtre-asura-min.jpg', 'images/products/armoires-a-filtration/brochure_Asura_FR_bd_31102013101013.pdf', 8, NULL, NULL, NULL, 1, 0, 80, '2016-02-22 14:24:48', '2016-02-22 14:26:54'),
+(25, 'Smart Armoires', 'smart-armoires', NULL, NULL, 'images/products/armoires-a-filtration/captair-smart-min.jpg', 'images/products/armoires-a-filtration/SMART_Armoires_FR.pdf', 8, NULL, NULL, NULL, 1, 0, 100, '2016-02-22 14:31:13', '2016-02-22 14:32:31'),
+(26, 'Practum', 'practum', NULL, NULL, 'images/products/balances/balances-de-laboratoire/practum-min.jpg', 'images/products/balances/balances-de-laboratoire/Data_Practum_WL-2002-f.pdf', 9, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:32:35', '2016-02-22 14:36:38'),
+(27, 'Secura', 'balances', NULL, NULL, 'images/products/balances/balances-de-laboratoire/secura-min.jpg', 'images/products/balances/balances-de-laboratoire/Data_Secura_WL-2000-f.pdf', 9, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 14:36:41', '2016-02-22 14:38:07'),
+(28, 'Poids etalons', 'accessoires', NULL, NULL, 'images/products/balances/balances-de-laboratoire/accessoires/weight-min.jpg', 'images/products/balances/balances-de-laboratoire/accessoires/BRO-Weights-f.pdf', 9, NULL, NULL, NULL, 0, 0, 0, '2016-02-22 14:38:11', '2016-03-20 10:04:16'),
+(29, 'CAWP', 'cawp', NULL, NULL, 'images/products/balances/balances-industrielles/cawp-min.jpg', 'images/products/balances/balances-industrielles/DS-CAWP-Balances_completes-f.pdf', 9, NULL, NULL, NULL, 0, 0, 0, '2016-02-22 14:40:01', '2016-02-22 14:53:46'),
+(30, 'CAWS', 'caws', NULL, NULL, 'images/products/balances/balances-industrielles/caws-min.jpg', 'images/products/balances/balances-industrielles/DS-CAWS-Balances_completes-f.pdf', 9, NULL, NULL, NULL, 0, 0, 0, '2016-02-22 14:53:49', '2016-02-22 14:55:08'),
+(31, 'MWS', 'mws', NULL, NULL, 'images/products/balances/balances-industrielles/mws-min.jpg', 'images/products/balances/balances-industrielles/DS-MWS-Balances_completes-f.pdf', 9, NULL, NULL, NULL, 0, 0, 0, '2016-02-22 14:55:12', '2016-02-22 14:56:41'),
+(32, 'SIWA', 'siwa', NULL, NULL, 'images/products/balances/balances-industrielles/signum-min.jpg', 'images/products/balances/balances-industrielles/DS-Signum-Advanced-f.pdf', 9, NULL, NULL, NULL, 0, 0, 0, '2016-02-22 14:56:45', '2016-02-22 14:59:13'),
+(33, 'MET ONE HHPC+', 'met-one-hhpc', NULL, NULL, 'images/products/compteur-de-particules-air/handheld-particle-counters-min.jpg', 'images/products/compteur-de-particules-air/Handheld-Airborne-Particle-Counter-MET-ONE-HHPC-Series-Brochure-UK-2.pdf', 12, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 15:03:10', '2016-02-22 15:07:37'),
+(34, 'MET ONE 3400', 'images-products-compteur-de-particules-air-handheld-particle-counters-min-jpg', NULL, NULL, 'images/products/compteur-de-particules-air/met-one-3400-min.jpg', 'images/products/compteur-de-particules-air/MET-ONE-3400-Airborne-Particle-Counter-Series-Brochure.pdf', 12, NULL, NULL, NULL, 1, 0, 0, '2016-02-22 15:07:41', '2016-02-23 08:30:47'),
+(35, 'DBM610', 'dbm610', NULL, NULL, 'images/products/debitmetre/dbm210-min.jpg', 'images/products/debitmetre/FT_dbm_610.pdf', 13, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:30:50', '2016-02-23 08:35:06'),
+(36, 'QRAE II', 'qrae-ii', NULL, NULL, 'images/products/detecteurs-de-gaz/qraeii-min.jpg', 'images/products/detecteurs-de-gaz/FT_qraeii.pdf', 14, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:35:12', '2016-02-23 08:36:30'),
+(37, 'ToxiRAEII-NH3 / ToxiRAEII-O2', 'toxiraeii-nh3-toxiraeii-o2', NULL, NULL, 'images/products/detecteurs-de-gaz/toxi-raeii-min.jpg', 'images/products/detecteurs-de-gaz/FT_toxi_raeii_nh3_o2.pdf', 14, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:36:36', '2016-02-23 08:38:08'),
+(38, 'AirPort MD8', 'airport-md8', NULL, NULL, 'images/products/echantilloneur-d-air/mdb-airport-min.jpg', 'images/products/echantilloneur-d-air/MD8_Airport.pdf', 15, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:38:13', '2016-02-23 08:39:19'),
+(39, 'KT 120 / KH 120', 'kt-120-kh-120', NULL, NULL, 'images/products/enregistreurs/kistock120-min.jpg', 'images/products/enregistreurs/FT_kistock_120.pdf', 16, NULL, NULL, NULL, 1, 0, 80, '2016-02-23 08:39:22', '2016-02-23 08:41:23'),
+(40, 'KT 220 / KH 220 / KTT 220', 'kt-220-kh-220-ktt-220', NULL, NULL, 'images/products/enregistreurs/kistock220-min.jpg', 'images/products/enregistreurs/FT_kistock_220.pdf', 16, NULL, NULL, NULL, 1, 0, 60, '2016-02-23 08:41:26', '2016-02-23 08:42:25'),
+(41, 'KT50 / KH50', 'kt50-kh50', NULL, NULL, 'images/products/enregistreurs/kt50kh50-min.jpg', 'images/products/enregistreurs/FT_kt_50_kh_50.pdf', 16, NULL, NULL, NULL, 1, 0, 100, '2016-02-23 08:42:28', '2016-02-23 08:43:31'),
+(42, 'Minisart Syringe Filters', 'minisart-syringe-filters', NULL, NULL, 'images/products/filtration/minisart-min.jpg', 'images/products/filtration/Broch_Minisart-Product-Overview_SL-0012-pièce-jointe.pdf', 30, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:43:34', '2016-03-20 13:52:02'),
+(43, 'Laboratory Filtration', 'laboratory-filtration', NULL, NULL, 'images/products/filtration/lab-filtration-min.jpg', 'images/products/filtration/Cata_Lab-Filtration_SLU0006-e.pdf', 17, NULL, NULL, NULL, 0, 0, 0, '2016-02-23 08:48:57', '2016-02-23 08:50:49'),
+(44, 'Microfilters', 'microfilters', NULL, NULL, 'images/products/filtration/membranes-min.jpg', 'images/products/filtration/membranes.pdf', 29, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:50:52', '2016-03-20 13:51:41'),
+(45, 'Rampe 6 postes 500ml', 'rampe-6-postes-500ml', NULL, NULL, 'images/products/filtration/rampe-6postes-min.jpg', 'images/products/filtration/rampe-6poste-500ml.pdf', 31, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:52:24', '2016-03-20 13:52:53'),
+(46, 'Rampe de filtration 3 postes 500ml', 'rampe-de-filtration-combisart-3-postes-500ml', NULL, NULL, 'images/products/filtration/rampe-3postes-min.jpg', 'images/products/filtration/Rampe-de-filtration-Combisart-3POSTES-500ml.pdf', 31, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 08:55:29', '2016-03-20 13:52:43'),
+(47, 'Filtre Asura', 'filtre-asura', NULL, NULL, 'images/products/hottes-a-filtration/asura-min.jpg', 'images/products/hottes-a-filtration/brochure_Asura_FR_bd_31102013101013.pdf', 18, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:01:00', '2016-02-23 09:02:53'),
+(48, 'Captair Smart', 'captair-smart', NULL, NULL, 'images/products/hottes-a-filtration/amrt-hottes-min.jpg', 'images/products/SMART_hottes_FR.pdf', 18, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:02:56', '2016-02-23 09:04:05'),
+(49, 'Contrôle microbiologique', 'controle-microbiologique', NULL, NULL, 'images/products/milieux-de-cultures/microbio-min.jpg', 'images/products/milieux-de-cultures/Broch_Microbiological_Testing_SM-4017-f[1].pdf', 19, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:04:08', '2016-02-23 09:07:07'),
+(50, 'Liquid Handling', 'liquid-handling', NULL, NULL, 'images/products/pipettes/lh-min.jpg', 'images/products/pipettes/Cata_Liquid-Handling_SUL0002-e.pdf', 20, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:07:10', '2016-02-23 09:15:10'),
+(51, 'Universal Pump', 'universal-pump', NULL, NULL, 'images/products/pompe-sterisart/steristart-min.jpg', 'images/products/pompe-sterisart/Broch_New-Sterisart-Universal-Pump_SLD1003-e.pdf', 21, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:15:13', '2016-02-23 09:16:43'),
+(52, 'Water Purification Systems', 'water-purification-systems', NULL, NULL, 'images/products/purificateur-d-eau/arium-min.jpg', 'images/products/purificateur-d-eau/Broch_arium_Water_Purification_Systems_SL-1532-e.pdf', 22, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:16:47', '2016-02-23 09:18:07'),
+(53, 'UVILINE 8100', 'uviline-8100', NULL, NULL, 'images/products/spectrophotometre/uviline8100-min.jpg', 'images/products/spectrophotometre/Fiche-Uviline-8100.pdf', 23, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 09:18:10', '2016-02-23 10:08:27'),
+(54, 'UVILINE 9100 & 9400', 'fiche-uviline-9100-9400-pdf', NULL, NULL, 'images/products/spectrophotometre/uviline-9100-9400-min.jpg', 'images/products/spectrophotometre/Fiche-Uviline-9100-9400.pdf', 23, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 10:08:30', '2016-02-23 10:10:01'),
+(55, 'KIRAY 100', 'kiray-100', NULL, NULL, 'images/products/thermometres/kiray100-min.jpg', 'images/products/thermometres/FT_kiray_100.pdf', 24, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 10:10:03', '2016-02-23 10:12:23'),
+(56, 'KIRAY 200', 'kiray-200', NULL, NULL, 'images/products/thermometres/kiray200-min.jpg', 'images/products/thermometres/FT_kiray_200.pdf', 24, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 10:12:26', '2016-02-23 10:18:23'),
+(57, 'KIRAY 300', 'kiray-300', NULL, NULL, 'images/products/thermometres/kiray300-min.jpg', 'images/products/thermometres/FT_kiray_300.pdf', 24, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 10:18:26', '2016-02-23 10:28:35'),
+(58, 'TK 110 – TK 112', 'tk-110-tk-112', NULL, NULL, 'images/products/thermometres/tk110-tk112-min.jpg', 'images/products/thermometres/FT_tk_110_tk_112.pdf', 24, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 10:28:38', '2016-02-23 10:29:50'),
+(59, 'TR 110 – TR 112', 'tr-110-tr-112', NULL, NULL, 'images/products/thermometres/tr110-tr112-min.jpg', 'images/products/thermometres/FT_tr_110_tr_112', 24, NULL, NULL, NULL, 1, 0, 0, '2016-02-23 10:29:53', '2016-02-23 10:30:51'),
+(60, 'Printer YDP 20', 'printer-ydp-20', NULL, NULL, 'images/products/printer-ydp20-min.jpg', NULL, 36, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 10:11:42', '2016-03-23 09:39:38'),
+(61, 'Printer YDP 40', 'printer-ydp-40', NULL, NULL, 'images/products/printer-ydp40-min.jpg', NULL, 36, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 10:14:01', '2016-03-23 09:39:06'),
+(62, 'Midrics', 'midrics', NULL, NULL, 'images/products/midrics-min.jpg', 'images/products/midrics.pdf', 25, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 13:57:04', '2016-03-20 14:02:50'),
+(63, 'Combic 1', 'combic-1', NULL, NULL, 'images/products/combic-1-min.jpg', 'images/products/combic-1.pdf', 25, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 13:59:16', '2016-03-20 14:03:15'),
+(64, 'Combic 2', 'combic-2', NULL, NULL, 'images/products/combic-2-min.jpg', 'images/products/combic-2.pdf', 25, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:00:29', '2016-03-20 14:01:24'),
+(65, 'Combic 3', 'combic-3', NULL, NULL, 'images/products/combic-3-min.jpg', 'brochures/products/combic-3.pdf', 25, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:01:26', '2026-06-10 08:21:37'),
+(66, 'Maxxis 5', 'maxxis-5', NULL, NULL, 'images/products/maxxis5-min.jpg', 'images/products/maxxis5.pdf', 25, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:03:26', '2016-03-20 14:04:20'),
+(67, 'Plate-forme IS', 'plate-forme-is', NULL, NULL, 'images/products/plate-forme-is-min.jpg', 'images/products/plate-forme-is.pdf', 26, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:04:31', '2016-03-30 09:02:47'),
+(68, 'Plate-forme IF', 'plate-forme-if', NULL, NULL, 'images/products/plate-forme-if-min.jpg', 'images/products/plate-forme-if.pdf', 26, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:05:48', '2016-03-20 14:24:55'),
+(69, 'Pese-Palette IU', 'pese-palette-iu', NULL, NULL, 'images/products/pese-palette-iu-min.jpg', NULL, 26, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:26:04', '2016-03-20 14:32:42'),
+(70, 'YDP04', 'ydp04', NULL, NULL, 'images/products/ydp04-min.jpg', NULL, 27, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:33:13', '2016-03-30 09:02:29'),
+(71, 'STERISART NF', 'sterisart', NULL, NULL, 'images/products/sterisart-nf-min.jpg', NULL, 28, NULL, NULL, NULL, 1, 0, 0, '2016-03-20 14:34:58', '2016-03-20 14:36:05'),
+(72, 'Poids fil', 'poids-fil', NULL, NULL, 'images/products/poids-fil-min.jpg', NULL, 32, NULL, NULL, NULL, 1, 0, 0, '2016-03-21 11:03:24', '2016-03-21 11:04:30'),
+(73, 'Poids à gorge de préhension', 'poids-a-gorge-de-prehension', NULL, NULL, 'images/products/poids-a--gorge-min.jpg', NULL, 32, NULL, NULL, NULL, 1, 0, 0, '2016-03-21 11:04:39', '2016-03-21 11:05:15'),
+(74, 'Poids lamelle', 'poids-lamelle', NULL, NULL, 'images/products/poids-lamelle-min.jpg', NULL, 32, NULL, NULL, NULL, 1, 0, 0, '2016-03-21 11:05:33', '2016-03-21 11:06:02'),
+(75, 'Poids cylindriques', 'poids-cylindriques', NULL, NULL, 'images/products/poids-cylindriques-min.jpg', NULL, 32, NULL, NULL, NULL, 1, 0, 0, '2016-03-21 11:06:04', '2016-03-21 11:06:36'),
+(76, 'Jeux de poids', 'jeux-de-poids', NULL, NULL, 'images/products/jeux-de-poids-min.jpg', NULL, 32, NULL, NULL, NULL, 1, 0, 0, '2016-03-21 11:06:42', '2016-03-21 11:07:29'),
+(77, 'Accessoires', 'accessoires-2', NULL, NULL, NULL, NULL, 10, NULL, NULL, NULL, 0, 0, 0, '2016-03-23 08:48:22', '2016-03-23 09:37:13'),
+(78, 'Cubis', 'cubiqs', NULL, NULL, 'images/products/cubis-min.jpg', 'images/products/cubis.pdf', 10, NULL, NULL, NULL, 1, 0, 0, '2016-03-23 10:04:33', '2016-03-23 10:05:33'),
+(79, 'Quintix', 'quintix', NULL, NULL, 'images/products/quintix-min.jpg', 'images/products/quintix.pdf', 10, NULL, NULL, NULL, 1, 0, 0, '2016-03-23 10:06:50', '2016-03-23 10:07:49'),
+(80, 'Akivision', 'akivision', NULL, NULL, 'images/products/akivision-min.jpg', 'images/products/ft-akivision.pdf', 37, NULL, NULL, NULL, 1, 0, 0, '2016-03-24 14:44:04', '2016-03-24 14:45:09'),
+(81, 'UVILINE 9300 & 9600', 'uviline-9300-9600', NULL, NULL, 'images/products/uviline-min.jpg', 'images/products/uviline.pdf', 23, NULL, NULL, NULL, 1, 0, 0, '2016-03-30 09:10:02', '2016-03-30 09:10:52'),
+(82, 'HIAC 9703+', 'compteur-de-particules-dans-les-liquides', '', '', '/Hebergement/maokaa/includes/../assets/images/products/hiac_9703.jpg', '/Hebergement/maokaa/includes/../assets/brochures/hiac9703.pdf', 38, NULL, NULL, '', 1, 0, 0, '2016-06-25 09:55:01', '2026-06-10 10:16:57');
 
 -- --------------------------------------------------------
 
@@ -376,14 +454,6 @@ CREATE TABLE `produit_images` (
   `display_order` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `produit_images`
---
-
-INSERT INTO `produit_images` (`id`, `produit_id`, `image`, `alt_text`, `display_order`, `created_at`) VALUES
-(1, 4, 'assets\\images\\produits\\1.jpg', NULL, 0, '2026-06-07 15:35:25'),
-(2, 2, 'assets\\images\\produits\\2.jpg', NULL, 0, '2026-06-07 15:35:25');
 
 -- --------------------------------------------------------
 
@@ -580,13 +650,13 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT pour la table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT pour la table `contacts`
@@ -604,7 +674,7 @@ ALTER TABLE `content`
 -- AUTO_INCREMENT pour la table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `marques`
@@ -634,7 +704,7 @@ ALTER TABLE `partenaires`
 -- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT pour la table `produit_images`

@@ -22,6 +22,8 @@
 
 ### API Interne
 - `includes/api_products.php` — Endpoint JSON pour le bloc produits interactif
+- `includes/api_quote.php` — Endpoint JSON pour soumettre une demande de devis (POST, public)
+- `includes/inline_edit_product.php` — Endpoint AJAX pour l'édition inline des produits (POST, admin)
 
 ### Dépendances CDN (aucun package manager)
 - Bootstrap 5.3 (CSS + JS)
@@ -93,6 +95,43 @@ Bloc interactif [products] (depuis juin 2026):
     état vide intelligent avec suggestions de produits populaires,
     favoris localStorage, carte moderne (hover zoom, wishlist, aperçu)
   → api_products.php supporte ?search=&category=&sort=&limit=
+  → Chaque carte produit a un bouton "Devis" qui ouvre la modale quoteModal
+    (composant partagé app/views/partials/blocks/quote-form.php)
+  → La soumission POST est envoyée à includes/api_quote.php (JSON)
+    qui crée une entrée dans la table contacts avec sujet "[Demande de devis]"
+```
+
+### Bloc contact-form
+```
+[contact_form]
+  → render_block_contact_form() gère POST + validation
+  → Modèle Contact.php (table contacts : nom, email, telephone, sujet, message)
+```
+
+### Demande de devis
+```
+Bouton "Demander un devis" sur la page détail produit
+  → Ouvre la modale Bootstrap #quoteModal (quote-form.php)
+  → Soumission AJAX → includes/api_quote.php → table contacts (sujet: [Demande de devis] ...)
+
+Bouton "Gérer les Produits" visible sur la page produits quand isLoggedIn()
+  → Lien vers admin/dashboard.php?section=products
+
+Bouton "Modifier ce produit" visible sur la vue détail produit (admin)
+  → Lien vers admin/products/edit.php?id=N
+
+Champs produit inline-editables (vue détail, admin uniquement) :
+  → nom, description, description_complete, caracteristiques_techniques, image
+  → Attributs data-inline-field + data-product-id sur les éléments HTML
+  → Texts : initProductField() dans inline-edit.js → saveProductField()
+    → POST JSON → includes/inline_edit_product.php
+    → Vérifie CSRF + whitelist des champs
+    → Product::update() → UPDATE produits SET ... WHERE id = ?
+    → logAudit() journalise chaque modification
+  → Image : data-product-img + data-product-id
+    → initProductImage() → openProductImagePicker() → sélecteur images
+    → Sauvegarde via saveProductField(pid, 'image', src)
+    → Même modal que le body (list_images.php) mais sauvegarde directe champ image
 ```
 
 ### 4. Inline Edit (Frontend Admin)

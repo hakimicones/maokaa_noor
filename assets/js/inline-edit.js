@@ -415,4 +415,158 @@
             .replace(/>/g, '&gt;');
     }
 
+    // ── Champs produit inline ─────────────────────────────────────────────
+    function initProductField(el, productId) {
+        var field = el.getAttribute('data-inline-field');
+        if (!field) return;
+
+        el.setAttribute('contenteditable', 'true');
+        el.setAttribute('spellcheck', 'true');
+        el.classList.add('ie-field');
+
+        var originalHTML = el.innerHTML;
+
+        el.addEventListener('focus', function () {
+            this.classList.add('ie-editing');
+            showWysiwygToolbar(this);
+        });
+
+        el.addEventListener('mousedown', function () { cancelHideWysiwyg(); });
+
+        el.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.blur(); }
+            if (e.key === 'Escape') { this.innerHTML = originalHTML; this.blur(); }
+        });
+
+        el.addEventListener('blur', function () {
+            var self = this;
+            self.classList.remove('ie-editing');
+            hideWysiwygToolbar();
+            var current = self.innerHTML;
+            if (current === originalHTML) return;
+            pulse(self, 'ie-saving');
+            saveProductField(productId, field, current, function (ok, data) {
+                self.classList.remove('ie-saving');
+                if (ok) {
+                    originalHTML = current;
+                    pulse(self, 'ie-success');
+                    showToast(data.message, 'success');
+                } else {
+                    self.innerHTML = originalHTML;
+                    pulse(self, 'ie-error');
+                    showToast(data.message || 'Erreur', 'error');
+                }
+            });
+        });
+    }
+
+    function saveProductField(productId, field, value, callback) {
+        fetch(baseUrl + 'includes/inline_edit_product.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                csrf_token: csrfToken,
+                product_id: productId,
+                field:      field,
+                value:      value
+            })
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) { callback(data.success, data); })
+        .catch(function () { callback(false, { message: 'Erreur de connexion' }); });
+    }
+
+    // ── Image produit inline ──────────────────────────────────────────────
+    function initProductImage(img, productId) {
+        img.classList.add('ie-img');
+
+        var wrap = document.createElement('span');
+        wrap.className = 'ie-img-wrap';
+        img.parentNode.insertBefore(wrap, img);
+        wrap.appendChild(img);
+
+        var overlay = document.createElement('span');
+        overlay.className = 'ie-img-overlay';
+        overlay.innerHTML = '<i class="fas fa-camera"></i>';
+        wrap.appendChild(overlay);
+
+        overlay.addEventListener('click', function (e) {
+            e.stopPropagation();
+            openProductImagePicker(img, productId);
+        });
+
+        img.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openProductImagePicker(img, productId);
+        });
+    }
+
+    function openProductImagePicker(img, productId) {
+        fetch(baseUrl + 'includes/list_images.php')
+            .then(function (r) { return r.json(); })
+            .then(function (data) { showProductImagePickerModal(img, data.images || [], productId); })
+            .catch(function () { showToast('Impossible de charger les images', 'error'); });
+    }
+
+    function showProductImagePickerModal(img, images, productId) {
+        var existing = document.getElementById('ie-img-picker');
+        if (existing) existing.remove();
+
+        var grid = images.map(function (src) {
+            return '<button class="ie-img-picker-item" data-src="' + escapeAttr(src) + '" type="button">' +
+                   '<img src="' + escapeAttr(src) + '" alt="" loading="lazy"></button>';
+        }).join('');
+
+        var picker = document.createElement('div');
+        picker.id = 'ie-img-picker';
+        picker.innerHTML =
+            '<div class="ie-img-picker-dialog">' +
+                '<div class="ie-img-picker-header">' +
+                    '<span><i class="fas fa-images"></i> Choisir une image produit</span>' +
+                    '<button class="ie-img-picker-close" type="button" aria-label="Fermer">&times;</button>' +
+                '</div>' +
+                '<div class="ie-img-picker-grid">' +
+                    (grid || '<p class="ie-img-picker-empty">Aucune image dans assets/images/</p>') +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(picker);
+
+        picker.querySelector('.ie-img-picker-close').addEventListener('click', function () { picker.remove(); });
+        picker.addEventListener('click', function (e) { if (e.target === picker) picker.remove(); });
+
+        picker.querySelectorAll('.ie-img-picker-item').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var src = this.getAttribute('data-src');
+                picker.remove();
+                pulse(img, 'ie-saving');
+                saveProductField(productId, 'image', src, function (ok, data) {
+                    img.classList.remove('ie-saving');
+                    if (ok) {
+                        img.src = src;
+                        pulse(img, 'ie-success');
+                        showToast(data.message, 'success');
+                    } else {
+                        pulse(img, 'ie-error');
+                        showToast(data.message || 'Erreur', 'error');
+                    }
+                });
+            });
+        });
+    }
+
+    // Initialiser les champs produit inline (en dehors du body)
+    document.querySelectorAll('[data-inline-field][data-product-id]').forEach(function (el) {
+        if (el.closest('.ie-body')) return;
+        var pid = parseInt(el.getAttribute('data-product-id'), 10);
+        if (pid > 0) initProductField(el, pid);
+    });
+
+    // Initialiser les images produit inline
+    document.querySelectorAll('[data-product-img][data-product-id]').forEach(function (img) {
+        var pid = parseInt(img.getAttribute('data-product-id'), 10);
+        if (pid > 0) initProductImage(img, pid);
+    });
+
 })();
