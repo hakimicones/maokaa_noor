@@ -314,7 +314,7 @@
             .then(r => r.json())
             .then(data => {
                 if (data.html) {
-                    component.setContent(data.html);
+                    component.components(data.html);
                     if (data.html.includes('splide')) {
                         setTimeout(initSplideInCanvas, 900);
                     }

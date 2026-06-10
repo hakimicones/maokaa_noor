@@ -12,7 +12,7 @@
         <div class="brand-logo-col">
           <?php if (!empty($brand['logo'])): ?>
             <div class="brand-logo-box">
-              <img src="<?php echo htmlspecialchars($brand['logo']); ?>"
+              <img src="<?php echo htmlspecialchars(BASE_URL . $brand['logo']); ?>"
                    alt="<?php echo htmlspecialchars($brand['name']); ?>"
                    style="max-height:200px; width:auto; max-width:100%;">
             </div>

@@ -13,7 +13,7 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm border-0">
                         <?php if (!empty($partner['logo'])): ?>
-                            <img src="<?php echo htmlspecialchars($partner['logo']); ?>"
+                            <img src="<?php echo htmlspecialchars(BASE_URL . $partner['logo']); ?>"
                                  alt="<?php echo htmlspecialchars($partner['name']); ?>"
                                  class="card-img-top" style="height:200px;object-fit:cover;">
                         <?php endif; ?>
