@@ -40,6 +40,14 @@ function loadEnv($path = null) {
             $value = $projectRoot . $value;
         } elseif ($key === 'MAX_IMAGE_SIZE' || $key === 'MAX_PDF_SIZE') {
             $value = (int)$value;
+        } elseif ($key === 'BASE_URL') {
+            // Auto-détection : ignore .env pour les requêtes web, fonctionne dans
+            // n'importe quel sous-répertoire (local XAMPP) comme à la racine (prod)
+            if (php_sapi_name() !== 'cli' && isset($_SERVER['SCRIPT_NAME'])) {
+                $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+                $value = $scriptDir . '/';
+            }
+            // En CLI, garder la valeur de .env comme fallback
         }
 
         // Définir la variable d'environnement et la constante

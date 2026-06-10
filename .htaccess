@@ -2,7 +2,9 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /Hebergement/maokaa/
+    
+    # NOTE: Pas de RewriteBase — la cible relative index.php fonctionne 
+    # dans n'importe quel sous-répertoire (local XAMPP) comme à la racine (prod)
     
     # Don't rewrite real files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
