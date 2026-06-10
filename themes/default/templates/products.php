@@ -89,25 +89,23 @@ if ($productId > 0) {
                     <?php if (!empty($product['categorie_name'])): ?>
                     <p class="text-primary fw-bold mb-1 text-uppercase small"><?php echo htmlspecialchars($product['categorie_name']); ?></p>
                     <?php endif; ?>
-                    <h1 class="h2 fw-bold mb-2"<?php if ($isAdmin): ?> data-inline-field="nom" data-product-id="<?php echo $product['id']; ?>"<?php endif; ?>><?php echo $isAdmin ? $product['nom'] : htmlspecialchars($product['nom']); ?></h1>
+                    <h1 class="h2 fw-bold mb-2"<?php if ($isAdmin): ?> data-inline-field="nom" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Nom du produit"<?php endif; ?>><?php echo $isAdmin ? $product['nom'] : htmlspecialchars($product['nom']); ?></h1>
                     <?php if (!empty($product['marque_name'])): ?>
                     <p class="text-muted mb-3">Marque : <strong><?php echo htmlspecialchars($product['marque_name']); ?></strong></p>
                     <?php endif; ?>
-                    <?php if (!empty($product['description'])): ?>
-                    <p class="lead mb-4"<?php if ($isAdmin): ?> data-inline-field="description" data-product-id="<?php echo $product['id']; ?>"<?php endif; ?>><?php echo $isAdmin ? $product['description'] : nl2br(htmlspecialchars($product['description'])); ?></p>
+                    <?php if (!empty($product['description']) || $isAdmin): ?>
+                    <p class="lead mb-4"<?php if ($isAdmin): ?> data-inline-field="description" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Ajouter une description courte..."<?php endif; ?>><?php echo $isAdmin ? $product['description'] : nl2br(htmlspecialchars($product['description'])); ?></p>
                     <?php endif; ?>
-                    <?php if (!empty($product['description_complete'])): ?>
+                    <?php if (!empty($product['description_complete']) || $isAdmin): ?>
                     <div class="mb-4">
                         <h5 class="fw-bold">Description détaillée</h5>
-                        <p<?php if ($isAdmin): ?> data-inline-field="description_complete" data-product-id="<?php echo $product['id']; ?>"<?php endif; ?>><?php echo $isAdmin ? $product['description_complete'] : nl2br(htmlspecialchars($product['description_complete'])); ?></p>
+                        <p<?php if ($isAdmin): ?> data-inline-field="description_complete" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Ajouter une description détaillée..."<?php endif; ?>><?php echo $isAdmin ? $product['description_complete'] : nl2br(htmlspecialchars($product['description_complete'])); ?></p>
                     </div>
                     <?php endif; ?>
-                    <?php if (!empty($product['caracteristiques_techniques'])): ?>
+                    <?php if (!empty($product['caracteristiques_techniques']) || $isAdmin): ?>
                     <div class="mb-4">
                         <h5 class="fw-bold">Caractéristiques techniques</h5>
-                        <div class="border rounded p-3 bg-light"<?php if ($isAdmin): ?> data-inline-field="caracteristiques_techniques" data-product-id="<?php echo $product['id']; ?>"<?php endif; ?>>
-                            <?php echo $isAdmin ? $product['caracteristiques_techniques'] : nl2br(htmlspecialchars($product['caracteristiques_techniques'])); ?>
-                        </div>
+                        <div class="border rounded p-3 bg-light"<?php if ($isAdmin): ?> data-inline-field="caracteristiques_techniques" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Ajouter les caractéristiques techniques..."<?php endif; ?>><?php echo $isAdmin ? $product['caracteristiques_techniques'] : nl2br(htmlspecialchars($product['caracteristiques_techniques'])); ?></div>
                     </div>
                     <?php endif; ?>
                     <div class="d-flex gap-3 mt-4 flex-wrap">

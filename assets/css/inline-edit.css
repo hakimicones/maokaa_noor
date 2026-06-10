@@ -70,6 +70,13 @@ body:has(#ie-toolbar) { padding-top: 36px !important; }
     100% { background-color: transparent; }
 }
 
+/* Champs produit vides : texte indicatif cliquable */
+[data-inline-field][data-product-id].ie-field:empty::before {
+    content: attr(data-ie-placeholder);
+    color: #94a3b8;
+    font-style: italic;
+}
+
 /* ──────────────────────────────────────────
    Blocs dynamiques (VEP) — non éditables
    mais avec lien vers l'admin
@@ -474,6 +481,10 @@ body:has(#ie-toolbar) { padding-top: 36px !important; }
 }
 #ie-wysiwyg-toolbar button:active {
     background: #475569;
+}
+
+#ie-wysiwyg-toolbar button[data-cmd="ai-rewrite"] i {
+    color: #a5b4fc;
 }
 
 .ie-wysiwyg-sep {

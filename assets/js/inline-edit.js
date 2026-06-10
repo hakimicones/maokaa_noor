@@ -54,7 +54,9 @@
             '<button type="button" data-cmd="formatBlock" data-arg="p" title="Paragraphe"><i class="fas fa-paragraph"></i></button>' +
             '<span class="ie-wysiwyg-sep"></span>' +
             '<button type="button" data-cmd="createLink" title="Insérer un lien"><i class="fas fa-link"></i></button>' +
-            '<button type="button" data-cmd="unlink" title="Supprimer le lien"><i class="fas fa-unlink"></i></button>';
+            '<button type="button" data-cmd="unlink" title="Supprimer le lien"><i class="fas fa-unlink"></i></button>' +
+            '<span class="ie-wysiwyg-sep"></span>' +
+            '<button type="button" data-cmd="ai-rewrite" title="Assistant IA"><i class="fas fa-magic"></i> IA</button>';
 
         wysiwygToolbar.addEventListener('mousedown', function (e) {
             e.preventDefault();
@@ -62,6 +64,12 @@
             if (!btn) return;
             var cmd = btn.getAttribute('data-cmd');
             var arg = btn.getAttribute('data-arg') || null;
+
+            if (cmd === 'ai-rewrite') {
+                openFieldAiModal(wysiwygTarget);
+                return;
+            }
+
             if (cmd === 'createLink') {
                 var url = prompt('URL du lien :', 'https://');
                 if (url) document.execCommand(cmd, false, url);
@@ -367,11 +375,73 @@
         }
 
         btn.addEventListener('click', function () {
-            openAiModal(bodyEl);
+            openAiModal({
+                getHtml: function () { return getCleanBodyHtml(bodyEl); },
+                onApply: function (html, done) {
+                    saveField('body', html, function (ok, data) {
+                        if (ok) {
+                            done(true);
+                            window.location.reload();
+                        } else {
+                            done(false, data.message);
+                        }
+                    });
+                }
+            });
         });
     }
 
-    function openAiModal(bodyEl) {
+    // ── Assistant IA (régénération d'un champ inline isolé) ────────────────
+    // Utilisé par le bouton "IA" de la barre WYSIWYG flottante, pour les
+    // paragraphes/titres du corps de page et pour les champs produit
+    // (nom, description, description_complete, caracteristiques_techniques).
+    function openFieldAiModal(target) {
+        if (!target) return;
+
+        openAiModal({
+            getHtml: function () { return target.innerHTML; },
+            onApply: function (html, done) {
+                target.innerHTML = unwrapIfSameTag(html, target.tagName);
+                pulse(target, 'ie-saving');
+
+                var productId = target.getAttribute('data-product-id');
+                var save = productId
+                    ? function (cb) {
+                        saveProductField(parseInt(productId, 10), target.getAttribute('data-inline-field'), target.innerHTML, cb);
+                    }
+                    : function (cb) { serializeAndSaveBody(bodyEl, cb); };
+
+                save(function (ok, data) {
+                    target.classList.remove('ie-saving');
+                    if (ok) {
+                        pulse(target, 'ie-success');
+                        showToast(data.message, 'success');
+                        done(true);
+                    } else {
+                        pulse(target, 'ie-error');
+                        showToast(data.message || 'Erreur inconnue', 'error');
+                        done(false, data.message);
+                    }
+                });
+            }
+        });
+    }
+
+    // Si le HTML retourné par l'IA est un unique élément racine de même type
+    // que le champ édité (ex: <h2>...</h2> pour un titre h2), on ne garde que
+    // son contenu pour éviter une imbrication (<h2><h2>...</h2></h2>).
+    function unwrapIfSameTag(html, tagName) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html.trim();
+        if (tmp.childNodes.length === 1 &&
+            tmp.children.length === 1 &&
+            tmp.children[0].tagName === tagName.toUpperCase()) {
+            return tmp.children[0].innerHTML;
+        }
+        return html;
+    }
+
+    function openAiModal(options) {
         var existing = document.getElementById('ie-ai-modal');
         if (existing) existing.remove();
 
@@ -436,7 +506,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     csrf_token: csrfToken,
-                    html: getCleanBodyHtml(bodyEl),
+                    html: options.getHtml(),
                     instruction: instruction
                 })
             })
@@ -467,14 +537,13 @@
             generateBtn.disabled = true;
             setStatus('Enregistrement…', 'loading');
 
-            saveField('body', generatedHtml, function (ok, data) {
+            options.onApply(generatedHtml, function (ok, errorMessage) {
                 if (ok) {
-                    setStatus('Enregistré. Rechargement…', 'success');
-                    window.location.reload();
+                    close();
                 } else {
                     applyBtn.disabled = false;
                     generateBtn.disabled = false;
-                    setStatus(data.message || 'Erreur lors de l\'enregistrement', 'error');
+                    setStatus(errorMessage || 'Erreur lors de l\'enregistrement', 'error');
                 }
             });
         });

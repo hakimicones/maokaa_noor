@@ -125,6 +125,11 @@ Bouton "Modifier ce produit" visible sur la vue détail produit (admin)
 Champs produit inline-editables (vue détail, admin uniquement) :
   → nom, description, description_complete, caracteristiques_techniques, image
   → Attributs data-inline-field + data-product-id sur les éléments HTML
+  → Pour l'admin, les blocs description / description_complete /
+    caracteristiques_techniques sont toujours rendus (même si la valeur DB
+    est NULL/vide), avec un texte indicatif (attribut data-ie-placeholder +
+    CSS .ie-field:empty::before) afin de pouvoir y ajouter du contenu via
+    l'édition inline. Côté visiteur, ces blocs restent masqués si vides.
   → Texts : initProductField() dans inline-edit.js → saveProductField()
     → POST JSON → includes/inline_edit_product.php
     → Vérifie CSRF + whitelist des champs
@@ -234,8 +239,20 @@ Flux commun :
   Aperçu :
     - GrapesJS : injecté dans le canvas via shortcodesToBlocks() + setComponents()
       → bouton "Enregistrer" existant persiste (pipeline inchangé)
-    - Inline : aperçu dans la modale, bouton "Appliquer et enregistrer"
-      → saveField('body', html) → inline_edit.php → reload de la page
+    - Inline (corps de page entier) : aperçu dans la modale, bouton
+      "Appliquer et enregistrer" → saveField('body', html) → inline_edit.php
+      → reload de la page
+
+Assistant IA par champ (bouton "IA" de la barre WYSIWYG flottante) :
+  → Disponible sur chaque paragraphe/titre du corps de page (initInlineText)
+    et sur chaque champ produit éditable (initProductField : nom, description,
+    description_complete, caracteristiques_techniques)
+  → openFieldAiModal(target) : même modale/endpoint que ci-dessus, mais
+    html = target.innerHTML (le champ ciblé uniquement)
+  → Application : target.innerHTML = résultat (dépaqueté si l'IA renvoie le
+    même tag racine via unwrapIfSameTag()), puis sauvegarde directe
+    (serializeAndSaveBody() pour un champ du body, saveProductField() pour un
+    champ produit) — sans rechargement de page
 ```
 
 ---
