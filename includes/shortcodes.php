@@ -59,6 +59,7 @@ function _wrap_vep_block_admin(string $type, string $shortcode, string $html): s
         'featured_products' => 'admin/dashboard.php?section=products',
         'products'          => 'admin/dashboard.php?section=products',
         'news'              => 'admin/dashboard.php?section=news',
+        'brands_carousel'   => 'admin/dashboard.php?section=brands',
         'brands'            => 'admin/dashboard.php?section=brands',
         'partners'          => 'admin/dashboard.php?section=partners',
         'contact_form'      => 'admin/messages/view.php',
@@ -102,6 +103,7 @@ function render_shortcode(string $tag, array $atts, PDO $pdo): string
         case 'products':          return render_block_products($pdo, $limit, $category, $title);
         case 'featured_products': return render_block_featured_products($pdo, $limit, $title);
         case 'news':              return render_block_news($pdo, $limit, $title);
+        case 'brands_carousel': return render_block_brands_carousel($pdo, $title);
         case 'brands':            return render_block_brands($pdo, $title);
         case 'partners':          return render_block_partners($pdo, $title);
         case 'contact_form':      return render_block_contact_form($pdo, $title);
@@ -157,6 +159,24 @@ function render_block_brands(PDO $pdo, string $blockTitle = ''): string
     ob_start();
     include __DIR__ . '/../app/views/partials/blocks/brands.php';
     return ob_get_clean();
+}
+
+function render_block_brands_carousel(PDO $pdo, string $blockTitle = ''): string
+{
+    static $assetsLoaded = false;
+    $assets = '';
+    if (!$assetsLoaded) {
+        $assetsLoaded = true;
+        $assets = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">'
+                . '<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>';
+    }
+
+    require_once __DIR__ . '/../app/models/Brand.php';
+    $model = new Brand($pdo);
+    $items = $model->getAll();
+    ob_start();
+    include __DIR__ . '/../app/views/partials/blocks/brands-carousel.php';
+    return $assets . ob_get_clean();
 }
 
 function render_block_partners(PDO $pdo, string $blockTitle = ''): string
@@ -231,15 +251,15 @@ function render_block_carousel(PDO $pdo = null, int $slider_id = 0): string
         $textBlock .= '</div>';
 
         if (!empty($s['image'])) {
-            $img    = htmlspecialchars(BASE_URL . $s['image'], ENT_QUOTES, 'UTF-8');
-            $items .= '<li class="splide__slide" data-splide-cover="true" style="position:relative;overflow:hidden;">'
+            $img    = htmlspecialchars(    $s['image'], ENT_QUOTES, 'UTF-8');
+            $items .= '<li class="splide__slide myclass" data-splide-cover="true" style="position:relative;overflow:hidden;"> '
                     . '<img src="' . $img . '" alt="' . $label . '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
                     . '<div class="container" style="position:absolute;inset:0;display:flex;' . $ai . $jc . ' ">'
                     . $textBlock
                     . '</div>'
                     . '</li>';
         } else {
-            $items .= '<li class="splide__slide" style="height:420px;background:' . $bg . ';display:flex;' . $ai . $jc . '">'
+            $items .= '<li class="splide__slide myclass" style="height:420px;background:' . $bg . ';display:flex;' . $ai . $jc . '">'
                     . $textBlock
                     . '</li>';
         }

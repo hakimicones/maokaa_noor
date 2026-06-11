@@ -20,7 +20,7 @@ $slug = $page['slug'] ?? 'page';
         <div class="container">
             <div class="row mb-4">
                 <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="display-6 mb-3"><?php echo htmlspecialchars($page['title'] ?? 'Liste'); ?></h1>
+                  
                     <?php if (!empty($page['subtitle'])): ?>
                     <p class="lead text-muted mb-4"><?php echo htmlspecialchars($page['subtitle']); ?></p>
                     <?php endif; ?>

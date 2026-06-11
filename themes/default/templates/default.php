@@ -29,7 +29,7 @@ $isAdmin = isLoggedIn();
         <div class="container py-5">
             <div class="row">
                 <div class="col-lg-8 mx-auto">
-                    <h1 class="display-6 mb-3"
+                    <h1 class="display-6 mb-3 default"
                         <?php if ($isAdmin): ?>data-inline-field="title"<?php endif; ?>>
                         <?php echo htmlspecialchars($page['title']); ?>
                     </h1>

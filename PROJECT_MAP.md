@@ -175,7 +175,26 @@ Sauvegarde:
   → UPDATE content SET body = ...
 ```
 
-### 5. Theme Resolution
+### Blocs GrapesJS disponibles
+| Bloc | Shortcode | Attributs | Catégorie |
+|---|---|---|---|
+| Hero | — | — | Blocs |
+| Deux colonnes | — | — | Blocs |
+| Deux colonnes 2-1 | — | — | Blocs |
+| Une colonne | — | — | Blocs |
+| Texte | — | — | Blocs |
+| Call to action | — | — | Blocs |
+| Image | — | — | Blocs |
+| Produits Populaires | `[featured_products]` | limit | Contenu Dynamique |
+| Catalogue Produits | `[products]` | limit, category | Contenu Dynamique |
+| Actualités | `[news]` | limit | Contenu Dynamique |
+| Marques | `[brands]` | — | Contenu Dynamique |
+| **Marques Carousel** | `[brands_carousel]` | — | Contenu Dynamique |
+| Partenaires | `[partners]` | — | Contenu Dynamique |
+| Formulaire de Contact | `[contact_form]` | — | Contenu Dynamique |
+| Carousel | `[carousel]` / `[splide_carousel]` | slider_id | Caroussel |
+
+### 6. Theme Resolution
 ```
 ThemeManager::template($name)
   → themes/{active}/templates/{name}.php
@@ -184,7 +203,7 @@ ThemeManager::template($name)
   → return '' si introuvable
 ```
 
-### 6. Admin CRUD Architecture
+### 7. Admin CRUD Architecture
 ```
 admin/dashboard.php (single page, sections via ?section=)
   ├── POST actions centralisées (delete_product, delete_brand, etc.)
@@ -198,7 +217,7 @@ Sous-pages (CRUD dédiés):
   admin/messages/, admin/themes/
 ```
 
-### 7. Upload Flow
+### 8. Upload Flow
 ```
 upload_image() / upload_pdf() dans includes/upload.php
   → Validation MIME (finfo)
@@ -207,14 +226,14 @@ upload_image() / upload_pdf() dans includes/upload.php
   → move_uploaded_file() vers assets/images/ ou assets/brochures/
 ```
 
-### 8. Tables Database
+### 9. Tables Database
 ```
 admins → categories → marques → partenaires → actualites
 → produits → produit_images → contacts → content
 → sliders → menus → settings → audit_logs → login_attempts
 ```
 
-### 9. Assistant IA (régénération HTML)
+### 10. Assistant IA (régénération HTML)
 ```
 Configuration : .env → AI_API_URL, AI_API_KEY, AI_MODEL, AI_MAX_TOKENS
   (API compatible OpenAI Chat Completions : OpenAI, Mistral, OpenRouter, etc.)

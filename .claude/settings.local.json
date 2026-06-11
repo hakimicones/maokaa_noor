@@ -18,7 +18,10 @@
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(Select-Object Mode, Name)",
       "Bash(Format-Table -AutoSize)",
-      "Bash(Test-Path \"c:\\\\xampp\\\\htdocs\\\\Hebergement\\\\maokaa\\\\README.md\")"
+      "Bash(Test-Path \"c:\\\\xampp\\\\htdocs\\\\Hebergement\\\\maokaa\\\\README.md\")",
+      "PowerShell(Get-Process -Name QASH,7z,7za -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='powershell.exe' OR Name='conhost.exe'\")",
+      "PowerShell(\"=== powershell procs ===\")"
     ]
   }
 }

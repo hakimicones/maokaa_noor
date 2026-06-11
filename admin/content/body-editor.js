@@ -109,7 +109,13 @@
                 id: 'vep-brands',
                 label: 'Marques',
                 category: 'Contenu Dynamique ',
-                content: '<div data-vep-block="brands" style="background:#f3e5f5;border:2px dashed #9C27B0;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-award" style="font-size:40px;color:#9C27B0;margin-bottom:12px;"></i><strong style="color:#6A1B9A;font-size:16px;">Nos Marques</strong><small style="color:#8a56a0;margin-top:6px;display:block;font-size:13px;">Toutes les marques actives depuis la DB</small></div>'
+                content: '<div class="row g-4"  data-vep-block="brands" style="background:#f3e5f5;border:2px dashed #9C27B0;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-award" style="font-size:40px;color:#9C27B0;margin-bottom:12px;"></i><strong style="color:#6A1B9A;font-size:16px;">Nos Marques</strong><small style="color:#8a56a0;margin-top:6px;display:block;font-size:13px;">Toutes les marques actives depuis la DB</small></div>'
+            },
+            {
+                id: 'vep-brands-carousel',
+                label: 'Marques Carousel',
+                category: 'Contenu Dynamique ',
+                content: '<div class="row g-4" data-vep-block="brands-carousel" style="background:#f3e5f5;border:2px dashed #9C27B0;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-images" style="font-size:40px;color:#9C27B0;margin-bottom:12px;"></i><strong style="color:#6A1B9A;font-size:16px;">Marques Carousel</strong><small style="color:#8a56a0;margin-top:6px;display:block;font-size:13px;">Marques en carousel depuis la DB</small></div>'
             },
             {
                 id: 'vep-partners',
@@ -121,13 +127,13 @@
                 id: 'vep-contact-form',
                 label: 'Formulaire de Contact',
                 category: 'Contenu Dynamique ',
-                content: '<div data-vep-block="contact-form" style="background:#fce4ec;border:2px dashed #E91E63;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-envelope" style="font-size:40px;color:#E91E63;margin-bottom:12px;"></i><strong style="color:#880E4F;font-size:16px;">Formulaire de Contact</strong><small style="color:#b05070;margin-top:6px;display:block;font-size:13px;">Connecte a la table contacts</small></div>'
+                content: '<div class="row g-4" data-vep-block="contact-form" style="background:#fce4ec;border:2px dashed #E91E63;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-envelope" style="font-size:40px;color:#E91E63;margin-bottom:12px;"></i><strong style="color:#880E4F;font-size:16px;">Formulaire de Contact</strong><small style="color:#b05070;margin-top:6px;display:block;font-size:13px;">Connecte a la table contacts</small></div>'
             },
             {
                 id: 'bs-carousel',
                 label: 'Carousel',
                 category: 'Caroussel',
-                content: '<div data-vep-block="carousel" data-slider-id="1" style="background:#e3f2fd;border:2px dashed #2196F3;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-images" style="font-size:40px;color:#2196F3;margin-bottom:12px;"></i><strong style="color:#1565C0;font-size:16px;">Carousel #1</strong><small style="color:#5c85b8;margin-top:6px;display:block;font-size:13px;">Slider depuis la DB</small></div>'
+                content: '<div class="row g-4"data-vep-block="carousel" data-slider-id="1" style="background:#e3f2fd;border:2px dashed #2196F3;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-images" style="font-size:40px;color:#2196F3;margin-bottom:12px;"></i><strong style="color:#1565C0;font-size:16px;">Carousel #1</strong><small style="color:#5c85b8;margin-top:6px;display:block;font-size:13px;">Slider depuis la DB</small></div>'
             }
 
         ];
@@ -163,9 +169,103 @@
             modal.open();
             container.querySelector('#gjs-import-btn').addEventListener('click', function() {
                 var val = container.querySelector('#gjs-import-input').value.trim();
-                if (val) {
-                    ed.setComponents(val);
+                if (!val) return;
+
+                try {
+                    // Extraire les blocs <style> et les retirer du HTML
+                    var cssBlocks = [];
+                    var html = val.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, function(match, css) {
+                        if (css.trim()) cssBlocks.push(css.trim());
+                        return '';
+                    });
+                    html = html.trim();
+
+                    var cssComposer = ed.CssComposer;
+
+                    function parseDeclarations(cssText) {
+                        var styles = {};
+                        cssText.split(';').forEach(function(decl) {
+                            var idx = decl.indexOf(':');
+                            if (idx > 0) {
+                                var key = decl.substring(0, idx).trim();
+                                var val = decl.substring(idx + 1).trim();
+                                if (key) styles[key] = val;
+                            }
+                        });
+                        return styles;
+                    }
+
+                    // Parser CSS qui gère @media et les commentaires /* */
+                    function importCss(css, mediaText) {
+                        css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+
+                        var blocks = [];
+                        var depth = 0;
+                        var buf = '';
+                        for (var i = 0; i < css.length; i++) {
+                            var ch = css[i];
+                            if (ch === '{') {
+                                buf += ch;
+                                depth++;
+                            } else if (ch === '}') {
+                                depth--;
+                                buf += ch;
+                                if (depth === 0) {
+                                    blocks.push(buf);
+                                    buf = '';
+                                }
+                            } else if (ch !== '\n' && ch !== '\r') {
+                                buf += ch;
+                            }
+                        }
+                        if (buf.trim()) blocks.push(buf);
+
+                        blocks.forEach(function(block) {
+                            block = block.trim();
+                            if (!block) return;
+
+                            var braceIdx = block.indexOf('{');
+                            if (braceIdx === -1) return;
+
+                            var pre = block.substring(0, braceIdx).trim();
+                            var body = block.substring(braceIdx + 1, block.lastIndexOf('}'));
+
+                            if (pre.indexOf('@media') === 0) {
+                                var cond = pre.replace(/@media\s*/i, '').trim();
+                                importCss(body, cond);
+                            } else if (pre.indexOf('@') === 0) {
+                                return;
+                            } else {
+                                var selector = pre.replace(/\s+/g, ' ').trim();
+                                if (!selector) return;
+                                var styles = parseDeclarations(body);
+                                if (Object.keys(styles).length > 0) {
+                                    try {
+                                        var opts = {};
+                                        if (mediaText) {
+                                            opts.atRuleType = 'media';
+                                            opts.mediaText = mediaText;
+                                        }
+                                        cssComposer.add(selector, styles, opts);
+                                    } catch(e) {
+                                        console.warn('CSS import error:', selector, e);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    cssBlocks.forEach(function(css) {
+                        importCss(css);
+                    });
+
+                    if (html) {
+                        ed.setComponents(html);
+                    }
                     modal.close();
+                } catch(e) {
+                    console.error('Import error:', e);
+                    alert('Erreur lors de l\'import : ' + e.message);
                 }
             });
         }
@@ -282,15 +382,30 @@
             var canvasWin = editor.Canvas.getWindow();
             if (!canvasWin || !canvasWin.Splide) return;
             canvasWin.document.querySelectorAll('.splide:not(.is-initialized)').forEach(function(el) {
-                new canvasWin.Splide(el, {
-                    type: 'fade',
-                    autoplay: true,
-                    interval: 4000,
-                    pauseOnHover: true,
-                    rewind: true,
-                    cover: true,
-                    heightRatio: 0.4
-                }).mount();
+                if (el.classList.contains('brands-carousel')) {
+                    new canvasWin.Splide(el, {
+                        type: 'loop',
+                        perPage: 5,
+                        perMove: 1,
+                        autoplay: true,
+                        interval: 3000,
+                        pauseOnHover: true,
+                        gap: '24px',
+                        breakpoints: { 992: { perPage: 3 }, 576: { perPage: 2 } },
+                        pagination: false,
+                        arrows: true
+                    }).mount();
+                } else {
+                    new canvasWin.Splide(el, {
+                        type: 'fade',
+                        autoplay: true,
+                        interval: 4000,
+                        pauseOnHover: true,
+                        rewind: true,
+                        cover: true,
+                        heightRatio: 0.4
+                    }).mount();
+                }
             });
         } catch(e) {
             console.warn('Splide canvas init error:', e);

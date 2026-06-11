@@ -57,7 +57,7 @@ if ($newsId > 0) {
             </div>
         <?php else: ?>
             <div class="text-center mb-5">
-                <h1 class="display-6 mb-3"><?php echo htmlspecialchars($page['title'] ?? 'Actualités'); ?></h1>
+                
                 <?php if (!empty($page['subtitle'])): ?>
                 <p class="lead text-muted"><?php echo htmlspecialchars($page['subtitle']); ?></p>
                 <?php endif; ?>

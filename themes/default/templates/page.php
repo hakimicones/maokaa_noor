@@ -29,9 +29,9 @@ $isAdmin = isLoggedIn();
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 mx-auto">
-                    <h1 class="display-6 mb-3"
+                    <h1 class="display-6 mb-3 page"
                         <?php if ($isAdmin): ?>data-inline-field="title"<?php endif; ?>>
-                        <?php echo htmlspecialchars($page['title'] ?? ''); ?>
+                       
                     </h1>
                     <?php if (!empty($page['subtitle'])): ?>
                     <p class="lead text-muted mb-4"

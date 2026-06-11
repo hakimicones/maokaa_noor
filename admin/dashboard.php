@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Récupérer les données
-$products = $productModel->getAll(false, 10);
+$products = $productModel->getAll(false );
 $categories = $categoryModel->getAll(false);
 $brands = $brandModel->getAll(false);
 $partners = $partnerModel->getAll(false);

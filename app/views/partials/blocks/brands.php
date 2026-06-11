@@ -87,14 +87,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <style>
     .brands-section {
-  width: 100vw;
+  /* width: 100vw;
   position: relative;
   left: 50%;
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
   background: #f8f9fa;
-  padding: 4rem 0;
+  padding: 4rem 0; */
 }
 
 .brands-content {

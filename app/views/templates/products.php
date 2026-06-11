@@ -135,7 +135,7 @@ if ($productId > 0) {
                 </div>
             <?php endif; ?>
             <div class="text-center mb-5">
-                <h1 class="display-6 mb-3"><?php echo htmlspecialchars($page['title'] ?? 'Produits'); ?></h1>
+                <h1 class="display-6 mb-3 products"><?php echo htmlspecialchars($page['title'] ?? 'Produits'); ?></h1>
             </div>
             <?php
             require_once __DIR__ . '/../../../includes/shortcodes.php';
