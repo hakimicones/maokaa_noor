@@ -143,6 +143,7 @@ $csrfToken = generateCSRFToken();
     <title>Dashboard Admin - VEP</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -661,7 +662,7 @@ $csrfToken = generateCSRFToken();
             </div>
             
             <div class="data-table">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0" id="dt-products" data-datatable data-dt-columns='[{"select":5,"sortable":false}]'>
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -709,7 +710,7 @@ $csrfToken = generateCSRFToken();
     </div>
 
     <div class="data-table">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover mb-0" id="dt-categories" data-datatable data-dt-columns='[{"select":5,"sortable":false}]'>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -857,7 +858,7 @@ $csrfToken = generateCSRFToken();
             </div>
             
             <div class="data-table">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0" id="dt-brands" data-datatable data-dt-columns='[{"select":3,"sortable":false}]'>
                     <thead>
                         <tr>
                             <th>Nom</th>
@@ -904,7 +905,7 @@ $csrfToken = generateCSRFToken();
             </div>
             
             <div class="data-table">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0" id="dt-partners" data-datatable data-dt-columns='[{"select":3,"sortable":false}]'>
                     <thead>
                         <tr>
                             <th>Nom</th>
@@ -951,7 +952,7 @@ $csrfToken = generateCSRFToken();
             </div>
             
             <div class="data-table">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0" id="dt-news" data-datatable data-dt-columns='[{"select":3,"sortable":false}]'>
                     <thead>
                         <tr>
                             <th>Titre</th>
@@ -991,7 +992,7 @@ $csrfToken = generateCSRFToken();
             <h3 class="mb-4">Messages de contact</h3>
             
             <div class="data-table">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0" id="dt-messages" data-datatable data-dt-columns='[{"select":5,"sortable":false}]'>
                     <thead>
                         <tr>
                             <th>Nom</th>
@@ -1039,7 +1040,7 @@ $csrfToken = generateCSRFToken();
     </div>
 
     <div class="data-table">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover mb-0" id="dt-users" data-datatable data-dt-columns='[{"select":6,"sortable":false}]'>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -1092,6 +1093,8 @@ $csrfToken = generateCSRFToken();
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/umd/simple-datatables.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/js/admin-tables.js"></script>
 </body>
 </html>
 

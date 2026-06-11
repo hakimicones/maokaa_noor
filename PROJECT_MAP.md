@@ -17,6 +17,7 @@
 | **Sélecteur images produits** | Modal bibliothèque depuis `assets/images/products/` + upload direct | — |
 | **Carousel** | Splide.js | 4.1.4 |
 | **Toolbar WYSIWYG inline** | Floating toolbar via `document.execCommand` (B/I/U/H2/H3/lien) | — |
+| **Tables admin** | Simple-DataTables (recherche, tri, pagination sans jQuery) | 10.2.0 |
 | **Shortcodes admin URLs** | `_wrap_vep_block_admin()` mappe chaque shortcode vers sa section admin | — |
 | **Assistant IA de contenu** | API compatible OpenAI (Chat Completions), configurable via `.env` (`AI_API_URL`/`AI_API_KEY`/`AI_MODEL`/`AI_MAX_TOKENS`) | — |
 | **Serveur** | XAMPP (Apache + MySQL) | — |
@@ -34,6 +35,7 @@
 - DOMPurify 3.1.6
 - Splide.js 4.1.4
 - Quill.js 1.3.7 (chargé mais non utilisé — remplacé par toolbar flottante inline)
+- Simple-DataTables 10.2.0 (CDN) — `assets/js/admin-tables.js`
 
 ---
 
@@ -215,6 +217,12 @@ Sous-pages (CRUD dédiés):
   admin/products/, admin/categories/, admin/brands/, admin/partners/
   admin/news/, admin/content/, admin/sliders/, admin/menus/
   admin/messages/, admin/themes/
+
+Recherche & pagination (Simple-DataTables) :
+  → 7 tables du dashboard activées via data-datatable + data-dt-columns
+  → Initialiseur partagé : assets/js/admin-tables.js
+  → Colonne Actions désactivée du tri sur chaque table
+  → Labels français, pagination 10/25/50/100 par page
 ```
 
 ### 8. Upload Flow
@@ -286,3 +294,4 @@ Assistant IA par champ (bouton "IA" de la barre WYSIWYG flottante) :
 - **Slider**: Support images upload + fallback couleur de fond
 - **Editor**: Configuration dynamique via JS (baseUrl depuis PHP)
 - **Sécurité**: CSRF tokens, bcrypt, rate limiting, prepared statements, sanitize_body_html
+- **Tables admin**: Simple-DataTables via `data-datatable` (déclaratif, DRY, pas de jQuery)
