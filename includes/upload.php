@@ -5,13 +5,20 @@
 /**
  * Valide et déplace une image uploadée.
  * Retourne ['filename' => '...'] en succès ou ['error' => '...'] en échec.
+ *
+ * @param array  $file         Élément de $_FILES
+ * @param string $uploadDir    Répertoire de destination
+ * @param string $prefix       Préfixe du nom de fichier
+ * @param array|null $allowedMimes Map MIME => extension (null = défaut JPEG/PNG/WebP)
  */
-function upload_image(array $file, string $uploadDir, string $prefix = 'img'): array {
-    $allowedMimes = [
-        'image/jpeg' => 'jpg',
-        'image/png'  => 'png',
-        'image/webp' => 'webp',
-    ];
+function upload_image(array $file, string $uploadDir, string $prefix = 'img', ?array $allowedMimes = null): array {
+    if ($allowedMimes === null) {
+        $allowedMimes = [
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+        ];
+    }
 
     if ($file['error'] !== UPLOAD_ERR_OK) {
         return ['error' => 'Erreur lors de l\'upload (code ' . $file['error'] . ')'];
@@ -24,7 +31,8 @@ function upload_image(array $file, string $uploadDir, string $prefix = 'img'): a
     $mime  = $finfo->file($file['tmp_name']);
 
     if (!array_key_exists($mime, $allowedMimes)) {
-        return ['error' => 'Format d\'image invalide (JPEG, PNG ou WebP requis)'];
+        $formats = implode(', ', array_map('strtoupper', $allowedMimes));
+        return ['error' => "Format d'image invalide ($formats requis)"];
     }
 
     if (!is_dir($uploadDir)) {

@@ -1,6 +1,6 @@
 # PROJECT MAP — Maokaa CMS
 
-> Généré le 30 Mai 2026 — Audit code
+> Généré le 13 Juin 2026 — Audit code
 
 ---
 
@@ -216,13 +216,21 @@ admin/dashboard.php (single page, sections via ?section=)
 Sous-pages (CRUD dédiés):
   admin/products/, admin/categories/, admin/brands/, admin/partners/
   admin/news/, admin/content/, admin/sliders/, admin/menus/
-  admin/messages/, admin/themes/
+  admin/messages/, admin/themes/, admin/media/
 
 Recherche & pagination (Simple-DataTables) :
   → 7 tables du dashboard activées via data-datatable + data-dt-columns
   → Initialiseur partagé : assets/js/admin-tables.js
   → Colonne Actions désactivée du tri sur chaque table
   → Labels français, pagination 10/25/50/100 par page
+
+Gestionnaire de médias (admin/media/) :
+  → Page standalone listant toutes les images de assets/images/ (scan récursif)
+  → Upload : upload_image() helper avec validation MIME (JPG, PNG, GIF, SVG, WebP)
+  → Renommage via modale Bootstrap
+  → Suppression avec confirmation + vérification path (anti-traversal)
+  → Grille responsive, tri par date de modification (plus récent en premier)
+  → Liens depuis la sidebar du dashboard (après Messages)
 ```
 
 ### 8. Upload Flow

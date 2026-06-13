@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/upload.php';
 
 requirePasswordChange();
 
@@ -13,34 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $uploadDir = __DIR__ . '/../../assets/images/uploads/';
-if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
-}
 
-$allowed = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
-$file = $_FILES['file'] ?? null;
+$result = upload_image($_FILES['file'] ?? [], $uploadDir, 'img', [
+    'image/jpeg'    => 'jpg',
+    'image/png'     => 'png',
+    'image/gif'     => 'gif',
+    'image/svg+xml' => 'svg',
+    'image/webp'    => 'webp',
+]);
 
-if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
+if (isset($result['error'])) {
     http_response_code(400);
-    echo json_encode(['error' => 'Fichier invalide']);
+    echo json_encode(['error' => $result['error']]);
     exit;
 }
 
-$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-if (!in_array($ext, $allowed)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Type de fichier non autorisé']);
-    exit;
-}
-
-$filename = uniqid('img_', true) . '.' . $ext;
-$destination = $uploadDir . $filename;
-
-if (!move_uploaded_file($file['tmp_name'], $destination)) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Échec du téléversement']);
-    exit;
-}
-
+$filename = $result['filename'];
 $url = BASE_URL . 'assets/images/uploads/' . $filename;
 echo json_encode(['data' => [['src' => $url, 'name' => $filename]]]);

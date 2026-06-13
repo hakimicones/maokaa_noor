@@ -508,6 +508,11 @@ $csrfToken = generateCSRFToken();
                 </a>
             </li>
             <li class="nav-item">
+                <a href="media/index.php" class="nav-link">
+                    <i class="fas fa-photo-video"></i> Médias
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="menus/index.php" class="nav-link">
                     <i class="fas fa-bars"></i> Menus
                 </a>
