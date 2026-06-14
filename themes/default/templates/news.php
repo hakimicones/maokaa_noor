@@ -29,6 +29,7 @@ if ($newsId > 0) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="<?php echo BASE_URL; ?>assets/css/style.css" rel="stylesheet">
     <link href="<?php echo theme_url('assets/css/theme.css'); ?>" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
 </head>
 <body>
     <?php theme_partial('navbar'); ?>
@@ -69,5 +70,25 @@ if ($newsId > 0) {
     <?php theme_partial('footer'); ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.splide:not(.is-initialized)').forEach(function (el) {
+            if (el.classList.contains('brands-carousel')) {
+                new Splide(el, {
+                    type: 'loop', perPage: 5, perMove: 1, autoplay: true,
+                    interval: 3000, pauseOnHover: true, gap: '24px',
+                    breakpoints: { 992: { perPage: 3 }, 576: { perPage: 2 } },
+                    pagination: false, arrows: true
+                }).mount();
+            } else {
+                new Splide(el, {
+                    type: 'fade', autoplay: true, interval: 4000,
+                    pauseOnHover: true, rewind: true, cover: true, heightRatio: 0.4
+                }).mount();
+            }
+        });
+    });
+    </script>
 </body>
 </html>

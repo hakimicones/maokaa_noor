@@ -33,7 +33,7 @@
 - Font Awesome 6.4.0
 - GrapesJS 0.21.9 + plugins
 - DOMPurify 3.1.6
-- Splide.js 4.1.4
+- Splide.js 4.1.4 (CDN chargé dans tous les templates frontend + auto-init DOMContentLoaded)
 - Quill.js 1.3.7 (chargé mais non utilisé — remplacé par toolbar flottante inline)
 - Simple-DataTables 10.2.0 (CDN) — `assets/js/admin-tables.js`
 
