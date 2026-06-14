@@ -26,6 +26,8 @@
 - `includes/api_products.php` — Endpoint JSON pour le bloc produits interactif
 - `includes/api_quote.php` — Endpoint JSON pour soumettre une demande de devis (POST, public)
 - `includes/inline_edit_product.php` — Endpoint AJAX pour l'édition inline des produits (POST, admin)
+- `includes/inline_edit_setting.php` — Endpoint AJAX pour l'édition inline des settings (footer : phone, email, address, etc.) (POST, admin)
+- `includes/settings_helpers.php` — Helpers `get_setting($pdo, $key, $default)` / `set_setting($pdo, $key, $value)` pour la table `settings`
 - `includes/api_ai_content.php` — Endpoint AJAX : régénération du HTML d'une page via IA (POST, admin), s'appuie sur `includes/ai_client.php`
 
 ### Dépendances CDN (aucun package manager)
@@ -147,6 +149,7 @@ Champs produit inline-editables (vue détail, admin uniquement) :
 ```
 Page rendue avec isLoggedIn()
   → Templates injectent data-inline-field="body" sur le conteneur
+    (home, default, page, products, listing, news)
   → inline-edit.js détecte [data-inline-field="body"]
   → initBodyField() parcourt les enfants :
     → Éléments texte (h1-h6, p, ...) → contenteditable + toolbar WYSIWYG
@@ -154,8 +157,22 @@ Page rendue avec isLoggedIn()
     → .vep-block-wrapper → bouton "Gérer dans l'admin"
       (URL mappée par _wrap_vep_block_admin())
       Le lien inclut ?return_url=<page courante> pour le retour
+  → Liaisons existantes (double-clic) → openLinkModal() (popup URL + label + target)
   → Sauvegarde : serializeAndSaveBody() → POST → inline_edit.php
     → sanitize_body_html() (PHP) → UPDATE content SET body
+
+Footer inline editing (depuis V2) :
+  → Footer partial injecte data-ie-setting="footer_*" sur les champs
+  → Petit script embarqué dans footer.php (admin uniquement) :
+    → contenteditable + sauvegarde AJAX → inline_edit_setting.php
+    → settings table (footer_description, footer_phone, footer_email, footer_address, footer_copyright)
+
+Link/Button modal (depuis V2) :
+  → openLinkModal(anchorEl, contextEl) dans inline-edit.js
+  → Modale avec champs : Texte, URL, Target (_blank)
+  → Double-clic sur un lien existant → édition
+  → Bouton "🔗 lien" dans toolbar WYSIWYG → création
+  → Applicable aussi sur les boutons (<a class="btn">)
 
 Retour depuis l'admin :
   → return_url() dans config.php : $_GET['return_url'] > Referer > défaut
@@ -177,45 +194,56 @@ Sauvegarde:
   → UPDATE content SET body = ...
 ```
 
-### Blocs GrapesJS disponibles
-| Bloc | Shortcode | Attributs | Catégorie |
-|---|---|---|---|
-| Hero | — | — | Blocs |
-| Deux colonnes | — | — | Blocs |
-| Deux colonnes 2-1 | — | — | Blocs |
-| Trois colonnes | — | — | Blocs |
-| Quatre colonnes | — | — | Blocs |
-| Deux colonnes 25/75 | — | — | Blocs |
-| Deux colonnes 75/25 | — | — | Blocs |
-| Une colonne | — | — | Blocs |
-| Pleine largeur | — | — | Blocs |
-| Conteneur | — | — | Blocs |
-| Espaceur | — | — | Blocs |
-| Texte | — | — | Blocs |
-| Call to action | — | — | Blocs |
-| Image | — | — | Blocs |
-| Titre H1 | — | — | Texte |
-| Titre H2 | — | — | Texte |
-| Titre H3 | — | — | Texte |
-| Paragraphe | — | — | Texte |
-| Citation | — | — | Texte |
-| Séparateur | — | — | Texte |
-| Liste à puces | — | — | Texte |
-| Liste numérotée | — | — | Texte |
-| Bouton | — | — | Composants |
-| Carte | — | — | Composants |
-| Accordéon | — | — | Composants |
-| Image + légende | — | — | Médias |
-| Vidéo | — | — | Médias |
-| Section avec fond | — | — | Médias |
-| Produits Populaires | `[featured_products]` | limit | Contenu Dynamique |
-| Catalogue Produits | `[products]` | limit, category | Contenu Dynamique |
-| Actualités | `[news]` | limit | Contenu Dynamique |
-| Marques | `[brands]` | — | Contenu Dynamique |
-| Marques Carousel | `[brands_carousel]` | — | Contenu Dynamique |
-| Partenaires | `[partners]` | — | Contenu Dynamique |
-| Formulaire de Contact | `[contact_form]` | — | Contenu Dynamique |
-| Carousel | `[carousel]` / `[splide_carousel]` | slider_id | Caroussel |
+### Blocs GrapesJS disponibles (V1 + V2)
+| Bloc | Catégorie | Vague |
+|---|---|---|
+| Hero | Blocs | V1 |
+| Deux colonnes | Blocs | V1 |
+| Deux colonnes 2-1 | Blocs | V1 |
+| Trois colonnes | Blocs | V1 |
+| Quatre colonnes | Blocs | V1 |
+| Deux colonnes 25/75 | Blocs | V1 |
+| Deux colonnes 75/25 | Blocs | V1 |
+| Une colonne | Blocs | V1 |
+| Pleine largeur | Blocs | V1 |
+| Conteneur | Blocs | V1 |
+| Espaceur | Blocs | V1 |
+| Texte | Blocs | V1 |
+| Call to action | Blocs | V1 |
+| Image | Blocs | V1 |
+| Hero couverture | **Hero** | V2 |
+| Hero centré | **Hero** | V2 |
+| Hero splité | **Hero** | V2 |
+| Titre H1 | Texte | V1 |
+| Titre H2 | Texte | V1 |
+| Titre H3 | Texte | V1 |
+| Paragraphe | Texte | V1 |
+| Citation | Texte | V1 |
+| Séparateur | Texte | V1 |
+| Liste à puces | Texte | V1 |
+| Liste numérotée | Texte | V1 |
+| Bouton | Composants | V1 |
+| Carte | Composants | V1 |
+| Accordéon | Composants | V1 |
+| Image + légende | Médias | V1 |
+| Vidéo | Médias | V1 |
+| Section avec fond | Médias | V1 |
+| Formulaire contact | **Formulaires** | V2 |
+| Newsletter | **Formulaires** | V2 |
+| Section newsletter | **Formulaires** | V2 |
+| Carte icône | **Cards** | V2 |
+| Carte horizontale | **Cards** | V2 |
+| Carte overlay | **Cards** | V2 |
+| Grille 3 cartes | **Cards** | V2 |
+| Tableau tarifs | **Cards** | V2 |
+| Produits Populaires | Contenu Dynamique | V1 |
+| Catalogue Produits | Contenu Dynamique | V1 |
+| Actualités | Contenu Dynamique | V1 |
+| Marques | Contenu Dynamique | V1 |
+| Marques Carousel | Contenu Dynamique | V1 |
+| Partenaires | Contenu Dynamique | V1 |
+| Formulaire de Contact | Contenu Dynamique | V1 |
+| Carousel | Caroussel | V1 |
 
 ### 6. Theme Resolution
 ```

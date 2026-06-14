@@ -71,8 +71,8 @@
             }
 
             if (cmd === 'createLink') {
-                var url = prompt('URL du lien :', 'https://');
-                if (url) document.execCommand(cmd, false, url);
+                openLinkModal(null, wysiwygTarget);
+                return;
             } else {
                 document.execCommand(cmd, false, arg);
             }
@@ -111,6 +111,97 @@
             clearTimeout(wysiwygTimer);
             wysiwygTimer = null;
         }
+    }
+
+    // ── Helper : texte sélectionné ─────────────────────────────────────────
+    function getSelectedText() {
+        var sel = window.getSelection();
+        return sel ? sel.toString().trim() : '';
+    }
+
+    // ── Modal lien/bouton (création ou édition) ────────────────────────────
+    function openLinkModal(anchorEl, contextEl) {
+        var existing = document.getElementById('ie-link-modal');
+        if (existing) existing.remove();
+
+        var isEdit = anchorEl !== null;
+        var currentUrl  = isEdit ? (anchorEl.getAttribute('href') || '') : '';
+        var currentText = isEdit ? anchorEl.textContent : getSelectedText();
+        var currentTarget = isEdit ? (anchorEl.getAttribute('target') || '') : '';
+
+        var modal = document.createElement('div');
+        modal.id = 'ie-link-modal';
+        modal.innerHTML =
+            '<div class="ie-link-dialog">' +
+                '<div class="ie-link-header">' +
+                    '<span><i class="fas fa-link"></i> ' + (isEdit ? 'Modifier le lien' : 'Insérer un lien') + '</span>' +
+                    '<button class="ie-link-close" type="button" aria-label="Fermer">&times;</button>' +
+                '</div>' +
+                '<div class="ie-link-body">' +
+                    '<label>Texte à afficher</label>' +
+                    '<input type="text" id="ie-link-text" class="ie-link-input" value="' + escapeAttr(currentText) + '">' +
+                    '<label>URL</label>' +
+                    '<input type="url" id="ie-link-url" class="ie-link-input" value="' + escapeAttr(currentUrl) + '" placeholder="https://...">' +
+                    '<label class="ie-link-checkbox">' +
+                        '<input type="checkbox" id="ie-link-target"' + (currentTarget === '_blank' ? ' checked' : '') + '> ' +
+                        'Ouvrir dans un nouvel onglet' +
+                    '</label>' +
+                '</div>' +
+                '<div class="ie-link-footer">' +
+                    '<button class="ie-link-action ie-link-action-secondary ie-link-cancel" type="button">Annuler</button>' +
+                    '<button class="ie-link-action ie-link-action-primary ie-link-apply" type="button">' + (isEdit ? 'Appliquer' : 'Insérer') + '</button>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(modal);
+
+        var textInput   = modal.querySelector('#ie-link-text');
+        var urlInput    = modal.querySelector('#ie-link-url');
+        var targetInput = modal.querySelector('#ie-link-target');
+        var closeBtn    = modal.querySelector('.ie-link-close');
+        var cancelBtn   = modal.querySelector('.ie-link-cancel');
+        var applyBtn    = modal.querySelector('.ie-link-apply');
+
+        function close() { modal.remove(); }
+
+        closeBtn.addEventListener('click', close);
+        cancelBtn.addEventListener('click', close);
+        modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+
+        textInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyBtn.click(); });
+        urlInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyBtn.click(); });
+
+        applyBtn.addEventListener('click', function () {
+            var text   = textInput.value.trim();
+            var url    = urlInput.value.trim();
+            var target = targetInput.checked ? '_blank' : '';
+
+            if (!text || !url) {
+                urlInput.focus();
+                return;
+            }
+
+            if (isEdit) {
+                anchorEl.textContent = text;
+                anchorEl.setAttribute('href', url);
+                if (target) {
+                    anchorEl.setAttribute('target', target);
+                    anchorEl.setAttribute('rel', 'noopener');
+                } else {
+                    anchorEl.removeAttribute('target');
+                    anchorEl.removeAttribute('rel');
+                }
+            } else {
+                document.execCommand('insertHTML', false,
+                    '<a href="' + escapeAttr(url) + '"' +
+                    (target ? ' target="_blank" rel="noopener"' : '') + '>' +
+                    escapeHtml(text) + '</a>');
+            }
+            close();
+        });
+
+        urlInput.focus();
+        if (currentUrl) urlInput.select();
     }
 
     // ── Champs texte simples (title, subtitle) : contenteditable ─────────
@@ -175,6 +266,24 @@
         bodyEl.querySelectorAll(TEXT_SELECTORS).forEach(function (el) {
             if (el.closest('.vep-block-wrapper')) return;
             initInlineText(el, bodyEl);
+        });
+
+        // 4. Empêcher la navigation sur les liens hors contenteditable (standalone)
+        //    pour que le double-clic puisse ouvrir le modal d'édition
+        bodyEl.addEventListener('click', function (e) {
+            var anchor = e.target.closest('a');
+            if (anchor && !anchor.closest('[contenteditable]') && !anchor.closest('.ie-vep-block')) {
+                e.preventDefault();
+            }
+        });
+
+        // 5. Double-clic sur un lien → popup d'édition
+        bodyEl.addEventListener('dblclick', function (e) {
+            var anchor = e.target.closest('a');
+            if (anchor && !anchor.closest('.ie-vep-block')) {
+                e.preventDefault();
+                openLinkModal(anchor, bodyEl);
+            }
         });
     }
 

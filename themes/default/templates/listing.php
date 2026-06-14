@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__DIR__, 3) . '/includes/shortcodes.php';
+$isAdmin = isLoggedIn();
 $slug = $page['slug'] ?? 'page';
 ?>
 <!DOCTYPE html>
@@ -9,11 +10,19 @@ $slug = $page['slug'] ?? 'page';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page['meta_title'] ?? $page['title'] ?? 'VEP'); ?> - VEP</title>
     <meta name="description" content="<?php echo htmlspecialchars($page['meta_description'] ?? ''); ?>">
+    <?php if ($isAdmin): ?>
+    <meta name="csrf-token" content="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
+    <meta name="page-slug"  content="<?php echo htmlspecialchars($page['slug'] ?? ''); ?>">
+    <meta name="base-url"   content="<?php echo htmlspecialchars(BASE_URL); ?>">
+    <?php endif; ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="<?php echo BASE_URL; ?>assets/css/style.css" rel="stylesheet">
     <link href="<?php echo theme_url('assets/css/theme.css'); ?>" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <?php if ($isAdmin): ?>
+    <link href="<?php echo BASE_URL; ?>assets/css/inline-edit.css" rel="stylesheet">
+    <?php endif; ?>
 </head>
 <body>
     <?php theme_partial('navbar'); ?>
@@ -21,12 +30,12 @@ $slug = $page['slug'] ?? 'page';
         <div class="container">
             <div class="row mb-4">
                 <div class="col-lg-8 mx-auto text-center">
-                  
+                    <h1 class="h2 fw-bold mb-2"<?php if ($isAdmin): ?> data-inline-field="title"<?php endif; ?>><?php echo htmlspecialchars($page['title'] ?? ''); ?></h1>
                     <?php if (!empty($page['subtitle'])): ?>
-                    <p class="lead text-muted mb-4"><?php echo htmlspecialchars($page['subtitle']); ?></p>
+                    <p class="lead text-muted mb-4"<?php if ($isAdmin): ?> data-inline-field="subtitle"<?php endif; ?>><?php echo htmlspecialchars($page['subtitle']); ?></p>
                     <?php endif; ?>
                     <?php if (!empty($page['body'])): ?>
-                    <div class="text-start"><?php echo do_shortcode($page['body'], $pdo); ?></div>
+                    <div class="text-start"<?php if ($isAdmin): ?> data-inline-field="body"<?php endif; ?>><?php echo do_shortcode($page['body'], $pdo); ?></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -55,5 +64,8 @@ $slug = $page['slug'] ?? 'page';
         });
     });
     </script>
+    <?php if ($isAdmin): ?>
+    <script src="<?php echo BASE_URL; ?>assets/js/inline-edit.js"></script>
+    <?php endif; ?>
 </body>
 </html>

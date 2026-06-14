@@ -264,6 +264,75 @@
                 label: 'Section avec fond',
                 category: 'Medias',
                 content: '<section class="py-5 text-white" style="background: linear-gradient(135deg, #435980 0%, #345075 100%);"><div class="container"><div class="row"><div class="col-12 text-center"><h2 class="h3">Section mise en avant</h2><p class="mb-0 opacity-75">Utilisez un fond colore ou une image pour mettre en valeur cette section.</p></div></div></div></section>'
+            },
+            // --- Vague 2: Hero ---
+            {
+                id: 'hero-cover',
+                label: 'Hero couverture',
+                category: 'Hero',
+                content: '<section class="d-flex align-items-center" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);min-height:80vh;padding:80px 0;color:#fff;"><div class="container text-center"><h1 class="display-3 fw-bold mb-4">Grand titre accrocheur</h1><p class="lead mb-5 mx-auto" style="max-width:700px;opacity:0.9;">Sous-titre convaincant qui donne envie d\'en savoir plus.</p><div class="d-flex gap-3 justify-content-center flex-wrap"><a href="#" class="btn btn-light btn-lg px-4">Commencer</a><a href="#" class="btn btn-outline-light btn-lg px-4">En savoir plus</a></div></div></section>'
+            },
+            {
+                id: 'hero-centered',
+                label: 'Hero centre',
+                category: 'Hero',
+                content: '<section class="py-5 text-center"><div class="container" style="max-width:800px;"><h1 class="display-5 fw-bold mb-3">Titre accrocheur</h1><p class="lead text-muted mb-4">Phrase d\'accroche courte et percutante pour capter l\'attention.</p><a href="#" class="btn btn-primary btn-lg">CTA principal</a></div></section>'
+            },
+            {
+                id: 'hero-split',
+                label: 'Hero splite',
+                category: 'Hero',
+                content: '<section class="py-5"><div class="container"><div class="row align-items-center g-5"><div class="col-lg-6"><span class="badge bg-primary bg-opacity-10 text-primary mb-2">Nouveau</span><h1 class="display-5 fw-bold mb-3">Titre a gauche</h1><p class="lead text-muted mb-4">Description du produit ou service avec un argumentaire convaincant.</p><div class="d-flex gap-2"><a href="#" class="btn btn-primary btn-lg">Action</a><a href="#" class="btn btn-outline-secondary btn-lg">Secondaire</a></div></div><div class="col-lg-6"><div class="bg-light rounded-4 p-5 text-center"><i class="fas fa-image text-muted" style="font-size:6rem;"></i></div></div></div></div></section>'
+            },
+            // --- Vague 2: Formulaires ---
+            {
+                id: 'form-contact',
+                label: 'Formulaire contact',
+                category: 'Formulaires',
+                content: '<div class="container py-4" style="max-width:600px;"><h3 class="mb-4">Contactez-nous</h3><form><div class="mb-3"><label class="form-label">Nom *</label><input type="text" class="form-control" placeholder="Votre nom"></div><div class="mb-3"><label class="form-label">Email *</label><input type="email" class="form-control" placeholder="votre@email.com"></div><div class="mb-3"><label class="form-label">Telephone</label><input type="tel" class="form-control" placeholder="+213 5XX XX XX XX"></div><div class="mb-3"><label class="form-label">Message</label><textarea class="form-control" rows="4" placeholder="Votre message..."></textarea></div><button type="submit" class="btn btn-primary">Envoyer le message</button></form></div>'
+            },
+            {
+                id: 'newsletter-inline',
+                label: 'Newsletter',
+                category: 'Formulaires',
+                content: '<div class="py-4"><div class="container" style="max-width:500px;"><h5 class="text-center mb-3">Inscrivez-vous a notre newsletter</h5><div class="input-group"><input type="email" class="form-control" placeholder="votre@email.com"><button class="btn btn-primary" type="button">S\'abonner</button></div></div></div>'
+            },
+            {
+                id: 'newsletter-section',
+                label: 'Section newsletter',
+                category: 'Formulaires',
+                content: '<section class="py-5 text-center text-white" style="background:linear-gradient(135deg,#435980,#345075);"><div class="container" style="max-width:600px;"><h3 class="mb-2">Restez informe</h3><p class="mb-4 opacity-75">Recevez nos dernieres actualites et offres exclusives.</p><div class="input-group"><input type="email" class="form-control" placeholder="votre@email.com"><button class="btn btn-light" type="button">S\'abonner</button></div></div></section>'
+            },
+            // --- Vague 2: Cards ---
+            {
+                id: 'card-icon',
+                label: 'Carte icone',
+                category: 'Cards',
+                content: '<div class="card text-center h-100 shadow-sm border-0"><div class="card-body py-5"><i class="fas fa-star" style="font-size:3rem;color:#435980;margin-bottom:20px;"></i><h5 class="card-title">Titre de la carte</h5><p class="card-text text-muted">Description du service ou de la fonctionnalite.</p></div></div>'
+            },
+            {
+                id: 'card-horizontal',
+                label: 'Carte horizontale',
+                category: 'Cards',
+                content: '<div class="card mb-3 shadow-sm overflow-hidden"><div class="row g-0"><div class="col-md-5"><img src="https://via.placeholder.com/600x400" class="img-fluid h-100" style="object-fit:cover;" alt=""></div><div class="col-md-7"><div class="card-body"><h5 class="card-title">Titre de la carte</h5><p class="card-text text-muted">Description detaillee avec du contenu pertinent pour le lecteur.</p><a href="#" class="btn btn-primary">En savoir plus</a></div></div></div></div>'
+            },
+            {
+                id: 'card-overlay',
+                label: 'Carte overlay',
+                category: 'Cards',
+                content: '<div class="card text-white border-0 overflow-hidden" style="min-height:300px;"><img src="https://via.placeholder.com/1200x600" class="card-img h-100" style="object-fit:cover;" alt=""><div class="card-img-overlay d-flex flex-column justify-content-end" style="background:linear-gradient(to top,rgba(0,0,0,.7),transparent);"><h5 class="card-title">Titre superpose</h5><p class="card-text">Texte descriptif sur l\'image avec fond degrade.</p></div></div>'
+            },
+            {
+                id: 'cards-grid-3',
+                label: 'Grille 3 cartes',
+                category: 'Cards',
+                content: '<div class="row g-4"><div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body"><h5>Carte 1</h5><p class="text-muted mb-0">Description de la premiere carte.</p></div></div></div><div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body"><h5>Carte 2</h5><p class="text-muted mb-0">Description de la deuxieme carte.</p></div></div></div><div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body"><h5>Carte 3</h5><p class="text-muted mb-0">Description de la troisieme carte.</p></div></div></div></div>'
+            },
+            {
+                id: 'pricing-table',
+                label: 'Tableau tarifs',
+                category: 'Cards',
+                content: '<div class="row g-4 justify-content-center"><div class="col-md-4"><div class="card text-center h-100 shadow-sm"><div class="card-body py-4"><h5 class="text-muted text-uppercase small fw-bold">Basique</h5><h2 class="fw-bold mb-0">99€</h2><p class="text-muted small">/ mois</p><ul class="list-unstyled mt-4 mb-4 text-start"><li><i class="fas fa-check text-success me-2"></i>Fonctionnalite 1</li><li><i class="fas fa-check text-success me-2"></i>Fonctionnalite 2</li><li><i class="fas fa-times text-danger me-2"></i>Fonctionnalite 3</li></ul><a href="#" class="btn btn-outline-primary w-100">Choisir</a></div></div></div><div class="col-md-4"><div class="card text-center h-100 shadow-sm border-primary"><div class="card-body py-4"><span class="badge bg-primary mb-2">Populaire</span><h5 class="text-muted text-uppercase small fw-bold">Pro</h5><h2 class="fw-bold mb-0">199€</h2><p class="text-muted small">/ mois</p><ul class="list-unstyled mt-4 mb-4 text-start"><li><i class="fas fa-check text-success me-2"></i>Fonctionnalite 1</li><li><i class="fas fa-check text-success me-2"></i>Fonctionnalite 2</li><li><i class="fas fa-check text-success me-2"></i>Fonctionnalite 3</li></ul><a href="#" class="btn btn-primary w-100">Choisir</a></div></div></div></div>'
             }
         ];
 

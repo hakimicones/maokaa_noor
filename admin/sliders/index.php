@@ -76,6 +76,7 @@ $flash = function_exists('getFlash') ? getFlash() : null;
         </div>
     <?php endif; ?>
 
+    <a href="<?php echo BASE_URL; ?>admin/dashboard.php" class="btn btn-outline-secondary mb-3">&larr; Tableau de bord</a>
     <?php if (!empty($_GET['return_url'])): ?>
         <a href="<?php echo htmlspecialchars($_GET['return_url']); ?>" class="btn btn-outline-secondary mb-3">&larr; Retour au site</a>
     <?php endif; ?>
