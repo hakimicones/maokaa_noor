@@ -134,8 +134,137 @@
                 label: 'Carousel',
                 category: 'Caroussel',
                 content: '<div class="row g-4"data-vep-block="carousel" data-slider-id="1" style="background:#e3f2fd;border:2px dashed #2196F3;border-radius:8px;padding:24px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><i class="fas fa-images" style="font-size:40px;color:#2196F3;margin-bottom:12px;"></i><strong style="color:#1565C0;font-size:16px;">Carousel #1</strong><small style="color:#5c85b8;margin-top:6px;display:block;font-size:13px;">Slider depuis la DB</small></div>'
+            },
+            // --- Vague 1: Structure ---
+            {
+                id: 'three-columns',
+                label: 'Trois colonnes',
+                category: 'Blocs',
+                content: '<div class="row g-4"><div class="col-md-4"><div class="p-4 bg-light rounded-3 h-100"><h4>Colonne 1</h4><p class="text-muted mb-0">Contenu de la colonne 1.</p></div></div><div class="col-md-4"><div class="p-4 bg-light rounded-3 h-100"><h4>Colonne 2</h4><p class="text-muted mb-0">Contenu de la colonne 2.</p></div></div><div class="col-md-4"><div class="p-4 bg-light rounded-3 h-100"><h4>Colonne 3</h4><p class="text-muted mb-0">Contenu de la colonne 3.</p></div></div></div>'
+            },
+            {
+                id: 'four-columns',
+                label: 'Quatre colonnes',
+                category: 'Blocs',
+                content: '<div class="row g-4"><div class="col-md-3"><div class="p-3 bg-light rounded-3 h-100"><h5>Colonne 1</h5><p class="text-muted mb-0 small">Contenu.</p></div></div><div class="col-md-3"><div class="p-3 bg-light rounded-3 h-100"><h5>Colonne 2</h5><p class="text-muted mb-0 small">Contenu.</p></div></div><div class="col-md-3"><div class="p-3 bg-light rounded-3 h-100"><h5>Colonne 3</h5><p class="text-muted mb-0 small">Contenu.</p></div></div><div class="col-md-3"><div class="p-3 bg-light rounded-3 h-100"><h5>Colonne 4</h5><p class="text-muted mb-0 small">Contenu.</p></div></div></div>'
+            },
+            {
+                id: 'two-columns-25-75',
+                label: 'Deux colonnes 25/75',
+                category: 'Blocs',
+                content: '<div class="row g-4"><div class="col-md-3"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h5">Colonne etroite</h3><p class="text-muted mb-0 small">Menu lateral, sidebar ou sommaire.</p></div></div><div class="col-md-9"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h4">Colonne large</h3><p class="text-muted mb-0">Contenu principal de la page.</p></div></div></div>'
+            },
+            {
+                id: 'two-columns-75-25',
+                label: 'Deux colonnes 75/25',
+                category: 'Blocs',
+                content: '<div class="row g-4"><div class="col-md-9"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h4">Colonne large</h3><p class="text-muted mb-0">Contenu principal.</p></div></div><div class="col-md-3"><div class="p-4 bg-light rounded-3 h-100"><h3 class="h5">Colonne etroite</h3><p class="text-muted mb-0 small">Sidebar ou encart.</p></div></div></div>'
+            },
+            {
+                id: 'section-fullwidth',
+                label: 'Pleine largeur',
+                category: 'Blocs',
+                content: '<section class="container-fluid py-5"><div class="row"><div class="col-12"><h2 class="h3">Section pleine largeur</h2><p class="text-muted mb-0">Cette section prend toute la largeur de l\'ecran. Utilisez-la pour des bannieres.</p></div></div></section>'
+            },
+            {
+                id: 'container-block',
+                label: 'Conteneur',
+                category: 'Blocs',
+                content: '<div class="container py-4"><h2 class="h4 mb-3">Bloc conteneur</h2><p class="text-muted mb-0">Encapsulez du contenu dans un conteneur centre avec padding.</p></div>'
+            },
+            {
+                id: 'spacer',
+                label: 'Espaceur',
+                category: 'Blocs',
+                content: '<div style="height: 60px;" aria-hidden="true"></div>'
+            },
+            // --- Vague 1: Typographie ---
+            {
+                id: 'heading-h1',
+                label: 'Titre H1',
+                category: 'Texte',
+                content: '<h1 class="display-4 fw-bold">Titre principal</h1>'
+            },
+            {
+                id: 'heading-h2',
+                label: 'Titre H2',
+                category: 'Texte',
+                content: '<h2 class="h2">Sous-titre de section</h2>'
+            },
+            {
+                id: 'heading-h3',
+                label: 'Titre H3',
+                category: 'Texte',
+                content: '<h3 class="h3">Titre de sous-section</h3>'
+            },
+            {
+                id: 'paragraph',
+                label: 'Paragraphe',
+                category: 'Texte',
+                content: '<p class="lead text-muted">Paragraphe de contenu. Remplacez ce texte par le votre.</p>'
+            },
+            {
+                id: 'blockquote',
+                label: 'Citation',
+                category: 'Texte',
+                content: '<figure class="text-center py-3"><blockquote class="blockquote"><p>"Une citation inspirante qui capte l\'attention."</p></blockquote><figcaption class="blockquote-footer">Auteur de la citation</figcaption></figure>'
+            },
+            {
+                id: 'divider',
+                label: 'Separateur',
+                category: 'Texte',
+                content: '<hr class="my-5">'
+            },
+            {
+                id: 'list-ul',
+                label: 'Liste a puces',
+                category: 'Texte',
+                content: '<ul><li>Element de liste 1</li><li>Element de liste 2</li><li>Element de liste 3</li></ul>'
+            },
+            {
+                id: 'list-ol',
+                label: 'Liste numerotee',
+                category: 'Texte',
+                content: '<ol><li>Premier element</li><li>Deuxieme element</li><li>Troisieme element</li></ol>'
+            },
+            // --- Vague 1: Composants ---
+            {
+                id: 'button',
+                label: 'Bouton',
+                category: 'Composants',
+                content: '<div class="d-flex gap-2 flex-wrap py-2"><a href="#" class="btn btn-primary" draggable="false">Bouton principal</a><a href="#" class="btn btn-outline-secondary" draggable="false">Secondaire</a></div>'
+            },
+            {
+                id: 'card',
+                label: 'Carte',
+                category: 'Composants',
+                content: '<div class="card shadow-sm h-100"><img src="https://via.placeholder.com/600x400" class="card-img-top" alt="Image" style="aspect-ratio:16/9;object-fit:cover;"><div class="card-body d-flex flex-column"><h5 class="card-title">Titre de la carte</h5><p class="card-text text-muted flex-grow-1">Description de la carte avec du contenu pertinent.</p><a href="#" class="btn btn-primary mt-auto">En savoir plus</a></div></div>'
+            },
+            {
+                id: 'accordion',
+                label: 'Accordeon',
+                category: 'Composants',
+                content: '<div class="accordion"><div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target=".acc-panel-1">Question frequente 1</button></h2><div class="accordion-collapse collapse show acc-panel-1"><div class="accordion-body">Reponse a la question 1.</div></div></div><div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target=".acc-panel-2">Question frequente 2</button></h2><div class="accordion-collapse collapse acc-panel-2"><div class="accordion-body">Reponse a la question 2.</div></div></div></div>'
+            },
+            // --- Vague 1: Medias ---
+            {
+                id: 'image-caption',
+                label: 'Image + legende',
+                category: 'Medias',
+                content: '<figure class="text-center"><img src="https://via.placeholder.com/800x500" alt="Description" class="img-fluid rounded-3 shadow-sm" style="max-height:500px;object-fit:cover;width:100%;"><figcaption class="text-muted mt-2 small">Legende descriptive de l\'image.</figcaption></figure>'
+            },
+            {
+                id: 'video-responsive',
+                label: 'Video',
+                category: 'Medias',
+                content: '<div class="ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/dQw4w9WgXQc" title="Video" allowfullscreen loading="lazy"></iframe></div>'
+            },
+            {
+                id: 'section-bg',
+                label: 'Section avec fond',
+                category: 'Medias',
+                content: '<section class="py-5 text-white" style="background: linear-gradient(135deg, #435980 0%, #345075 100%);"><div class="container"><div class="row"><div class="col-12 text-center"><h2 class="h3">Section mise en avant</h2><p class="mb-0 opacity-75">Utilisez un fond colore ou une image pour mettre en valeur cette section.</p></div></div></div></section>'
             }
-
         ];
 
 

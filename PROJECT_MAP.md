@@ -183,15 +183,36 @@ Sauvegarde:
 | Hero | — | — | Blocs |
 | Deux colonnes | — | — | Blocs |
 | Deux colonnes 2-1 | — | — | Blocs |
+| Trois colonnes | — | — | Blocs |
+| Quatre colonnes | — | — | Blocs |
+| Deux colonnes 25/75 | — | — | Blocs |
+| Deux colonnes 75/25 | — | — | Blocs |
 | Une colonne | — | — | Blocs |
+| Pleine largeur | — | — | Blocs |
+| Conteneur | — | — | Blocs |
+| Espaceur | — | — | Blocs |
 | Texte | — | — | Blocs |
 | Call to action | — | — | Blocs |
 | Image | — | — | Blocs |
+| Titre H1 | — | — | Texte |
+| Titre H2 | — | — | Texte |
+| Titre H3 | — | — | Texte |
+| Paragraphe | — | — | Texte |
+| Citation | — | — | Texte |
+| Séparateur | — | — | Texte |
+| Liste à puces | — | — | Texte |
+| Liste numérotée | — | — | Texte |
+| Bouton | — | — | Composants |
+| Carte | — | — | Composants |
+| Accordéon | — | — | Composants |
+| Image + légende | — | — | Médias |
+| Vidéo | — | — | Médias |
+| Section avec fond | — | — | Médias |
 | Produits Populaires | `[featured_products]` | limit | Contenu Dynamique |
 | Catalogue Produits | `[products]` | limit, category | Contenu Dynamique |
 | Actualités | `[news]` | limit | Contenu Dynamique |
 | Marques | `[brands]` | — | Contenu Dynamique |
-| **Marques Carousel** | `[brands_carousel]` | — | Contenu Dynamique |
+| Marques Carousel | `[brands_carousel]` | — | Contenu Dynamique |
 | Partenaires | `[partners]` | — | Contenu Dynamique |
 | Formulaire de Contact | `[contact_form]` | — | Contenu Dynamique |
 | Carousel | `[carousel]` / `[splide_carousel]` | slider_id | Caroussel |
