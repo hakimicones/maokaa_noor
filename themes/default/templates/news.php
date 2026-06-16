@@ -90,7 +90,6 @@ if ($newsId > 0) {
                 </a>
             </div>
             <?php endif; ?>
-            <?php echo do_shortcode($page['body'] ?? '', $pdo); ?>
             <?php $allNews = $newsModel->getAll(); ?>
             <?php if (!empty($allNews)): ?>
             <div class="row g-4 mt-3">
