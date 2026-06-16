@@ -62,7 +62,7 @@ function _wrap_vep_block_admin(string $type, string $shortcode, string $html): s
         'brands_carousel'   => 'admin/dashboard.php?section=brands',
         'brands'            => 'admin/dashboard.php?section=brands',
         'partners'          => 'admin/dashboard.php?section=partners',
-        'contact_form'      => 'admin/messages/view.php',
+        'contact_form'      => 'admin/dashboard.php?section=messages',
         'carousel'          => 'admin/sliders/index.php',
         'splide_carousel'   => 'admin/sliders/index.php',
     ];

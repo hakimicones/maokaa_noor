@@ -101,7 +101,22 @@ $csrfToken = generateCSRFToken();
             <div class="mb-3"><label class="form-label">Sous-titre</label><input name="subtitle" class="form-control" value="<?php echo htmlspecialchars($page['subtitle'] ?? ''); ?>"></div>
             <div class="mb-3"><label class="form-label">Meta title</label><input name="meta_title" class="form-control" value="<?php echo htmlspecialchars($page['meta_title'] ?? ''); ?>"></div>
             <div class="mb-3"><label class="form-label">Meta description</label><textarea name="meta_description" class="form-control" rows="3"><?php echo htmlspecialchars($page['meta_description'] ?? ''); ?></textarea></div>
-            <div class="mb-3"><label class="form-label">Template</label><input name="template" class="form-control" value="<?php echo htmlspecialchars($page['template']); ?>"></div>
+            <div class="mb-3"><label class="form-label">Template</label>
+                <select name="template" class="form-select">
+                    <?php
+                    $themeDir = dirname(__DIR__, 2) . '/themes';
+                    $templates = [];
+                    foreach (glob($themeDir . '/*/templates/*.php') as $f) {
+                        $name = basename($f, '.php');
+                        if (!in_array($name, $templates)) $templates[] = $name;
+                    }
+                    sort($templates);
+                    foreach ($templates as $tpl):
+                    ?>
+                    <option value="<?php echo htmlspecialchars($tpl); ?>" <?php echo $page['template'] === $tpl ? 'selected' : ''; ?>><?php echo htmlspecialchars($tpl); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="mb-3"><label class="form-label">Status</label>
                 <select name="status" class="form-select">
                     <option value="published" <?php echo $page['status'] === 'published' ? 'selected' : ''; ?>>published</option>
