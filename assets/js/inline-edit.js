@@ -162,7 +162,26 @@
         var cancelBtn   = modal.querySelector('.ie-link-cancel');
         var applyBtn    = modal.querySelector('.ie-link-apply');
 
+        // Remonter jusqu'au conteneur body pour la sauvegarde
+        var bodyContainer = contextEl
+            ? (contextEl.getAttribute && contextEl.getAttribute('data-inline-field') === 'body'
+                ? contextEl
+                : (typeof contextEl.closest === 'function' ? contextEl.closest('[data-inline-field="body"]') : null))
+            : null;
+
         function close() { modal.remove(); }
+
+        function saveAfterLinkEdit() {
+            if (bodyContainer && typeof serializeAndSaveBody === 'function') {
+                serializeAndSaveBody(bodyContainer, function (ok, data) {
+                    if (ok) {
+                        showToast(data.message, 'success');
+                    } else {
+                        showToast(data.message || 'Erreur lors de la sauvegarde', 'error');
+                    }
+                });
+            }
+        }
 
         closeBtn.addEventListener('click', close);
         cancelBtn.addEventListener('click', close);
@@ -198,6 +217,7 @@
                     escapeHtml(text) + '</a>');
             }
             close();
+            saveAfterLinkEdit();
         });
 
         urlInput.focus();
