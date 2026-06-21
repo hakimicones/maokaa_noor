@@ -1,6 +1,7 @@
 <?php
 // $blockTitle = optional heading, $formSent = bool, $formError = string, $formData = array
 $csrfToken = function_exists('generateCSRFToken') ? generateCSRFToken() : '';
+$baseUrl = defined('BASE_URL') ? BASE_URL : '/';
 ?>
 <section class="py-5">
     <div class="container">
@@ -49,10 +50,35 @@ $csrfToken = function_exists('generateCSRFToken') ? generateCSRFToken() : '';
                             <label class="form-label">Message *</label>
                             <textarea name="contact_message" class="form-control" rows="5" required><?php echo htmlspecialchars($formData['message'] ?? ''); ?></textarea>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Captcha *</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="#" class="captcha-refresh" title="Rafraîchir">
+                                    <img src="<?php echo htmlspecialchars($baseUrl); ?>includes/captcha-image.php"
+                                         alt="Captcha" class="captcha-img rounded border" style="cursor:pointer;height:60px;">
+                                </a>
+                                <input type="text" name="captcha" class="form-control" placeholder="Code" required
+                                       maxlength="5" style="max-width:120px;text-transform:uppercase;" autocomplete="off">
+                            </div>
+                            <div class="form-text mt-1">Entrez le code ci-contre. Cliquez sur l'image pour le changer.</div>
+                        </div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane me-2"></i>Envoyer le message
                         </button>
                     </form>
+                    <script>
+                    (function() {
+                        var img = document.querySelector('.captcha-img');
+                        var link = document.querySelector('.captcha-refresh');
+                        if (img && link) {
+                            function refresh() {
+                                img.src = '<?php echo htmlspecialchars($baseUrl); ?>includes/captcha-image.php?_=' + Date.now();
+                            }
+                            link.addEventListener('click', function(e) { e.preventDefault(); refresh(); });
+                            img.addEventListener('click', refresh);
+                        }
+                    })();
+                    </script>
                 <?php endif; ?>
             </div>
         </div>
