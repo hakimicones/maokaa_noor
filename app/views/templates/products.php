@@ -84,23 +84,7 @@ if ($productId > 0) {
                     <?php endif; ?>
 
                     <?php if (!empty($product['description'])): ?>
-                        <p class="lead mb-4"><?php echo htmlspecialchars($product['description']); ?></p>
-                    <?php endif; ?>
-
-                    <?php if (!empty($product['description_complete'])): ?>
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Description détaillée</h5>
-                            <p><?php echo nl2br(htmlspecialchars($product['description_complete'])); ?></p>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($product['caracteristiques_techniques'])): ?>
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Caractéristiques techniques</h5>
-                            <div class="border rounded p-3 bg-light">
-                                <?php echo nl2br(htmlspecialchars($product['caracteristiques_techniques'])); ?>
-                            </div>
-                        </div>
+                        <p class="lead mb-4"><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
                     <?php endif; ?>
 
                     <div class="d-flex gap-3 mt-4 flex-wrap">
