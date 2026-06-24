@@ -1,6 +1,7 @@
 <?php
 // $blockTitle = optional heading, $formSent = bool, $formError = string, $formData = array
 $csrfToken = function_exists('generateCSRFToken') ? generateCSRFToken() : '';
+$siteKey = defined('RECAPTCHA_SITE_KEY') ? RECAPTCHA_SITE_KEY : '';
 ?>
 <section class="py-5">
     <div class="container">
@@ -22,9 +23,11 @@ $csrfToken = function_exists('generateCSRFToken') ? generateCSRFToken() : '';
                         <div class="alert alert-danger"><?php echo htmlspecialchars($formError); ?></div>
                     <?php endif; ?>
 
-                    <form method="POST">
+                    <script src="https://www.google.com/recaptcha/api.js?render=<?php echo htmlspecialchars($siteKey); ?>"></script>
+                    <form method="POST" id="contact-form-recaptcha">
                         <input type="hidden" name="vep_contact_form" value="1">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                        <input type="hidden" name="g-recaptcha-response" id="recaptcha-response" value="">
                         <div class="mb-3">
                             <label class="form-label">Nom complet *</label>
                             <input type="text" name="contact_nom" class="form-control"
@@ -49,10 +52,24 @@ $csrfToken = function_exists('generateCSRFToken') ? generateCSRFToken() : '';
                             <label class="form-label">Message *</label>
                             <textarea name="contact_message" class="form-control" rows="5" required><?php echo htmlspecialchars($formData['message'] ?? ''); ?></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="contact-submit-btn">
                             <i class="fas fa-paper-plane me-2"></i>Envoyer le message
                         </button>
                     </form>
+                    <script>
+                    document.getElementById('contact-form-recaptcha').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        var btn = document.getElementById('contact-submit-btn');
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Vérification...';
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute('<?php echo htmlspecialchars($siteKey, ENT_QUOTES); ?>', {action: 'submit'}).then(function(token) {
+                                document.getElementById('recaptcha-response').value = token;
+                                e.target.submit();
+                            });
+                        });
+                    });
+                    </script>
                 <?php endif; ?>
             </div>
         </div>

@@ -36,6 +36,7 @@
 - GrapesJS 0.21.9 + plugins
 - DOMPurify 3.1.6
 - Splide.js 4.1.4 (CDN chargé dans tous les templates frontend + auto-init DOMContentLoaded)
+- Google reCAPTCHA v3 API (recaptcha/api.js?render=KEY) — chargé depuis le template contact-form.php
 - Quill.js 1.3.7 (chargé mais non utilisé — remplacé par toolbar flottante inline)
 - Simple-DataTables 10.2.0 (CDN) — `assets/js/admin-tables.js`
 
@@ -112,6 +113,13 @@ Bloc interactif [products] (depuis juin 2026):
 [contact_form]
   → render_block_contact_form() gère POST + validation
   → Modèle Contact.php (table contacts : nom, email, telephone, sujet, message)
+  → Google reCAPTCHA v3 (invisible, score ≥ 0.5)
+    → Clés dans .env : RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY
+    → Script chargé via https://www.google.com/recaptcha/api.js?render=SITE_KEY
+    → Token généré par grecaptcha.execute() sur submit du formulaire (JS)
+    → Token placé dans input hidden g-recaptcha-response
+    → Validation serveur : file_get_contents() → https://www.google.com/recaptcha/api/siteverify
+    → Score minimum : 0.5 (configurable dans shortcodes.php)
 ```
 
 ### Demande de devis
