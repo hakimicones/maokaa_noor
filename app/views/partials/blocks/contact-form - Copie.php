@@ -1,7 +1,11 @@
 <?php
 // $blockTitle = optional heading, $formSent = bool, $formError = string, $formData = array
 $csrfToken = function_exists('generateCSRFToken') ? generateCSRFToken() : '';
+<<<<<<< HEAD
+$siteKey = defined('RECAPTCHA_SITE_KEY') ? RECAPTCHA_SITE_KEY : '';
+=======
 $baseUrl = defined('BASE_URL') ? BASE_URL : '/';
+>>>>>>> b9c67495d5cc302d08b056d3a0d200ee33e026ab
 ?>
 <section class="py-5">
     <div class="container">
@@ -52,6 +56,9 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '/';
                             <label class="form-label">Message *</label>
                             <textarea name="contact_message" class="form-control" rows="5" required><?php echo htmlspecialchars($formData['message'] ?? ''); ?></textarea>
                         </div>
+<<<<<<< HEAD
+                        <button type="submit" class="btn btn-primary" id="contact-submit-btn">
+=======
                         <div class="mb-3">
                             <label class="form-label">Captcha *</label>
                             <div class="d-flex align-items-center gap-3">
@@ -65,10 +72,25 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '/';
                             <div class="form-text mt-1">Entrez le code ci-contre. Cliquez sur l'image pour le changer.</div>
                         </div>
                         <button type="submit" class="btn btn-primary">
+>>>>>>> b9c67495d5cc302d08b056d3a0d200ee33e026ab
                             <i class="fas fa-paper-plane me-2"></i>Envoyer le message
                         </button>
                     </form>
                     <script>
+<<<<<<< HEAD
+                    document.getElementById('contact-form-recaptcha').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        var btn = document.getElementById('contact-submit-btn');
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Vérification...';
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute('<?php echo htmlspecialchars($siteKey, ENT_QUOTES); ?>', {action: 'submit'}).then(function(token) {
+                                document.getElementById('recaptcha-response').value = token;
+                                e.target.submit();
+                            });
+                        });
+                    });
+=======
                     (function() {
                         var img = document.querySelector('.captcha-img');
                         var link = document.querySelector('.captcha-refresh');
@@ -80,6 +102,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '/';
                             img.addEventListener('click', refresh);
                         }
                     })();
+>>>>>>> b9c67495d5cc302d08b056d3a0d200ee33e026ab
                     </script>
                 <?php endif; ?>
             </div>
