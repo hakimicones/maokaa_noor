@@ -97,18 +97,6 @@ if ($productId > 0) {
                     <?php if (!empty($product['description']) || $isAdmin): ?>
                     <p class="lead mb-4"<?php if ($isAdmin): ?> data-inline-field="description" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Ajouter une description courte..."<?php endif; ?>><?php echo $isAdmin ? $product['description'] : nl2br(htmlspecialchars($product['description'])); ?></p>
                     <?php endif; ?>
-                    <?php if (!empty($product['description_complete']) || $isAdmin): ?>
-                    <div class="mb-4">
-                        <h5 class="fw-bold">Description détaillée</h5>
-                        <p<?php if ($isAdmin): ?> data-inline-field="description_complete" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Ajouter une description détaillée..."<?php endif; ?>><?php echo $isAdmin ? $product['description_complete'] : nl2br(htmlspecialchars($product['description_complete'])); ?></p>
-                    </div>
-                    <?php endif; ?>
-                    <?php if (!empty($product['caracteristiques_techniques']) || $isAdmin): ?>
-                    <div class="mb-4">
-                        <h5 class="fw-bold">Caractéristiques techniques</h5>
-                        <div class="border rounded p-3 bg-light"<?php if ($isAdmin): ?> data-inline-field="caracteristiques_techniques" data-product-id="<?php echo $product['id']; ?>" data-ie-placeholder="Ajouter les caractéristiques techniques..."<?php endif; ?>><?php echo $isAdmin ? $product['caracteristiques_techniques'] : nl2br(htmlspecialchars($product['caracteristiques_techniques'])); ?></div>
-                    </div>
-                    <?php endif; ?>
                     <div class="d-flex gap-3 mt-4 flex-wrap">
                         <?php if (!empty($product['brochure_pdf'])): ?>
                         <a href="<?php echo htmlspecialchars($product['brochure_pdf']); ?>"
