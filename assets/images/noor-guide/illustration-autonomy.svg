@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <!-- Background circles -->
+  <circle cx="200" cy="150" r="140" fill="#E8F5E9" opacity="0.4"/>
+  <circle cx="200" cy="150" r="100" fill="#C8E6C9" opacity="0.3"/>
+  
+  <!-- Path/road -->
+  <path d="M50 250 Q200 200 350 250" stroke="#FF6B00" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.3"/>
+  <path d="M30 270 Q200 220 370 270" stroke="#FF6B00" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.2"/>
+  
+  <!-- Person walking with cane -->
+  <circle cx="180" cy="85" r="20" fill="#1A1A2E"/>
+  <path d="M180 105 L180 175" stroke="#1A1A2E" stroke-width="6" stroke-linecap="round"/>
+  <!-- Left leg forward -->
+  <path d="M180 175 L155 220" stroke="#1A1A2E" stroke-width="6" stroke-linecap="round"/>
+  <!-- Right leg back -->
+  <path d="M180 175 L210 215" stroke="#1A1A2E" stroke-width="6" stroke-linecap="round"/>
+  <!-- Left arm with cane -->
+  <path d="M180 130 L145 160" stroke="#1A1A2E" stroke-width="6" stroke-linecap="round"/>
+  <!-- Right arm -->
+  <path d="M180 130 L210 155" stroke="#1A1A2E" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- White cane -->
+  <line x1="145" y1="160" x2="125" y2="230" stroke="#FF6B00" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="125" cy="232" r="4" fill="#FF6B00"/>
+  
+  <!-- Bluetooth signals -->
+  <path d="M240 100 Q260 85 240 70" stroke="#28A745" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M250 100 Q275 80 250 60" stroke="#28A745" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M260 100 Q290 75 260 50" stroke="#28A745" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+  
+  <!-- Bluetooth icon -->
+  <rect x="230" y="85" width="16" height="16" rx="3" fill="#28A745" opacity="0.2"/>
+  <path d="M238 88 L244 94 L238 100" stroke="#28A745" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M238 94 L244 88" stroke="#28A745" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Destination pin -->
+  <g transform="translate(300, 120)">
+    <path d="M0 0 C-15 -20 -15 -40 0 -50 C15 -40 15 -20 0 0Z" fill="#FF6B00"/>
+    <circle cx="0" cy="-30" r="8" fill="#fff"/>
+  </g>
+  
+  <!-- Ground dots -->
+  <circle cx="100" cy="240" r="3" fill="#FF6B00" opacity="0.3"/>
+  <circle cx="150" cy="235" r="2" fill="#FF6B00" opacity="0.4"/>
+  <circle cx="250" cy="235" r="2" fill="#FF6B00" opacity="0.4"/>
+  <circle cx="300" cy="240" r="3" fill="#FF6B00" opacity="0.3"/>
+</svg>

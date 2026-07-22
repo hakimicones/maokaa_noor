@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Noor Guide — Application mobile de guidage pour personnes aveugles et malvoyantes. Navigation intelligente, parcours personnalisés, détection Bluetooth.">
+  <meta name="theme-color" content="#FF6B00">
+  <title>Noor Guide — Application de guidage pour personnes aveugles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/noor-guide.css">
+  <style>
+    /* High contrast mode */
+    body.high-contrast { background: #000 !important; color: #fff !important; }
+    body.high-contrast * { color: #fff !important; border-color: #fff !important; }
+    body.high-contrast a { color: #FFD700 !important; }
+    body.high-contrast .feature-card,
+    body.high-contrast .testimonial-card { background: #111 !important; border-color: #fff !important; }
+    body.high-contrast .site-header { background: #111 !important; }
+    body.high-contrast .site-footer { background: #000 !important; }
+    body.high-contrast .section-alt { background: #111 !important; }
+    body.high-contrast .section-dark { background: #222 !important; }
+    body.high-contrast .feature-icon { background: #FFD700 !important; color: #000 !important; }
+    body.high-contrast .stat-number { color: #FFD700 !important; }
+    body.high-contrast .btn-primary { background: #FFD700 !important; color: #000 !important; border-color: #FFD700 !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+  <!-- Accessibility Toolbar -->
+  <div class="a11y-toolbar" role="toolbar" aria-label="Outils d'accessibilité">
+    <div class="a11y-toolbar-inner">
+      <button type="button" id="btn-high-contrast" class="a11y-btn" aria-pressed="false">Contraste élevé</button>
+      <button type="button" id="btn-increase-text" class="a11y-btn" aria-label="Agrandir le texte">A +</button>
+      <button type="button" id="btn-decrease-text" class="a11y-btn" aria-label="Réduire le texte">A -</button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="#" class="site-logo" aria-label="Noor Guide — Retour à l'accueil">
+        <span class="logo-icon" aria-hidden="true">N</span>
+        <span>Noor<span style="color:#FF6B00">Guide</span></span>
+      </a>
+
+      <button type="button" class="menu-toggle" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="nav-main">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <nav class="nav-main" id="nav-main" aria-label="Navigation principale">
+        <a href="#features">Fonctionnalités</a>
+        <a href="#how-it-works">Comment ça marche</a>
+        <a href="#accessibility">Accessibilité</a>
+        <a href="#testimonials">Témoignages</a>
+        <a href="#contact" class="nav-cta">Télécharger l'app</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;">
+        <div class="hero-content">
+          <span class="hero-badge" aria-hidden="true">
+            <i class="fas fa-phone-alt"></i> Application mobile
+          </span>
+          <h1 id="hero-title">Naviguez en toute <span class="highlight">sérénité</span></h1>
+          <p>
+            Noor Guide est une application mobile conçue pour accompagner les personnes aveugles et malvoyantes dans leurs déplacements, en leur offrant une expérience de navigation simple, intuitive et entièrement accessible.
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">
+              <i class="fab fa-apple"></i> App Store
+            </a>
+            <a href="#contact" class="btn btn-outline">
+              <i class="fab fa-google-play"></i> Google Play
+            </a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="assets/images/noor-guide/app-mockup.svg" alt="Application Noor Guide sur smartphone" width="320">
+          <div class="floating-card fc-1">
+            <div class="fc-icon" style="background:#28A745;"><i class="fas fa-bluetooth-b"></i></div>
+            <div class="fc-text">
+              <strong>Bluetooth détecté</strong>
+              <span>Dispositif à 2.5m</span>
+            </div>
+          </div>
+          <div class="floating-card fc-2">
+            <div class="fc-icon" style="background:#FF6B00;"><i class="fas fa-route"></i></div>
+            <div class="fc-text">
+              <strong>Parcours actif</strong>
+              <span>3 destinations</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label"><i class="fas fa-star"></i> Fonctionnalités</span>
+          <h2 id="features-title">Tout ce dont vous avez besoin</h2>
+          <p>
+            Noor Guide propose des fonctionnalités innovantes pour rendre vos déplacements plus simples et plus autonomes.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card reveal delay-1">
+            <div class="feature-icon" style="background:linear-gradient(135deg, #FF6B00, #FF8A33);">
+              <i class="fas fa-route"></i>
+            </div>
+            <h3>Navigation intelligente</h3>
+            <p>
+              Choisissez votre destination parmi les lieux disponibles et laissez Noor Guide vous accompagner tout au long de votre parcours.
+            </p>
+          </article>
+
+          <article class="feature-card reveal delay-2">
+            <div class="feature-icon" style="background:linear-gradient(135deg, #28A745, #5CB85C);">
+              <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3>Parcours personnalisés</h3>
+            <p>
+              Planifiez vos déplacements en créant des parcours personnalisés composés de plusieurs destinations. Organisez votre itinéraire selon vos besoins.
+            </p>
+          </article>
+
+          <article class="feature-card reveal delay-3">
+            <div class="feature-icon" style="background:linear-gradient(135deg, #1A1A2E, #2A2A4E);">
+              <i class="fas fa-bluetooth-b"></i>
+            </div>
+            <h3>Détection Bluetooth</h3>
+            <p>
+              L'application détecte les dispositifs de guidage Bluetooth situés à proximité, affiche leur disponibilité ainsi que leur distance.
+            </p>
+          </article>
+
+          <article class="feature-card reveal delay-4">
+            <div class="feature-icon" style="background:linear-gradient(135deg, #E05500, #FF6B00);">
+              <i class="fas fa-info-circle"></i>
+            </div>
+            <h3>Informations lieux</h3>
+            <p>
+              Consultez les informations essentielles sur chaque lieu avant de commencer votre déplacement afin de mieux préparer votre parcours.
+            </p>
+          </article>
+
+          <article class="feature-card reveal delay-5">
+            <div class="feature-icon" style="background:linear-gradient(135deg, #8e44ad, #a569bd);">
+              <i class="fas fa-universal-access"></i>
+            </div>
+            <h3>100% Accessible</h3>
+            <p>
+              Chaque écran a été conçu pour être entièrement compatible avec les lecteurs d'écran. Navigation fluide et interactions simples.
+            </p>
+          </article>
+
+          <article class="feature-card reveal delay-5">
+            <div class="feature-icon" style="background:linear-gradient(135deg, #2c3e50, #34495e);">
+              <i class="fas fa-hand-holding-heart"></i>
+            </div>
+            <h3>Autonomie & confiance</h3>
+            <p>
+              Notre objectif est de permettre aux personnes aveugles et malvoyantes de se déplacer avec davantage d'autonomie et de sérénité.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works - Showcase -->
+    <section class="section section-alt" id="how-it-works" aria-labelledby="showcase-title">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label"><i class="fas fa-cogs"></i> Comment ça marche</span>
+          <h2 id="showcase-title">Simple, intuitif, accessible</h2>
+          <p>
+            Découvrez comment Noor Guide vous accompagne à chaque étape de votre déplacement.
+          </p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="showcase reveal-left">
+          <div class="showcase-text">
+            <span class="section-label" style="font-size:0.65rem;"><i class="fas fa-step-forward"></i> Étape 1</span>
+            <h3>Choisissez votre destination</h3>
+            <p style="color:var(--text-light);line-height:1.8;">
+              Parcourez la liste des lieux disponibles dans votre espace équipé. Chaque lieu dispose d'informations détaillées pour vous aider à préparer votre déplacement.
+            </p>
+            <a href="#" class="btn btn-secondary" style="margin-top:1rem;">
+              <i class="fas fa-arrow-right"></i> En savoir plus
+            </a>
+          </div>
+          <div class="showcase-image">
+            <img src="assets/images/noor-guide/lieux.svg" alt="Sélection de destination dans Noor Guide" style="border-radius:20px;">
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="showcase reverse reveal-right" style="margin-top:4rem;">
+          <div class="showcase-text">
+            <span class="section-label" style="font-size:0.65rem;"><i class="fas fa-step-forward"></i> Étape 2</span>
+            <h3>Créez votre parcours</h3>
+            <p style="color:var(--text-light);line-height:1.8;">
+              Organisez votre itinéraire en ajoutant plusieurs destinations. Noor Guide calcule le meilleur chemin et vous guide pas à pas.
+            </p>
+            <a href="#" class="btn btn-secondary" style="margin-top:1rem;">
+              <i class="fas fa-arrow-right"></i> En savoir plus
+            </a>
+          </div>
+          <div class="showcase-image">
+            <img src="assets/images/noor-guide/parcours.svg" alt="Création de parcours personnalisé" style="border-radius:20px;">
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="showcase reveal-left" style="margin-top:4rem;">
+          <div class="showcase-text">
+            <span class="section-label" style="font-size:0.65rem;"><i class="fas fa-step-forward"></i> Étape 3</span>
+            <h3>Détectez les dispositifs</h3>
+            <p style="color:var(--text-light);line-height:1.8;">
+              L'application détecte automatiquement les dispositifs Bluetooth à proximité. Connectez-vous et activez le guidage sonore pour suivre votre chemin.
+            </p>
+            <a href="#" class="btn btn-secondary" style="margin-top:1rem;">
+              <i class="fas fa-arrow-right"></i> En savoir plus
+            </a>
+          </div>
+          <div class="showcase-image">
+            <img src="assets/images/noor-guide/bluetooth.svg" alt="Détection de dispositifs Bluetooth" style="border-radius:20px;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" aria-labelledby="stats-title">
+      <div class="container">
+        <h2 id="stats-title" class="sr-only">Nos chiffres clés</h2>
+        <div class="stats-grid">
+          <div class="stat-item reveal delay-1">
+            <span class="stat-number" data-count="5000" data-suffix="+">0</span>
+            <span class="stat-label">Utilisateurs actifs</span>
+          </div>
+          <div class="stat-item reveal delay-2">
+            <span class="stat-number" data-count="50" data-suffix="+">0</span>
+            <span class="stat-label">Espaces équipés</span>
+          </div>
+          <div class="stat-item reveal delay-3">
+            <span class="stat-number" data-count="100" data-suffix="%">0</span>
+            <span class="stat-label">Accessible</span>
+          </div>
+          <div class="stat-item reveal delay-4">
+            <span class="stat-number" data-count="24" data-suffix="/7">0</span>
+            <span class="stat-label">Disponible</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Accessibility Section -->
+    <section class="section" id="accessibility" aria-labelledby="a11y-title">
+      <div class="container">
+        <div class="showcase">
+          <div class="showcase-text reveal-left">
+            <span class="section-label"><i class="fas fa-universal-access"></i> Accessibilité</span>
+            <h2 id="a11y-title">Une expérience pensée pour tous</h2>
+            <p style="color:var(--text-light);line-height:1.8;">
+              Chaque écran de Noor Guide a été conçu pour être entièrement compatible avec les lecteurs d'écran. L'interface propose une navigation fluide, des formulaires accessibles et des interactions simples afin de garantir une expérience inclusive pour tous les utilisateurs.
+            </p>
+            <ul style="margin-top:1.5rem;list-style:none;">
+              <li style="display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;color:var(--text-light);">
+                <span style="width:28px;height:28px;background:rgba(40,167,69,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#28A745;font-size:0.75rem;flex-shrink:0;"><i class="fas fa-check"></i></span>
+                Compatibilité VoiceOver & TalkBack
+              </li>
+              <li style="display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;color:var(--text-light);">
+                <span style="width:28px;height:28px;background:rgba(40,167,69,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#28A745;font-size:0.75rem;flex-shrink:0;"><i class="fas fa-check"></i></span>
+                Navigation gestuelle simplifiée
+              </li>
+              <li style="display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;color:var(--text-light);">
+                <span style="width:28px;height:28px;background:rgba(40,167,69,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#28A745;font-size:0.75rem;flex-shrink:0;"><i class="fas fa-check"></i></span>
+                Retour haptique et sonore
+              </li>
+              <li style="display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;color:var(--text-light);">
+                <span style="width:28px;height:28px;background:rgba(40,167,69,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#28A745;font-size:0.75rem;flex-shrink:0;"><i class="fas fa-check"></i></span>
+                Textes à haute lisibilité
+              </li>
+            </ul>
+          </div>
+          <div class="showcase-image reveal-right">
+            <img src="assets/images/noor-guide/accessible.svg" alt="Interface accessible Noor Guide" style="border-radius:20px;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section section-alt" id="testimonials" aria-labelledby="testimonials-title">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label"><i class="fas fa-quote-left"></i> Témoignages</span>
+          <h2 id="testimonials-title">Ils utilisent Noor Guide</h2>
+          <p>
+            Découvrez les retours de nos utilisateurs et partenaires qui ont adopté Noor Guide.
+          </p>
+        </div>
+
+        <div class="testimonials-grid">
+          <article class="testimonial-card reveal delay-1">
+            <blockquote>
+              <p class="testimonial-text">
+                « Noor Guide a changé ma façon de me déplacer. Je peux maintenant aller au travail de manière autonome grâce au guidage sonore. C'est révolutionnaire ! »
+              </p>
+            </blockquote>
+            <p class="testimonial-author">Sarah M.</p>
+            <p class="testimonial-role">Utilisatrice quotidienne</p>
+          </article>
+
+          <article class="testimonial-card reveal delay-2">
+            <blockquote>
+              <p class="testimonial-text">
+                « La détection Bluetooth est incroyable. Je sais exactement où se trouve le dispositif le plus proche et je peux me diriger facilement vers la sortie. »
+              </p>
+            </blockquote>
+            <p class="testimonial-author">Ahmed K.</p>
+            <p class="testimonial-role">Voyageur régulier</p>
+          </article>
+
+          <article class="testimonial-card reveal delay-3">
+            <blockquote>
+              <p class="testimonial-text">
+                « Enfin une application vraiment pensée pour nous. Chaque écran est accessible, les formulaires sont simples et le retour sonore est clair. Merci ! »
+              </p>
+            </blockquote>
+            <p class="testimonial-author">Fatima B.</p>
+            <p class="testimonial-role">Utilisatrice malvoyante</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Autonomy Section -->
+    <section class="section" aria-labelledby="autonomy-title">
+      <div class="container">
+        <div class="showcase">
+          <div class="showcase-image reveal-left">
+            <img src="assets/images/noor-guide/autonomie.svg" alt="Autonomie et sérénité avec Noor Guide" style="border-radius:20px;">
+          </div>
+          <div class="showcase-text reveal-right">
+            <span class="section-label"><i class="fas fa-heart"></i> Notre mission</span>
+            <h2 id="autonomy-title">Une solution au service de l'autonomie</h2>
+            <p style="color:var(--text-light);line-height:1.8;">
+              Notre objectif est de permettre aux personnes aveugles et malvoyantes de se déplacer avec davantage d'autonomie, de confiance et de sérénité dans les espaces équipés de la solution Noor Guide.
+            </p>
+            <p style="color:var(--text-light);line-height:1.8;">
+              Parce que pouvoir aller où l'on veut et quand on veut est un droit, nous développons des solutions innovantes pour rendre chaque espace accessible à tous.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact" aria-labelledby="cta-title">
+      <div class="container" style="position:relative;z-index:1;">
+        <h2 id="cta-title">Prêt à naviguer <span style="color:#FF6B00;">en autonomie</span> ?</h2>
+        <p>
+          Téléchargez Noor Guide gratuitement sur l'App Store ou Google Play et découvrez une nouvelle façon de vous déplacer.
+        </p>
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="#" class="btn btn-primary">
+            <i class="fab fa-apple"></i> Télécharger sur l'App Store
+          </a>
+          <a href="#" class="btn btn-outline">
+            <i class="fab fa-google-play"></i> Disponible sur Google Play
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="site-logo" aria-label="Noor Guide — Retour à l'accueil" style="margin-bottom:0.5rem;">
+            <span class="logo-icon" aria-hidden="true">N</span>
+            <span style="color:#fff;">Noor<span style="color:#FF6B00;">Guide</span></span>
+          </a>
+          <p>
+            Application mobile de guidage pour personnes aveugles et malvoyantes.
+            Navigation intelligente, parcours personnalisés et détection Bluetooth.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Application</h4>
+          <ul>
+            <li><a href="#features">Fonctionnalités</a></li>
+            <li><a href="#how-it-works">Comment ça marche</a></li>
+            <li><a href="#accessibility">Accessibilité</a></li>
+            <li><a href="#contact">Télécharger</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <ul>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="#">contact@noorguide.com</a></li>
+            <li><a href="#">+33 (0)1 23 45 67 89</a></li>
+            <li><a href="#">Formulaire de contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Noor Guide — Tous droits réservés</p>
+        <nav aria-label="Liens légaux" style="display:flex;gap:1rem;">
+          <a href="#">Mentions légales</a>
+          <a href="#">Politique de confidentialité</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/noor-guide.js"></script>
+</body>
+</html>

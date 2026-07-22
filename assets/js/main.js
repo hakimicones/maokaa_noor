@@ -1,5 +1,5 @@
 // assets/js/main.js
-// VEP Main JavaScript File
+// Noor Accessibility Main JavaScript File
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeAnimations();
@@ -193,12 +193,11 @@ function copyToClipboard(text) {
 }
 
 // Export functions for use in global scope
-window.VEP = {
-    searchProducts,
-    downloadFile,
-    showToast,
-    smoothScroll,
-    copyToClipboard,
-    filterByLetter,
-    filterByCategory
-};
+window.VEP = window.VEP || {};
+window.VEP.searchProducts = searchProducts;
+window.VEP.downloadFile = downloadFile;
+window.VEP.showToast = showToast;
+window.VEP.smoothScroll = smoothScroll;
+window.VEP.copyToClipboard = copyToClipboard;
+window.VEP.filterByLetter = filterByLetter;
+window.VEP.filterByCategory = filterByCategory;

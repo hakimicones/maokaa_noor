@@ -1,1 +1,62 @@
-/* Thème Default — surcharges spécifiques au thème */
+/* Thème Default — VEP Accessibilité */
+/* Styles supplémentaires pour le thème */
+
+/* Contraste élevé */
+body.high-contrast {
+    background: #000 !important;
+    color: #fff !important;
+}
+body.high-contrast * {
+    color: #fff !important;
+    border-color: #fff !important;
+}
+body.high-contrast a {
+    color: #FFD700 !important;
+}
+body.high-contrast .card {
+    background: #111 !important;
+    border-color: #fff !important;
+}
+body.high-contrast nav {
+    background: #111 !important;
+}
+body.high-contrast footer {
+    background: #000 !important;
+}
+body.high-contrast .section-alt {
+    background: #111 !important;
+}
+body.high-contrast .section-dark {
+    background: #222 !important;
+}
+body.high-contrast .testimonial-card {
+    background: #111 !important;
+    border-left-color: #FFD700 !important;
+}
+body.high-contrast .card-icon {
+    background: #FFD700 !important;
+    color: #000 !important;
+}
+body.high-contrast .stat-number {
+    color: #FFD700 !important;
+}
+body.high-contrast .btn-primary {
+    background: #FFD700 !important;
+    color: #000 !important;
+    border-color: #FFD700 !important;
+}
+body.high-contrast .navbar {
+    background: #111 !important;
+}
+body.high-contrast .hero-section {
+    background: #000 !important;
+}
+body.high-contrast .noor-hero {
+    background: #000 !important;
+}
+body.high-contrast .noor-stats {
+    background: #111 !important;
+}
+body.high-contrast .noor-cta-card {
+    background: #111 !important;
+}

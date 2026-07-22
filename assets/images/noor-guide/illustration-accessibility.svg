@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <!-- Background circle -->
+  <circle cx="200" cy="150" r="140" fill="#FFF3E6" opacity="0.5"/>
+  <circle cx="200" cy="150" r="100" fill="#FFE8CC" opacity="0.4"/>
+  
+  <!-- Person figure -->
+  <circle cx="200" cy="80" r="22" fill="#FF6B00"/>
+  <path d="M200 102 L200 170" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+  <path d="M200 120 L170 150" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+  <path d="M200 120 L230 150" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+  <path d="M200 170 L175 210" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+  <path d="M200 170 L225 210" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Screen reader waves -->
+  <path d="M260 80 Q280 60 260 40" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M275 80 Q300 50 275 25" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+  <path d="M290 80 Q320 40 290 10" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.2"/>
+  
+  <!-- Accessibility symbol -->
+  <circle cx="120" cy="200" r="35" fill="#FF6B00" opacity="0.15"/>
+  <circle cx="120" cy="175" r="8" fill="#FF6B00"/>
+  <path d="M120 183 L120 215" stroke="#FF6B00" stroke-width="4" stroke-linecap="round"/>
+  <path d="M120 195 L105 210" stroke="#FF6B00" stroke-width="4" stroke-linecap="round"/>
+  <path d="M120 195 L135 210" stroke="#FF6B00" stroke-width="4" stroke-linecap="round"/>
+  <path d="M108 225 L132 225" stroke="#FF6B00" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Phone in hand -->
+  <rect x="220" y="160" width="30" height="50" rx="6" fill="#1A1A2E"/>
+  <rect x="224" y="166" width="22" height="34" rx="3" fill="#FF6B00" opacity="0.3"/>
+  <circle cx="235" cy="206" r="2" fill="#fff" opacity="0.5"/>
+  
+  <!-- Sound waves from phone -->
+  <path d="M255 175 Q265 170 265 180 Q265 190 255 185" stroke="#FF6B00" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M260 170 Q275 162 275 180 Q275 198 260 190" stroke="#FF6B00" stroke-width="2" fill="none" opacity="0.4"/>
+</svg>
