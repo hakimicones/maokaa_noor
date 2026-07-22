@@ -107,6 +107,7 @@ function render_shortcode(string $tag, array $atts, PDO $pdo): string
         case 'brands':            return render_block_brands($pdo, $title);
         case 'partners':          return render_block_partners($pdo, $title);
         case 'contact_form':      return render_block_contact_form($pdo, $title);
+        case 'noor_guide':        return render_block_noor_guide();
         case 'splide_carousel':
         case 'carousel':          return render_block_carousel($pdo, (int)($atts['slider_id'] ?? 0));
         default:                  return '';
@@ -318,47 +319,45 @@ function render_block_contact_form(PDO $pdo, string $blockTitle = ''): string
         if (!function_exists('verifyCSRFToken') || !verifyCSRFToken($_POST['csrf_token'] ?? '')) {
             $formError = 'Token de sécurité invalide.';
         } else {
-            $recaptchaToken = $_POST['g-recaptcha-response'] ?? '';
-            $recaptchaSecret = defined('RECAPTCHA_SECRET_KEY') ? RECAPTCHA_SECRET_KEY : '';
-            $captchaOk = false;
-            if ($recaptchaToken !== '' && $recaptchaSecret !== '') {
-                $resp = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, stream_context_create([
+            $hcaptchaResponse = $_POST['h-captcha-response'] ?? '';
+            $secretKey = defined('HCAPTCHA_SECRET_KEY') ? HCAPTCHA_SECRET_KEY : '';
+            if (empty($hcaptchaResponse) || empty($secretKey)) {
+                $formError = 'Captcha invalide. Veuillez réessayer.';
+            } else {
+                $verify = @file_get_contents('https://api.hcaptcha.com/siteverify', false, stream_context_create([
                     'http' => [
-                        'method' => 'POST',
-                        'header' => 'Content-Type: application/x-www-form-urlencoded',
+                        'method'  => 'POST',
+                        'header'  => 'Content-Type: application/x-www-form-urlencoded',
                         'content' => http_build_query([
-                            'secret'   => $recaptchaSecret,
-                            'response' => $recaptchaToken,
+                            'secret'   => $secretKey,
+                            'response' => $hcaptchaResponse,
                             'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
                         ]),
                     ],
                 ]));
-                if ($resp !== false) {
-                    $json = json_decode($resp, true);
-                    $captchaOk = ($json['success'] ?? false) && ($json['score'] ?? 0) >= 0.5;
-                }
-            }
-            if (!$captchaOk) {
-                $formError = 'Vérification anti-spam échouée. Veuillez réessayer.';
-            } else {
-                $formData = [
-                    'nom'       => trim($_POST['contact_nom']       ?? ''),
-                    'email'     => trim($_POST['contact_email']     ?? ''),
-                    'telephone' => trim($_POST['contact_telephone'] ?? ''),
-                    'sujet'     => trim($_POST['contact_sujet']     ?? ''),
-                    'message'   => trim($_POST['contact_message']   ?? ''),
-                ];
-                if (empty($formData['nom']) || empty($formData['email']) || empty($formData['message'])) {
-                    $formError = 'Veuillez remplir les champs obligatoires (nom, email, message).';
-                } elseif (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-                    $formError = 'Adresse email invalide.';
+                $result = $verify ? json_decode($verify, true) : [];
+                if (empty($result['success'])) {
+                    $formError = 'Captcha invalide. Veuillez réessayer.';
                 } else {
-                    $model = new Contact($pdo);
-                    if ($model->create($formData)) {
-                        $formSent = true;
-                        $formData = [];
+                    $formData = [
+                        'nom'       => trim($_POST['contact_nom']       ?? ''),
+                        'email'     => trim($_POST['contact_email']     ?? ''),
+                        'telephone' => trim($_POST['contact_telephone'] ?? ''),
+                        'sujet'     => trim($_POST['contact_sujet']     ?? ''),
+                        'message'   => trim($_POST['contact_message']   ?? ''),
+                    ];
+                    if (empty($formData['nom']) || empty($formData['email']) || empty($formData['message'])) {
+                        $formError = 'Veuillez remplir les champs obligatoires (nom, email, message).';
+                    } elseif (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
+                        $formError = 'Adresse email invalide.';
                     } else {
-                        $formError = "Erreur lors de l'envoi du message.";
+                        $model = new Contact($pdo);
+                        if ($model->create($formData)) {
+                            $formSent = true;
+                            $formData = [];
+                        } else {
+                            $formError = "Erreur lors de l'envoi du message.";
+                        }
                     }
                 }
             }
@@ -367,5 +366,12 @@ function render_block_contact_form(PDO $pdo, string $blockTitle = ''): string
 
     ob_start();
     include __DIR__ . '/../app/views/partials/blocks/contact-form.php';
+    return ob_get_clean();
+}
+
+function render_block_noor_guide(): string
+{
+    ob_start();
+    include __DIR__ . '/../app/views/partials/blocks/noor-guide.php';
     return ob_get_clean();
 }
